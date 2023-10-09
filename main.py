@@ -56,10 +56,10 @@ def total():
 root = Tk()
 root.title("Retail Billing system")
 root.geometry("1305x708")
-root.iconbitmap('icon.ico')
+
 headingLabel = Label(root, text='Retail Billing System', font=("Arial", 30,'bold' ), bg='gray20',fg='gold', relief=RIDGE)
 headingLabel.pack(fill=X)
-
+#------------------------------------------------------------
 customer_details_frame = LabelFrame(root, text="Customer Detail", font=('Arial', 15, 'bold'), fg='gold', bd=8, relief=GROOVE, bg='gray20')
 customer_details_frame.pack(fill=X, pady=5)
 
@@ -83,7 +83,7 @@ bil_numberEntry = Entry(customer_details_frame, font=('Arial', 15, 'bold'),relie
 bil_numberEntry.grid(row=0, column=5, padx=8)
 
 
-searchButton = Button(customer_details_frame, text='Search',font=('Arial', 12, 'bold'),relief=GROOVE, bd=5,width=15)
+searchButton = Button(customer_details_frame, text='Add new product',font=('Arial', 12, 'bold'),relief=GROOVE, bd=5,width=15)
 searchButton.grid(row=0, column=6, padx=6)
 
 #-----------------------------------------------------------------------------------------------------------------------------------#
@@ -214,6 +214,7 @@ texteare.pack()
 scrollbar.config(command=texteare.yview)
 
 
+
 #-------------------------------------------------------------------------------------#
 billmenuFrame = LabelFrame(root, text='Bill Menu',font=('Arial', 15, 'bold'),fg='white', bg='gray20')
 billmenuFrame.pack()
@@ -267,12 +268,7 @@ printButton.grid(row=0, column=3, pady=30, padx=10)
 clearButton = Button(buttonFrame, text='Clear' ,font=('Arial', 15, 'bold'), bg='gray20', fg='white', bd=5, width=8, pady=10)
 clearButton.grid(row=0, column=4, pady=30, padx=10)
 
-
-
-
-
-
-
+    
 
 
 

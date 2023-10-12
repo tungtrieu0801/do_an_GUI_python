@@ -4,7 +4,7 @@ import openpyxl
 
 
 def load_data():
-    path = "D:\codefirst.io\Tkinter Excel App\people.xlsx"
+    path = "./people.xlsx"
     workbook = openpyxl.load_workbook(path)
     sheet = workbook.active
 
@@ -19,14 +19,14 @@ def load_data():
 
 def insert_row():
     name = name_entry.get()
-    age = int(age_spinbox.get())
+    age = int(price_entry.get())
     subscription_status = status_combobox.get()
     employment_status = "Employed" if a.get() else "Unemployed"
 
     print(name, age, subscription_status, employment_status)
 
     # Insert row into Excel sheet
-    path = "D:\codefirst.io\Tkinter Excel App\people.xlsx"
+    path = "./people.xlsx"
     workbook = openpyxl.load_workbook(path)
     sheet = workbook.active
     row_values = [name, age, subscription_status, employment_status]
@@ -39,8 +39,8 @@ def insert_row():
     # Clear the values
     name_entry.delete(0, "end")
     name_entry.insert(0, "Name")
-    age_spinbox.delete(0, "end")
-    age_spinbox.insert(0, "Age")
+    price_entry.delete(0, "end")
+    price_entry.insert(0, "Age")
     status_combobox.set(combo_list[0])
     checkbutton.state(["!selected"])
 
@@ -60,24 +60,29 @@ root.tk.call("source", "forest-light.tcl")
 root.tk.call("source", "forest-dark.tcl")
 style.theme_use("forest-dark")
 
-combo_list = ["Subscribed", "Not Subscribed", "Other"]
+combo_list = ["Thức ăn chăn nuôi", "Rau", "Hoa quả"]
 
 frame = ttk.Frame(root)
 frame.pack()
 
-widgets_frame = ttk.LabelFrame(frame, text="Insert Row")
-widgets_frame.grid(row=0, column=0, padx=20, pady=10)
+style = ttk.Style()
+style.configure("TEntry.CustomHeight.TEntry", padding=[10, 10], fieldbackground="white", height=40,)  # Tùy chỉnh chiều cao
+style.configure("TCombobox.CustomHeight.TCombobox", padding=[10, 10], fieldbackground="white", height=40)
 
-name_entry = ttk.Entry(widgets_frame)
-name_entry.insert(0, "Name")
+widgets_frame = ttk.LabelFrame(frame, text="Thônng tin sản phẩm")
+widgets_frame.grid(row=0, column=0, padx=100, pady=10)
+
+name_entry = ttk.Entry(widgets_frame,style="TEntry.CustomHeight.TEntry",width=80)
+name_entry.insert(0, "Nhập tên sản phẩm")
 name_entry.bind("<FocusIn>", lambda e: name_entry.delete('0', 'end'))
 name_entry.grid(row=0, column=0, padx=5, pady=(0, 5), sticky="ew")
 
-age_spinbox = ttk.Spinbox(widgets_frame, from_=18, to=100)
-age_spinbox.insert(0, "Age")
-age_spinbox.grid(row=1, column=0, padx=5, pady=5, sticky="ew")
+price_entry = ttk.Entry(widgets_frame,style="TEntry.CustomHeight.TEntry")
+price_entry.insert(0, "Nhập giá tiền")
+price_entry.bind("<FocusIn>", lambda e: price_entry.delete('0', 'end'))
+price_entry.grid(row=1, column=0, padx=5, pady=5, sticky="ew")
 
-status_combobox = ttk.Combobox(widgets_frame, values=combo_list)
+status_combobox = ttk.Combobox(widgets_frame, values=combo_list,style="TCombobox.CustomHeight.TCombobox")
 status_combobox.current(0)
 status_combobox.grid(row=2, column=0, padx=5, pady=5,  sticky="ew")
 
@@ -100,12 +105,12 @@ treeFrame.grid(row=0, column=1, pady=10)
 treeScroll = ttk.Scrollbar(treeFrame)
 treeScroll.pack(side="right", fill="y")
 
-cols = ("Name", "Age", "Subscription", "Employment")
+cols = ("Sản phẩm", "Giá tiền", "Loại", "Employment")
 treeview = ttk.Treeview(treeFrame, show="headings",
                         yscrollcommand=treeScroll.set, columns=cols, height=13)
-treeview.column("Name", width=100)
-treeview.column("Age", width=50)
-treeview.column("Subscription", width=100)
+treeview.column("Sản phẩm", width=100)
+treeview.column("Giá tiền", width=50)
+treeview.column("Loại", width=100)
 treeview.column("Employment", width=100)
 treeview.pack()
 treeScroll.config(command=treeview.yview)

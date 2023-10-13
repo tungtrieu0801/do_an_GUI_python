@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 import openpyxl
 import tkinter.messagebox as messagebox
-
+from tkinter.simpledialog import askstring
 def load_data():
     path = "./people.xlsx"
     workbook = openpyxl.load_workbook(path)
@@ -138,6 +138,53 @@ treeview.pack()
 treeScroll.config(command=treeview.yview)
 load_data()
 
-# new
+# xoa dong trong treeview   
+# Hàm để xóa dòng được chọn từ treeview
+def delete_selected_row():
+    selected_item = treeview.selection()
+    for item in selected_item:
+        treeview.delete(item)
+        delete_row_from_excel(item)
 
+# Hàm để xóa dòng khỏi tệp Excel
+def delete_row_from_excel(selected_item):
+    path = "./people.xlsx"
+    
+    workbook = openpyxl.load_workbook(path)
+    sheet = workbook.active
+    for item in selected_item:
+        row_index = int(treeview.index(item))  # Lấy chỉ số hàng
+        sheet.delete_rows(row_index)
+    workbook.save(path)
+
+
+
+
+
+def on_treeview_select(event):
+    delete_button.config(state=tk.NORMAL if treeview.selection() else tk.DISABLED)
+# new
+buttonFrame = ttk.Frame(frame)
+buttonFrame.grid(row=1, column=0, pady=10,padx=10)
+treeview.bind("<<TreeviewSelect>>", on_treeview_select)
+delete_button = tk.Button(buttonFrame, text="Xoá", command=delete_selected_row, state=tk.DISABLED)
+delete_button.pack()
+# update button
+def update_selected_row():
+    selected_item = treeview.selection()
+    if selected_item:
+        current_data = treeview.item(selected_item, 'values')
+        new_data = askstring("Chỉnh sửa thông tin", "Nhập thông tin mới (Name, Age):", initialvalue="{}, {}".format(current_data[0], current_data[1]))
+        if new_data:
+            new_data = new_data.split(',')
+            if len(new_data) == 2:
+                treeview.item(selected_item, values=(new_data[0].strip(), new_data[1].strip()))
+    
+
+def on_treeview_select(event):
+    update_button.config(state=tk.NORMAL if treeview.selection() else tk.DISABLED)
+
+update_button = tk.Button(buttonFrame, text="Cập nhật", command=update_selected_row)
+
+update_button.pack()
 root.mainloop()

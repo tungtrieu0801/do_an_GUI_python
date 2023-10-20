@@ -14,7 +14,20 @@ import warehouse
 file_path = os.path.dirname(os.path.realpath(__file__))
 
 app = tk.Tk()
-app.geometry("1140x820")
+# Lấy kích thước của màn hình
+screen_width = app.winfo_screenwidth()
+screen_height = app.winfo_screenheight()
+
+# Lấy kích thước của cửa sổ
+window_width = 1140  # Thay đổi kích thước theo nhu cầu
+window_height = 820  # Thay đổi kích thước theo nhu cầu
+
+# Tính toán vị trí để cửa sổ xuất hiện giữa màn hình
+x = (screen_width - window_width) // 2
+y = (screen_height - window_height) // 2
+
+# Đặt vị trí cửa sổ
+app.geometry(f"{window_width}x{window_height}+{x}+{y}")
 app.title("Ứng dụng Tkinter")
 
 frame = ttk.Frame(app)

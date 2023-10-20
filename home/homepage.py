@@ -5,7 +5,19 @@ from tkinter import ttk
 def home(root):
     home_window = tk.Toplevel(root)
     home_window.title("Home")
-    home_window.geometry("1140x820")
+    
+    # Lấy kích thước của màn hình
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+    
+    window_width = 1140  # Thay đổi kích thước theo nhu cầu
+    window_height = 820  # Thay đổi kích thước theo nhu cầu
+    # Tính toán vị trí để cửa sổ xuất hiện giữa màn hình
+    x = (screen_width - window_width) // 2
+    y = (screen_height - window_height) // 2
+
+    # Đặt vị trí cửa sổ
+    home_window.geometry(f"{window_width}x{window_height}+{x}+{y}")
 
     def close_window_2():
         home_window.destroy()  # Đóng cửa sổ 2
@@ -15,5 +27,6 @@ def home(root):
 
     label = tk.Label(home_window, text="Đây là homepage", font=("Arial", 46))  # Đặt kích thước font là 16
     label.pack(expand=True, fill="both")
+
 
  

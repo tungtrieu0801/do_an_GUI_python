@@ -1,8 +1,10 @@
 import tkinter as tk
 from tkinter import ttk
-
+from styles import configure_styles
 
 def history(root):
+    #gọi hàm style căn chỉnh
+    configure_styles()
     history_window = tk.Toplevel(root)
     history_window.title("history")
         # Lấy kích thước của màn hình
@@ -21,7 +23,7 @@ def history(root):
     def close_window_2():
         history_window.destroy()  # Đóng cửa sổ 2
         root.deiconify() 
-    back_button = ttk.Button(history_window, text="Back", command=close_window_2)
+    back_button = ttk.Button(history_window, text="Back", command=close_window_2, style='Back_Bbutton.TButton')
     back_button.pack()
 
     # Thêm nội dung vào cửa sổ mới và đảm bảo nó nằm ở giữa

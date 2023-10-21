@@ -1,18 +1,10 @@
 import tkinter as tk
 from tkinter import ttk
-
+from styles import configure_styles
 
 def contact(root):
-    style = ttk.Style()
-    style.configure("Bbutton.TButton",
-                foreground="green",   # Màu chữ
-                font=("Arial", 12),    # Phông chữ và kích thước
-                padding=(10, 10),      # Khoảng cách giữa nội dung và biên (điều chỉnh chiều rộng và chiều cao ở đây)
-                width=8,               # Chiều rộng của nút (giảm giá trị ở đây)
-                borderwidth=5,         # Độ dày viền
-                relief="flat"          # Kiểu viền
-                )
-
+    #gọi hàm style căn chỉnh
+    configure_styles()
     contact_window = tk.Toplevel(root)
     contact_window.title("contact")
         # Lấy kích thước của màn hình
@@ -37,7 +29,7 @@ def contact(root):
     frame_back = ttk.Frame(contact_window)
     frame_back.place(x=20,y=20)
     
-    back_button = ttk.Button(frame_back, text="Quay lại", command=close_window_2, style='Bbutton.TButton')
+    back_button = ttk.Button(frame_back, text="Quay lại", command=close_window_2, style='Back_Bbutton.TButton')
     back_button.pack()
 
     

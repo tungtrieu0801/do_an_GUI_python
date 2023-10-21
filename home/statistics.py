@@ -1,6 +1,9 @@
 import tkinter as tk
 from tkinter import ttk
+from styles import configure_styles
 def statistics(root):
+    #gọi hàm style căn chỉnh
+    configure_styles()
     statistics_window = tk.Toplevel(root)
     statistics_window.title("statistics")
         # Lấy kích thước của màn hình
@@ -19,7 +22,7 @@ def statistics(root):
     def close_window_2():
         statistics_window.destroy()  # Đóng cửa sổ 2
         root.deiconify() 
-    back_button = ttk.Button(statistics_window, text="Back", command=close_window_2)
+    back_button = ttk.Button(statistics_window, text="Back", command=close_window_2, style='Back_Bbutton.TButton')
     back_button.pack()
 
     # Thêm nội dung vào cửa sổ mới và đảm bảo nó nằm ở giữa

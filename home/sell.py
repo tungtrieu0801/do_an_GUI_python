@@ -1,8 +1,10 @@
 import tkinter as tk
 from tkinter import ttk
-
+from styles import configure_styles
 
 def sell(root):
+    #gọi hàm style căn chỉnh
+    configure_styles()
     sell_window = tk.Toplevel(root)
     sell_window.title("sell")
         # Lấy kích thước của màn hình
@@ -21,7 +23,7 @@ def sell(root):
     def close_window_2():
         sell_window.destroy()  # Đóng cửa sổ 2
         root.deiconify() 
-    back_button = ttk.Button(sell_window, text="Back", command=close_window_2)
+    back_button = ttk.Button(sell_window, text="Back", command=close_window_2, style='Back_Bbutton.TButton')
     back_button.pack()
 
     # Thêm nội dung vào cửa sổ mới và đảm bảo nó nằm ở giữa

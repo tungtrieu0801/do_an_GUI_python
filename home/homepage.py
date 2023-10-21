@@ -1,8 +1,10 @@
 import tkinter as tk
 from tkinter import ttk
-
+from styles import configure_styles
 
 def home(root):
+    #gọi hàm style căn chỉnh
+    configure_styles()
     home_window = tk.Toplevel(root)
     home_window.title("Home")
     
@@ -22,7 +24,7 @@ def home(root):
     def close_window_2():
         home_window.destroy()  # Đóng cửa sổ 2
         root.deiconify() 
-    back_button = ttk.Button(home_window, text="Back", command=close_window_2)
+    back_button = ttk.Button(home_window, text="Back", command=close_window_2, style='Back_Bbutton.TButton')
     back_button.pack()
 
     label = tk.Label(home_window, text="Đây là homepage", font=("Arial", 46))  # Đặt kích thước font là 16

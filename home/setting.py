@@ -18,12 +18,17 @@ def setting(root):
 
     # Đặt vị trí cửa sổ
     setting_window.geometry(f"{window_width}x{window_height}+{x}+{y}")
+    setting_window.resizable(width=False, height=False)
 
     def close_window_2():
         setting_window.destroy()  # Đóng cửa sổ 2
         root.deiconify() 
-    back_button = ttk.Button(setting_window, text="Back", command=close_window_2, style='Back_Bbutton.TButton')
-    back_button.pack()
-    label = tk.Label(setting_window, text="Đây là setting", font=("Arial", 46))  # Đặt kích thước font là 16
-    label.pack(expand=True, fill="both")
+    frame_back = ttk.Frame(setting_window)
+    frame_back.place(x=20,y=20)
+    back_button = ttk.Button(frame_back, text="Quay lại", command=close_window_2, style='Back_Bbutton.TButton')
+    back_button.pack(padx=(30,0))
     
+    # Thêm nội dung vào cửa sổ mới và đảm bảo nó nằm ở giữa
+    
+    label = tk.Label(setting_window, text="Cài đặt ", foreground="green",font=("Arial", 25,'bold'),)  # Đặt kích thước font là 16
+    label.place(x=350, y=100)

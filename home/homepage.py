@@ -20,6 +20,7 @@ def home(root):
 
     # Đặt vị trí cửa sổ
     home_window.geometry(f"{window_width}x{window_height}+{x}+{y}")
+    home_window.resizable(width=False, height=False)
 
     def close_window_2():
         home_window.destroy()  # Đóng cửa sổ 2

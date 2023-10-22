@@ -22,7 +22,7 @@ def contact(root):
 
     # Đặt vị trí cửa sổ
     contact_window.geometry(f"{window_width}x{window_height}+{x}+{y}")
-
+    contact_window.resizable(width=False, height=False)
     def close_window_2():
         contact_window.destroy()  # Đóng cửa sổ 2
         root.deiconify() 
@@ -32,7 +32,7 @@ def contact(root):
     frame_back = ttk.Frame(contact_window)
     frame_back.place(x=20,y=20)
     back_button = ttk.Button(frame_back, text="Quay lại", command=close_window_2, style='Back_Bbutton.TButton')
-    back_button.pack()
+    back_button.pack(padx=(30,0))
 
     
     label = tk.Label(contact_window, text="Liên hệ với chúng tôi", foreground="green",font=("Arial", 25,'bold'),)  # Đặt kích thước font là 16

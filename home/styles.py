@@ -23,3 +23,14 @@ def configure_for_main():
                     borderwidth=10,       
                     relief="flat",       
                     )
+
+def style_for_text():
+    style = ttk.Style()
+    style.configure("Text.TButton",
+                    foreground="green",
+                    font=("Arial", 12),  # Đổi cỡ chữ thành 25
+                    padding=(40, 5),
+                    width=50,
+                    borderwidth=10,
+                    relief="flat"
+                    )

@@ -29,7 +29,7 @@ def style_for_text():
     style.configure("Text.TButton",
                     foreground="green",
                     font=("Arial", 12),  # Đổi cỡ chữ thành 25
-                    padding=(40, 5),
+                    padding=(10, 5),
                     width=50,
                     borderwidth=10,
                     relief="flat"

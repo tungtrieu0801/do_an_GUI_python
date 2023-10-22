@@ -1,0 +1,31 @@
+def search_button_clicked():
+    # Đọc dữ liệu từ tệp Excel
+    workbook = openpyxl.load_workbook( "./people.xlsx")
+    sheet = workbook.active
+
+    # Lấy giá trị từ ô tìm kiếm
+    search_value = search_entry.get()
+
+    # Tìm kiếm sản phẩm trong tệp Excel
+    found_products = []
+    for row in sheet.iter_rows(values_only=True):
+        if search_value in row:
+            found_products.append(row)
+
+    # Hiển thị kết quả
+    if found_products:
+        messagebox.showinfo("Kết quả", f"Tìm thấy {len(found_products)} sản phẩm:\n{found_products}")
+    else:
+        messagebox.showinfo("Kết quả", "Không tìm thấy sản phẩm.")
+root = Tk()
+
+search_label = Label(root, text="Tìm kiếm:")
+search_label.pack()
+
+search_entry = Entry(root)
+search_entry.pack() 
+
+search_button = Button(root, text="Tìm kiếm", command=search_button_clicked)
+search_button.pack()
+
+root.mainloop()

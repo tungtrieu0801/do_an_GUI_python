@@ -25,11 +25,13 @@ def home(root):
     def close_window_2():
         home_window.destroy()  # Đóng cửa sổ 2
         root.deiconify() 
-    back_button = ttk.Button(home_window, text="Back", command=close_window_2, style='Back_Bbutton.TButton')
-    back_button.pack()
+    frame_back = ttk.Frame(home_window)
+    frame_back.place(x=20,y=20)
+    back_button = ttk.Button(frame_back, text="Quay lại", command=close_window_2, style='Back_Bbutton.TButton')
+    back_button.grid(column=0,row=0,padx=(0,400))
 
-    label = tk.Label(home_window, text="Đây là homepage", font=("Arial", 46))  # Đặt kích thước font là 16
-    label.pack(expand=True, fill="both")
-
+    label = ttk.Label(frame_back, text="Trang chủ", foreground="green",font=("Arial", 25,'bold'),)  # Đặt kích thước font là 16
+    label.grid(row=0, column=1)
+    
 
  

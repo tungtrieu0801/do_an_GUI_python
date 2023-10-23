@@ -25,9 +25,9 @@ def history(root):
     frame_back = ttk.Frame(history_window)
     frame_back.place(x=20,y=20)
     back_button = ttk.Button(frame_back, text="Quay lại", command=close_window_2, style='Back_Bbutton.TButton')
-    back_button.pack(padx=(30,0))
+    back_button.grid(column=0,row=0,padx=(0,250))
     
     # Thêm nội dung vào cửa sổ mới và đảm bảo nó nằm ở giữa
     
-    label = tk.Label(history_window, text="Theo dõi lịch sử tại đây", foreground="green",font=("Arial", 25,'bold'),)  # Đặt kích thước font là 16
-    label.place(x=350, y=100)
+    label = ttk.Label(frame_back, text="Theo dõi lịch sử tại đây", foreground="green",font=("Arial", 25,'bold'),)  # Đặt kích thước font là 16
+    label.grid(column=1,row=0)

@@ -1,16 +1,17 @@
+
 import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
 import os
-import homepage
-import addProduct
-import contact
-import sell
-import deliver
-import history
-import setting
-import statistics
-import warehouse
+from sale import sell
+from home import homepage
+from addProduct import addProduct
+from contact import contact
+from shipping import deliver
+from history import history
+from setting import setting
+from statistict import statistics
+from warehouse import warehouse
 file_path = os.path.dirname(os.path.realpath(__file__))
 from styles import configure_for_main
 
@@ -96,7 +97,7 @@ button.grid(row=0, column=2, pady=40, padx=30,)
 
 image_warehouse = load_and_resize_image(file_path + "/images/warehouse.png", 65, 65)
 button = ttk.Button(frame, image=image_warehouse, text="Kho hàng   ",
-                    compound='right', style="Home.TButton",command=open_warehouse)
+                    compound='right', style="Home.TButton",command=open_warehouse) 
 button.grid(row=1, column=0, pady=40, padx=30)
 
 image_history = load_and_resize_image(file_path + "/images/time-management.png", 65, 65)

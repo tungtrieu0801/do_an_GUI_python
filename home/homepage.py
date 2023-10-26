@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
 from styles import configure_styles
-
 def home(root):
     #gọi hàm style căn chỉnh
     configure_styles()

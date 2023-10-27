@@ -1,0 +1,53 @@
+import tkinter as tk
+from tkinter import ttk
+import mysql.connector
+
+db=mysql.connector.connect(user="root",password='vantung2002',host='localhost',database='qlsp')
+
+window = tk.Tk()
+
+# Frame chính
+main_frame = tk.Frame(window)
+main_frame.pack()
+
+# Treeview
+tree = ttk.Treeview(main_frame)
+tree.pack()
+entry_search = tk.Entry(window)
+entry_search.pack()
+
+# Load dữ liệu ban đầu
+def load_data():
+  cursor = db.cursor()
+  query = "SELECT * FROM ten_san_pham"
+  cursor.execute(query)
+  results = cursor.fetchall()
+
+  for row in results:
+    tree.insert('', tk.END, values=row)
+
+load_data()
+
+# Tìm kiếm
+def search():
+  search_term = search_entry.get()  
+
+  cursor = db.cursor()
+  query = f"SELECT * FROM ten_san_pham WHERE ten_san_pham '%{search_term}%'"
+  cursor.execute(query)
+  results = cursor.fetchall()
+
+  tree.delete(*tree.get_children())
+
+  for row in results:
+    tree.insert('', tk.END, values=row)
+
+# Widget tìm kiếm  
+search_entry = tk.Entry(main_frame)
+search_btn = tk.Button(command=search)
+
+
+b1=tk.Button(window,text='tìm kiếm',bg='white',width=20,command=search)
+b1.pack()
+
+window.mainloop()

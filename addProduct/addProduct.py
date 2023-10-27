@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from styles import *
+import mysql.connector
 def addProduct(root):
     #gọi hàm style căn chỉnh
     configure_styles()
@@ -34,4 +35,9 @@ def addProduct(root):
     label = ttk.Label(frame_back, text="Thêm sản phẩm mới tại đây", foreground="green",font=("Arial", 25,'bold'),)  # Đặt kích thước font là 16
     label.grid(row=0, column=1)
     
+
+
+
+
+
     

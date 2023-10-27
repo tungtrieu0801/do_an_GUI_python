@@ -117,43 +117,13 @@ def sell(root):
     main_fm = tk.Frame(product_frame,width=900, height=400)
     main_fm.grid(column=0, row=2,padx=(20,0))
     create_home_page(main_fm)  # Hiển thị trang Home ban đầu
-    # create_contact_page(main_fm)
-    # create_product_page(main_fm)
-    # create_about_page(main_fm)
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    # fastFood = ttk.Label(product_frame,text="Đồ ăn nhanh")
-    # fastFood.grid(column=0, row=1,padx=30, pady=30)
-
-    # drinkFood = ttk.Label(product_frame,text="Đồ uống")
-    # drinkFood.grid(column=1, row=1,padx=30, pady=30)
-
-    # vegetable = ttk.Label(product_frame,text="Rau, hoa quả")
-    # vegetable.grid(column=2, row=1,padx=30, pady=30)
-
-    # do_dung_gia_dinh = ttk.Label(product_frame,text="Đồ dùng gia đình")
-    # do_dung_gia_dinh.grid(column=3, row=1)
 
 
     #tao frame tinh tien
+
+    def update_total():
+        total_label.config(text="Tổng tiền: $100.00")  # Thay đổi giá trị này bằng tổng tiền thực tế
 
     total_frame = ttk.Frame(sell_window)
     total_frame.place(x=1080, y=100, width=470, height=700)
@@ -161,26 +131,19 @@ def sell(root):
     style.configure("Custom.TFrame", background="#c8c3d9")  # Thay đổi màu nền ở đây
     total_frame["style"] = "Custom.TFrame"
 
-    #frame thanh toan
+    # Thêm một Label để hiển thị tổng tiền
+    total_label = ttk.Label(total_frame, text="Tổng tiền: $0.00", font=("Helvetica", 20))
+    total_label.pack(pady=20)
 
-    thanhtoan_label = ttk.Label(total_frame, text="Thanh Toán")
-    thanhtoan_label.grid(row=0,column=0, padx=30,pady=30)
-
-    showProduct = ttk.Label(total_frame, text="Sản phẩm đã mua")
-    showProduct.grid(column=0, row=1)
+    # Thêm một Treeview để hiển thị danh sách sản phẩm trong giỏ hàng
     
-
-    # prodcutShow = ttk.Frame(total_frame)
-    # prodcutShow.grid(column=0, row=2)
-    # style.configure("Custom.TFrame", background="black")  # Thay đổi màu nền ở đây
-    # prodcutShow["style"] = "Custom.TFrame"
+    cart_treeview = ttk.Treeview(total_frame, columns=("Name", "Quantity", "Price"), show="headings")
+    cart_treeview.heading("Name", text="Tên sản phẩm")
+    cart_treeview.heading("Quantity", text="Số lượng")
+    cart_treeview.heading("Price", text="Giá tiền")
+    cart_treeview.pack(fill="both", expand=True)
     
-    total_label = ttk.Label(total_frame,text="Tong so tien")
-    total_label.grid(column=0, row=2,padx=30, pady=30)
+    # Thêm một nút để cập nhật tổng tiền
+    update_button = ttk.Button(total_frame, text="Cập nhật tổng tiền", command=update_total)
+    update_button.pack(pady=20)
 
-    money = ttk.Label(total_frame,text="300000")
-    money.grid(column=1, row=2)
-
-
-    buttonPay = ttk.Button(total_frame, text="Thanh Toan")
-    buttonPay.grid(column=0, row=3, columnspan=2)

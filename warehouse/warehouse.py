@@ -133,27 +133,6 @@ def warehouse(root):
     style.configure("Treeview")
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     def close_window_2():
         warehourse_window.destroy()  # Đóng cửa sổ 2
         root.deiconify() 

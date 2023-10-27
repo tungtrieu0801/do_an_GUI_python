@@ -69,10 +69,10 @@ def contact(root):
     gmail = ttk.Label(frame_information, text="Gmail: trieutungvp@gmail.com", style='Text.TButton')
     gmail.grid(row=2, column=0) 
 
-    location_image = load_and_resize_image(file_path + "/images/location.png", 170, 170)  # Đặt kích thước 70x70
+    location_image = load_and_resize_image(file_path + "/images/location.png", 70, 70)  # Đặt kích thước 70x70
     image_label = tk.Label(frame_information, image=location_image) 
     #do image nằm đơn lẻ k phụ thuộc vào gì cả, nên phải lưu vào 1 biến để duy trì ngăn bị thu hồi bởi  garbage collector
     #còn trong file main là do ảnh nằm trong button, nên khi render button nó sẽ render lại cả ảnh.
     image_label.image = location_image
-    image_label.grid(row=0, column=1, rowspan=3, padx=(10, 0),pady=(30, 0))
+    image_label.grid(row=0, column=1, rowspan=3, padx=(10, 0),pady=(40, 0))
     

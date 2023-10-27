@@ -40,6 +40,21 @@ def warehouse(root):
         stock_entry.delete(0, tk.END)
         price_entry.delete(0, tk.END)
 
+    def sort_products_by_name():
+          cursor.execute("SELECT name, type, stock, price FROM products")
+          products = cursor.fetchall()
+    # Sắp xếp danh sách sản phẩm theo tên, bắt đầu từ ký tự đầu tiên của tên
+          products = sorted(products, key=lambda x: x[0])
+    
+    # Xóa tất cả các mục cũ trong Treeview
+    for item in treeview.get_children():
+        treeview.delete(item)
+    
+    # Hiển thị danh sách sản phẩm đã sắp xếp
+    for product in products:
+        treeview.insert('', 'end', values=product)
+    
+
     # Kết nối với cơ sở dữ liệu MySQL
     connection = mysql.connector.connect(
         host='localhost',
@@ -121,6 +136,10 @@ def warehouse(root):
     # Tạo nút để thêm sản phẩm
     add_button = ttk.Button(frame_button, text="Thêm sản phẩm", command=add_product)
     add_button.pack()
+    # Tạo nút để sắp xếp sản phẩm
+    sort_button = ttk.Button(frame_button, text="Sắp xếp theo tên", command=sort_products_by_name)
+    sort_button.pack()
+
 
     # Truy vấn dữ liệu từ cơ sở dữ liệu và hiển thị lên Treeview
 

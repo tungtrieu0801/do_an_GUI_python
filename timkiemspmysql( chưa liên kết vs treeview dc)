@@ -1,53 +1,78 @@
 import tkinter as tk
+from tkinter import *
 from tkinter import ttk
 import mysql.connector
 
-db=mysql.connector.connect(user="root",password='vantung2002',host='localhost',database='qlsp')
+root = Tk()
+root.title("Search")
 
-window = tk.Tk()
+bckg = 'grey'
 
-# Frame chính
-main_frame = tk.Frame(window)
-main_frame.pack()
+connection = mysql.connector.connect(user="root", password='vantung2002', host='localhost', database='qlsp')
+c = connection.cursor()
 
-# Treeview
-tree = ttk.Treeview(main_frame)
-tree.pack()
-entry_search = tk.Entry(window)
-entry_search.pack()
+frame = tk.Frame(root, bg=bckg)
 
-# Load dữ liệu ban đầu
-def load_data():
-  cursor = db.cursor()
-  query = "SELECT * FROM ten_san_pham"
-  cursor.execute(query)
-  results = cursor.fetchall()
+label_search = tk.Label(frame, text="Nhập tên sản phẩm:", bg=bckg, fg='gold', font=('verdana', 12))
+entry_search = tk.Entry(frame, font=('verdana', 12))
+button_search = tk.Button(frame, text='Search', font=('verdana', 12), bg='#0984e3', fg="#ffffff")
+button_back = tk.Button(frame, text='Back', font=('verdana', 12), bg='#0984e3', fg="#ffffff")
 
-  for row in results:
-    tree.insert('', tk.END, values=row)
+trv = ttk.Treeview(frame, columns=(1, 2, 3, 4), height=15, show="headings")
+trv.column(1, anchor=CENTER, stretch=NO, width=100)
+trv.column(2, anchor=CENTER, stretch=NO, width=100)
+trv.column(3, anchor=CENTER, stretch=NO, width=100)
+trv.column(4, anchor=CENTER, stretch=NO, width=100)
 
-load_data()
+trv.heading(1, text='Ten_san_pham')
+trv.heading(2, text='Loai_san_pham')
+trv.heading(3, text='Sốlượng')
+trv.heading(4, text='Gía tiền')
 
-# Tìm kiếm
-def search():
-  search_term = search_entry.get()  
+# Lưu trữ cơ sở dữ liệu ban đầu và dữ liệu tìm kiếm
+initial_data = []
+search_data = []
 
-  cursor = db.cursor()
-  query = f"SELECT * FROM ten_san_pham WHERE ten_san_pham '%{search_term}%'"
-  cursor.execute(query)
-  results = cursor.fetchall()
+def back():
+    entry_search.delete(0, END)  # Xóa nội dung của entry_search
+    
+    # Hiển thị lại cơ sở dữ liệu ban đầu
+    update_treeview(initial_data)
 
-  tree.delete(*tree.get_children())
+def find():
+    # Xoá dữ liệu hiện tại trong Treeview
+    trv.delete(*trv.get_children())
 
-  for row in results:
-    tree.insert('', tk.END, values=row)
+    val = entry_search.get()
+    c.execute("SELECT * FROM ten_san_pham WHERE TEN_SAN_PHAM LIKE %s or TYPE LIKE %s", ("%"+val+"%", "%"+val+"%"))
+    users = c.fetchall()
 
-# Widget tìm kiếm  
-search_entry = tk.Entry(main_frame)
-search_btn = tk.Button(command=search)
+    # Lưu trữ dữ liệu tìm kiếm và cập nhật Treeview
+    global search_data
+    search_data = users
+    update_treeview(users)
+    button_back.config(state=NORMAL)  # Kích hoạt lại nút "Back"
 
+def update_treeview(data):
+    trv.delete(*trv.get_children())  # Xoá dữ liệu hiện tại trong Treeview
+    for row in data:
+        trv.insert('', END, values=row)
 
-b1=tk.Button(window,text='tìm kiếm',bg='white',width=20,command=search)
-b1.pack()
+button_search['command'] = find
+button_back['command'] = back
 
-window.mainloop()
+label_search.grid(row=0, column=0, padx=10, pady=10)
+entry_search.grid(row=0, column=1, padx=10, pady=10)
+button_search.grid(row=0, column=2, padx=10, pady=10)
+trv.grid(row=1, column=0, columnspan=3)
+button_back.grid(row=0, column=3, padx=10, pady=10)
+frame.grid(row=0, column=0, sticky="nswe")
+
+# Lấy dữ liệu ban đầu và lưu trữ vào initial_data
+c.execute("SELECT * FROM ten_san_pham")
+initial_data = c.fetchall()
+
+# Hiển thị dữ liệu ban đầu trong Treeview
+update_treeview(initial_data)
+
+root.mainloop()

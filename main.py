@@ -15,6 +15,7 @@ from warehouse import warehouse
 file_path = os.path.dirname(os.path.realpath(__file__))
 from styles import configure_for_main
 
+
 app = tk.Tk()
 app.resizable(width=False, height=False)
 # Lấy kích thước của màn hình

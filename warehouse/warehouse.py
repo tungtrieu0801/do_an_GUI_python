@@ -94,33 +94,7 @@ def warehouse(root):
     treeview.configure(yscrollcommand=scrollbar.set)
 
     # Tạo các label và entry để nhập thông tin sản phẩm
-    frame_button = ttk.Frame(warehourse_window)
-    frame_button.place(x=100, y=600)
-    name_label = ttk.Label(frame_button, text="Tên sản phẩm")
-    name_label.pack()
-    name_entry = ttk.Entry(frame_button)
-    name_entry.pack()
 
-
-    type_label = ttk.Label(frame_button, text="Loại sản phẩm")
-    type_label.pack()
-    type_entry = ttk.Entry(frame_button)
-    type_entry.pack()
-
-
-    stock_label = ttk.Label(frame_button, text="Số lượng")
-    stock_label.pack()
-    stock_entry = ttk.Entry(frame_button)
-    stock_entry.pack()
-
-    price_label = ttk.Label(frame_button, text="Giá tiền")
-    price_label.pack()
-    price_entry = ttk.Entry(frame_button)
-    price_entry.pack()
-
-    # Tạo nút để thêm sản phẩm
-    add_button = ttk.Button(frame_button, text="Thêm sản phẩm", command=add_product)
-    add_button.pack()
 
     # Truy vấn dữ liệu từ cơ sở dữ liệu và hiển thị lên Treeview
 
@@ -131,7 +105,6 @@ def warehouse(root):
 
     # Đặt kiểu trình bày tùy chỉnh cho Treeview để đặt cỡ chữ
     style.configure("Treeview")
-
 
     def close_window_2():
         warehourse_window.destroy()  # Đóng cửa sổ 2

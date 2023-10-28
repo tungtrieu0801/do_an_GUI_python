@@ -75,4 +75,5 @@ initial_data = c.fetchall()
 # Hiển thị dữ liệu ban đầu trong Treeview
 update_treeview(initial_data)
 
+
 root.mainloop()

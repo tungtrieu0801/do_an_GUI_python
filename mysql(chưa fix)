@@ -1,97 +1,126 @@
-import mysql.connector
+
+import tkinter as tk
 from tkinter import *
 from tkinter import ttk
+import mysql.connector
+db=mysql.connector.connect(user="root",password='PHW#84#jeor',host='localhost',database='amitdb')
+#windown
+r=tk.Tk()
+r.title('Nhập Hàng')
+r.geometry('800x600')
+r.resizable(False,False)
+frm=Frame(r)
+frm.pack(side=tk.LEFT)
 
-db = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="PHW#84#jeor",
-    database="amitdb"
-)
+#Load table
+query='select * from product'
+q_show=db.cursor()
+q_show.execute(query)
+rows=q_show.fetchall()
 
-mycursor = db.cursor()
+#Tree view
+tree = ttk.Treeview(frm, columns=(1, 2, 3, 4, 5), show='headings', height='5')
+tree.heading(1, text='ProID')
+tree.heading(2, text='ProName')
+tree.heading(3, text='ProType')
+tree.heading(4, text='ProCost')
+tree.heading(5, text='ProNum')
 
-def Add():
-    ProID = e1.get()
-    ProName = e2.get()
-    ProType = e3.get()
-    ProCost = e4.get()
-    ProNum = e5.get()
+#Load db
+for i in rows:
+    tree.insert('','end',iid=i[0],values=i)
+tree.pack()
 
-    sql = "INSERT INTO product (ProID, ProName, ProType, ProCost, ProNum) VALUES (%s, %s, %s, %s, %s)"
-    val = (ProID, ProName, ProType, ProCost, ProNum)
-    mycursor.execute(sql, val)
+#Delete row
+def delete():
+    selected = tree.selection()
+    if not selected:
+        # Không có mục nào được chọn, không làm gì hoặc hiển thị thông báo lỗi
+        return
+
+    item = selected[0]
+    query = "DELETE FROM product WHERE ProID = %s"
+    q_del = db.cursor()
+    q_del.execute(query, (str(item),))  # Đặt item trong một tuple
     db.commit()
+    tree.delete(item)
 
-def Edit():
-    ProID = e1.get()
-    ProName = e2.get()
-    ProType = e3.get()
-    ProCost = e4.get()
-    ProNum = e5.get()
+#update row
+# Tạo các trường nhập liệu
+label_id = tk.Label(frm, text="ID")
+label_id.pack()
 
-    sql = "UPDATE product SET ProName = %s, ProType = %s, ProCost = %s, ProNum = %s WHERE ProID = %s"
-    val = (ProName, ProType, ProCost, ProNum, ProID)
-    mycursor.execute(sql, val)
+entry_id = tk.Entry(frm)
+entry_id.pack()
+
+label_name = tk.Label(frm, text="Tên sp")
+label_name.pack()
+
+entry_name = tk.Entry(frm)
+entry_name.pack()
+
+label_type = tk.Label(frm, text="Loại")
+label_type.pack()
+
+entry_type = tk.Entry(frm)
+entry_type.pack()
+
+label_price = tk.Label(frm, text="Giá")
+label_price.pack()
+
+entry_price = tk.Entry(frm)
+entry_price.pack()
+
+label_quantity = tk.Label(frm, text="Số lượng")
+label_quantity.pack()
+
+entry_quantity = tk.Entry(frm)
+entry_quantity.pack()
+
+# Hàm xử lý sự kiện thêm sản phẩm
+def add_product():
+    # Lấy thông tin từ các trường nhập liệu
+    product_id=entry_id.get()
+    product_name = entry_name.get()
+    product_type = entry_type.get()
+    product_quantity = entry_quantity.get()
+    product_price = entry_price.get()
+
+    # Thực hiện câu lệnh SQL để thêm sản phẩm vào cơ sở dữ liệu
+    query = "INSERT INTO product (ProID,ProName, ProType, ProCost, ProNum) VALUES (%s, %s, %s, %s,%s)"
+    product_data = (product_id,product_name, product_type, product_quantity, product_price)
+    cursor = db.cursor()
+    cursor.execute(query, product_data)
     db.commit()
+     # Xóa dữ liệu đã nhập trong các trường nhập liệu
+    entry_id.delete(0, tk.END)
+    entry_name.delete(0, tk.END)
+    entry_type.delete(0, tk.END)
+    entry_quantity.delete(0, tk.END)
+    entry_price.delete(0, tk.END)
 
-def Delete():
-    ProID = e1.get()
+    # Cập nhật dữ liệu trên treeview
+    tree.delete(*tree.get_children())
 
-    sql = "DELETE FROM product WHERE ProID = %s"
-    val = (ProID,)
-    mycursor.execute(sql, val)
-    db.commit()
+    query = "SELECT * FROM product"
+    cursor.execute(query)
+    products = cursor.fetchall()
 
-def show():
-    mycursor.execute("SELECT ProID, ProName, ProType, ProCost, ProNum FROM product")
-    records = mycursor.fetchall()
-    print(records)
-
-    for i, (ProID, ProName, ProType, ProCost, ProNum) in enumerate(records, start=1):
-        listBox.insert("", "end", values=(ProID, ProName, ProType, ProCost, ProNum))
-
-root = Tk()
-root.geometry("800x800")
-
+    for product in products:
+        tree.insert("", "end", values=product)
+    # Xóa dữ liệu đã nhập trong các trường nhập liệu
+    entry_id.delete(0, tk.END)
+    entry_name.delete(0, tk.END)
+    entry_type.delete(0, tk.END)
+    entry_quantity.delete(0, tk.END)
+    entry_price.delete(0, tk.END)
+b2 = tk.Button(frm, text='Thêm sản phẩm', bg='green', width=20, command=add_product)
+b2.pack()
 
 
-ProID = Label(root, text="ProID")
-ProName = Label(root, text="ProName")
-ProType = Label(root, text="ProType")
-ProCost = Label(root, text="ProCost")
-ProNum = Label(root, text="ProNum")
 
-ProID.grid(row=1, column=2)
-ProName.grid(row=2, column=2)
-ProType.grid(row=3, column=2)
-ProCost.grid(row=4, column=2)
-ProNum.grid(row=5, column=2)
+b1=tk.Button(frm,text='Delete',bg='red',width=20,command=delete)
+b1.pack()
 
-e1 = Entry(root)
-e2 = Entry(root)
-e3 = Entry(root)
-e4 = Entry(root)
-e5 = Entry(root)
 
-e1.grid(row=1, column=3)
-e2.grid(row=2, column=3)
-e3.grid(row=3, column=3)
-e4.grid(row=4, column=3)
-e5.grid(row=5, column=3)
-
-Button(root, text="Add", command=Add, height=3, width=10).place(x=150, y=450)
-Button(root, text="Edit", command=Edit, height=3, width=10).place(x=400, y=450)
-Button(root, text="Delete", command=Delete, height=3, width=10).place(x=650, y=450)
-
-cols = ('ProID', 'ProName', 'ProType', 'ProCost', 'ProNum')
-listBox = ttk.Treeview(root, columns=cols, show='headings')
-
-for col in cols:
-    listBox.heading(col, text=col)
-    listBox.grid(row=1, column=0, columnspan=2)
-    listBox.place(x=9, y=150)
-
-Button(root, text="Show", command=show, height=3, width=10).place(x=250, y=450)
-
-root.mainloop()
+r.mainloop()

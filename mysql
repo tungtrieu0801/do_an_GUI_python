@@ -138,6 +138,48 @@ def export_to_excel():
 
     # Xuất dữ liệu ra file Excel
     df.to_excel(file_path, index=False)
+def browse_excel_file():
+    # Mở hộp thoại để chọn file Excel
+    file_path = filedialog.askopenfilename(filetypes=[("Excel files", "*.xlsx")])
+
+    # Gọi hàm để đọc dữ liệu từ file Excel và thêm vào cơ sở dữ liệu
+    if file_path:
+        data = read_excel_data(file_path)
+        if data:
+            insert_data_into_database(data)
+def insert_data_into_database(data):
+    # Thực hiện câu lệnh SQL để thêm dữ liệu vào cơ sở dữ liệu
+    query = "INSERT INTO product (ProID, ProName, ProType, ProCost, ProNum) VALUES (%s, %s, %s, %s, %s)"
+    cursor = db.cursor()
+    cursor.executemany(query, data)
+    db.commit()
+
+    # Cập nhật dữ liệu trên treeview
+    tree.delete(*tree.get_children())
+
+    query = "SELECT * FROM product"
+    cursor.execute(query)
+    products = cursor.fetchall()
+
+    for product in products:
+        tree.insert("", "end", values=product)
+def read_excel_data(filename):
+    # Đọc file Excel
+    workbook = px.load_workbook(filename)
+    sheet = workbook.active
+
+    # Lấy dữ liệu từ các cột ProID, ProName, ProType, ProCost, ProNum
+    data = []
+    for row in sheet.iter_rows(values_only=True):
+        if isinstance(row[0], int):  # Kiểm tra nếu giá trị của cột ProID là một số nguyên
+            pro_id, pro_name, pro_type, pro_cost, pro_num = row[:5]
+            data.append((pro_id, pro_name, pro_type, pro_cost, pro_num))
+
+    return data
+
+# Tạo nút "Chọn file Excel"
+browse_button = tk.Button(frm, text="Chọn file Excel", bg="orange", width=20, command=browse_excel_file)
+browse_button.pack()
 
 b2 = tk.Button(frm, text='Thêm sản phẩm', bg='green', width=20, command=add_product)
 b2.pack()

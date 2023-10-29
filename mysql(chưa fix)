@@ -39,9 +39,11 @@ def delete():
         return
 
     item = selected[0]
+    pro_id = tree.item(item)['values'][0]  # Lấy giá trị ProID từ mục đã chọn
+
     query = "DELETE FROM product WHERE ProID = %s"
     q_del = db.cursor()
-    q_del.execute(query, (str(item),))  # Đặt item trong một tuple
+    q_del.execute(query, (pro_id,))  # Đặt ProID trong một tuple
     db.commit()
     tree.delete(item)
 

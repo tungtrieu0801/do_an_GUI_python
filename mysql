@@ -116,13 +116,38 @@ def add_product():
     entry_type.delete(0, tk.END)
     entry_quantity.delete(0, tk.END)
     entry_price.delete(0, tk.END)
+
+def export_to_excel():
+    # Kết nối đến cơ sở dữ liệu
+    db = mysql.connector.connect(user="root", password='PHW#84#jeor', host='localhost', database='amitdb')
+
+    # Truy vấn dữ liệu từ cơ sở dữ liệu
+    query = 'SELECT * FROM product'
+    cursor = db.cursor()
+    cursor.execute(query)
+    rows = cursor.fetchall()
+
+    # Đóng kết nối cơ sở dữ liệu
+    db.close()
+
+    # Tạo DataFrame từ dữ liệu
+    df = pd.DataFrame(rows, columns=['ProID', 'ProName', 'ProType', 'ProCost', 'ProNum'])
+
+    # Chọn đường dẫn và tên file Excel đầu ra
+    file_path = filedialog.asksaveasfilename(defaultextension='.xlsx')
+
+    # Xuất dữ liệu ra file Excel
+    df.to_excel(file_path, index=False)
+
 b2 = tk.Button(frm, text='Thêm sản phẩm', bg='green', width=20, command=add_product)
 b2.pack()
 
 
-
 b1=tk.Button(frm,text='Delete',bg='red',width=20,command=delete)
 b1.pack()
+
+export_button = tk.Button(frm, text='Xuất Excel', bg='blue', width=20, command=export_to_excel)
+export_button.pack()
 
 
 r.mainloop()

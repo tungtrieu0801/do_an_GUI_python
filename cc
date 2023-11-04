@@ -192,6 +192,15 @@ increase_button.pack(padx=10, pady=5)
 decrease_button = tk.Button(root, text="↓", command=decrease_quantity)
 decrease_button.pack(padx=10, pady=5)
 
+def delete_all():
+    treeview2.delete(*treeview2.get_children())
+
+    # Cập nhật lại tổng tiền
+    calculate_total()
+# Tạo nút "Xóa" để xóa dữ liệu trongtreeview2
+delete_all_button = tk.Button(root, text="Xóa", command=delete_all)
+delete_all_button.pack(padx=10, pady=5)
+    
 # Tải dữ liệu từ bảng "products" và cập nhật vào treeview1
 load_data()
 root.mainloop()

@@ -1,134 +1,58 @@
-
-import tkinter as tk
-from tkinter import ttk
-from PIL import Image, ImageTk
 import os
-from sale import sell
-from home import homepage
-from addProduct import addProduct
-from contact import contact
-from shipping import deliver
-from history import history
-from setting import setting
-from statistict import statistics
-from warehouse import warehouse
-file_path = os.path.dirname(os.path.realpath(__file__))
-from styles import configure_for_main
+from tkinter import *
+from tkinter import messagebox
+
+main = Tk()
+main.geometry("1366x768")
+main.title("Big Bazaar")
+main.resizable(0, 0)
+def Exit():
+    sure = messagebox.askyesno("Exit","Are you sure you want to exit?", parent=main)
+    if sure == True:
+        main.destroy()
+        
+main.protocol("WM_DELETE_WINDOW", Exit)
+
+def emp():
+    main.withdraw()
+    os.system("python employee.py")
+    main.deiconify()
 
 
-app = tk.Tk()
-app.resizable(width=False, height=False)
-# Lấy kích thước của màn hình
-screen_width = app.winfo_screenwidth()
-screen_height = app.winfo_screenheight()
+def adm():
+    main.withdraw()
+    os.system("python admin.py")
+    main.deiconify()
 
-# Lấy kích thước của cửa sổ
-window_width = 1140  # Thay đổi kích thước theo nhu cầu
-window_height = 820  # Thay đổi kích thước theo nhu cầu
+label1 = Label(main)
+label1.place(relx=0, rely=0, width=1366, height=768)
+img = PhotoImage(file="./images/main.png")
+label1.configure(image=img)
 
-# Tính toán vị trí để cửa sổ xuất hiện giữa màn hình
-x = (screen_width - window_width) // 2
-y = (screen_height - window_height) // 2
+button1 = Button(main)
+button1.place(relx=0.316, rely=0.446, width=146, height=90)
+button1.configure(relief="flat")
+button1.configure(overrelief="flat")
+button1.configure(activebackground="#ffffff")
+button1.configure(cursor="hand2")
+button1.configure(foreground="#ffffff")
+button1.configure(background="#ffffff")
+button1.configure(borderwidth="0")
+img2 = PhotoImage(file="./images/1.png")
+button1.configure(image=img2)
+button1.configure(command=emp)
 
-# Đặt vị trí cửa sổ
-app.geometry(f"{window_width}x{window_height}+{x}+{y}")
-app.title("Ứng dụng Tkinter")
+button2 = Button(main)
+button2.place(relx=0.566, rely=0.448, width=146, height=90)
+button2.configure(relief="flat")
+button2.configure(overrelief="flat")
+button2.configure(activebackground="#ffffff")
+button2.configure(cursor="hand2")
+button2.configure(foreground="#ffffff")
+button2.configure(background="#ffffff")
+button2.configure(borderwidth="0")
+img3 = PhotoImage(file="./images/2.png")
+button2.configure(image=img3)
+button2.configure(command=adm)
 
-frame = ttk.Frame(app)
-frame.pack(pady=20, padx=20, fill="both", expand=True)
-style = ttk.Style()
-#gọi hàm styles căn chỉnh button
-configure_for_main()
-def open_new_window_from_main():
-    app.withdraw()
-    homepage.home(app)
-
-def open_addProduct():
-    app.withdraw()
-    addProduct.addProduct(app)
-
-def open_contact():
-    app.withdraw()
-    contact.contact(app)
-
-def open_deliver():
-    app.withdraw()
-    deliver.deliver(app)
-
-def open_history():
-    app.withdraw()
-    history.history(app)
-
-def open_sell():
-    app.withdraw()
-    sell.sell(app)
-
-def open_setting():
-    app.withdraw()
-    setting.setting(app)
-
-def open_statistics():
-    app.withdraw()
-    statistics.statistics(app)
-    
-def open_warehouse():
-    app.withdraw()
-    warehouse.warehouse(app)
-
-# Hàm để load và co nhỏ ảnh
-def load_and_resize_image(image_path, width, height):
-    image = Image.open(image_path)
-    image.thumbnail((width, height))
-    return ImageTk.PhotoImage(image)
-
-image_home = load_and_resize_image(file_path + "/images/house.png", 65, 65)
-button = ttk.Button(frame, image=image_home, text="Trang chủ   ",
-                    compound='right', command=open_new_window_from_main, style="Home.TButton")
-button.grid(row=0, column=0, pady=40, padx=40)
-
-image_sell = load_and_resize_image(file_path + "/images/selling.png", 65, 65)
-button = ttk.Button(frame, image=image_sell, text="Bán hàng   ",
-                    compound='right', style="Home.TButton", command=open_sell)
-button.grid(row=0, column=1, pady=40, padx=30)
-
-image_statistics = load_and_resize_image(file_path + "/images/statistics.png", 65, 65)
-button = ttk.Button(frame, image=image_statistics, text="Thống kê   ",
-                    compound='right', style="Home.TButton",command=open_statistics)
-button.grid(row=0, column=2, pady=40, padx=30,)
-
-image_warehouse = load_and_resize_image(file_path + "/images/warehouse.png", 65, 65)
-button = ttk.Button(frame, image=image_warehouse, text="Kho hàng   ",
-                    compound='right', style="Home.TButton",command=open_warehouse) 
-button.grid(row=1, column=0, pady=40, padx=30)
-
-image_history = load_and_resize_image(file_path + "/images/time-management.png", 65, 65)
-button = ttk.Button(frame, image=image_history, text="Lịch sử     ",
-                    compound='right', style="Home.TButton",command=open_history)
-button.grid(row=1, column=1, pady=40, padx=30)
-
-image_shipped = load_and_resize_image(file_path + "/images/shipped.png", 65, 65)
-button = ttk.Button(frame, image=image_shipped, text="Giao hàng",
-                    compound='right', style="Home.TButton",command=open_deliver)
-button.grid(row=1, column=2, pady=40, padx=30)
-
-image_forklift = load_and_resize_image(file_path + "/images/forklift.png", 65, 65)
-button = ttk.Button(frame, image=image_forklift, text="Nhập hàng  ",
-                    compound='right', style="Home.TButton",command=open_addProduct)
-button.grid(row=2, column=0, pady=40, padx=30)
-
-image_gear = load_and_resize_image(file_path + "/images/gear.png", 65, 65)
-button = ttk.Button(frame, image=image_gear, text="Cài đặt     ",
-                    compound='right', style="Home.TButton",command=open_setting)
-button.grid(row=2, column=1, pady=40, padx=30)
-
-image_contact = load_and_resize_image(file_path + "/images/contact.png", 65, 65)
-button = ttk.Button(frame, image=image_contact, text="Báo lỗi     ",
-                    compound='right', style="Home.TButton",command=open_contact)
-button.grid(row=2, column=2, pady=40, padx=30)
-
-style = ttk.Style()
-style.configure("Home.TButton", font=("Arial", 25, "bold"), borderwidth=2, foreground="green")
-
-app.mainloop()
-if __name__ == "__main__":
-    app.mainloop()
+main.mainloop()

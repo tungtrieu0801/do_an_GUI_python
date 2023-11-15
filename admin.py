@@ -15,6 +15,13 @@ user = StringVar()
 passwd = StringVar()
 fname = StringVar()
 lname = StringVar()
+
+def random_emp_id(stringLength):
+    Digits = string.digits
+    strr=''.join(random.choice(Digits) for i in range(stringLength-3))
+    return ('EMP'+strr)
+
+
 def valid_phone(phn):
     if re.match(r"[789]\d{9}$", phn):
         return True
@@ -177,7 +184,8 @@ class login_page:
             host='localhost',
             user='root',
             password='080102',
-            database='store'
+            # database='store'
+            database= 'mydatabase'
         )
         cursor = connection.cursor()
 
@@ -188,7 +196,7 @@ class login_page:
         cursor.close()  # Đóng con trỏ sau khi thực hiện truy vấn
         connection.close()  # Đóng kết nối cơ sở dữ liệu
         if results:
-            if results[0][1]=="Admin":
+            if results[0][1]=="admin":
                 messagebox.showinfo("Login Page", "The login is successful.")
                 page1.entry1.delete(0, END)
                 page1.entry2.delete(0, END)
@@ -254,7 +262,7 @@ class Employee:
         self.button1.configure(font="-family {Poppins SemiBold} -size 10")
         self.button1.configure(borderwidth="0")
         self.button1.configure(text="""Search""")
-        # self.button1.configure(command=self.search_emp)
+        self.button1.configure(command=self.search_emp)
 
         self.button2 = Button(emp)
         self.button2.place(relx=0.035, rely=0.106, width=76, height=23)
@@ -280,7 +288,7 @@ class Employee:
         self.button3.configure(font="-family {Poppins SemiBold} -size 12")
         self.button3.configure(borderwidth="0")
         self.button3.configure(text="""ADD EMPLOYEE""")
-        # self.button3.configure(command=self.add_emp)
+        self.button3.configure(command=self.add_emp)
 
         self.button4 = Button(emp)
         self.button4.place(relx=0.052, rely=0.5, width=306, height=28)
@@ -293,7 +301,7 @@ class Employee:
         self.button4.configure(font="-family {Poppins SemiBold} -size 12")
         self.button4.configure(borderwidth="0")
         self.button4.configure(text="""UPDATE EMPLOYEE""")
-        # self.button4.configure(command=self.update_emp)
+        self.button4.configure(command=self.update_emp)
 
         self.button5 = Button(emp)
         self.button5.place(relx=0.052, rely=0.57, width=306, height=28)
@@ -306,7 +314,7 @@ class Employee:
         self.button5.configure(font="-family {Poppins SemiBold} -size 12")
         self.button5.configure(borderwidth="0")
         self.button5.configure(text="""DELETE EMPLOYEE""")
-        # self.button5.configure(command=self.delete_emp)
+        self.button5.configure(command=self.delete_emp)
 
         self.button6 = Button(emp)
         self.button6.place(relx=0.135, rely=0.885, width=76, height=23)
@@ -342,9 +350,9 @@ class Employee:
             columns=(
                 "Employee ID",
                 "Employee Name",
-                # "Contact No.",
-                # "Address",
-                # "Aadhar No.",
+                "Password",
+                "Address",
+                "PhoneNumber",
                 # "Password",
                 # "Designation"
             )
@@ -352,17 +360,17 @@ class Employee:
 
         self.tree.heading("Employee ID", text="Employee ID", anchor=W)
         self.tree.heading("Employee Name", text="Employee Name", anchor=W)
-        # self.tree.heading("Contact No.", text="Contact No.", anchor=W)
-        # self.tree.heading("Address", text="Address", anchor=W)
-        # self.tree.heading("Aadhar No.", text="Aadhar No.", anchor=W)
+        self.tree.heading("Password", text="Password", anchor=W)
+        self.tree.heading("Address", text="Address", anchor=W)
+        self.tree.heading("PhoneNumber", text="PhoneNumber", anchor=W)
         # self.tree.heading("Password", text="Password", anchor=W)
         # self.tree.heading("Designation", text="Designation", anchor=W)
 
         self.tree.column("#0", stretch=NO, minwidth=0, width=0)
         self.tree.column("#1", stretch=NO, minwidth=0, width=80)
-        # self.tree.column("#2", stretch=NO, minwidth=0, width=260)
-        # self.tree.column("#3", stretch=NO, minwidth=0, width=100)
-        # self.tree.column("#4", stretch=NO, minwidth=0, width=198)
+        self.tree.column("#2", stretch=NO, minwidth=0, width=260)
+        self.tree.column("#3", stretch=NO, minwidth=0, width=100)
+        self.tree.column("#4", stretch=NO, minwidth=0, width=198)
         # self.tree.column("#5", stretch=NO, minwidth=0, width=80)
         # self.tree.column("#6", stretch=NO, minwidth=0, width=80)
         # self.tree.column("#7", stretch=NO, minwidth=0, width=80)
@@ -374,7 +382,7 @@ class Employee:
             host='localhost',
             user='root',
             password='080102',
-            database='store'
+            database='mydatabase'
         )
         cursor = connection.cursor()
 
@@ -385,7 +393,7 @@ class Employee:
         fetch = cursor.fetchall()
         for data in fetch:
             self.tree.insert("", "end", values=(data))
-
+        self.all_items = fetch
     def search_emp(self):
         val = []
         for i in self.tree.get_children():
@@ -402,7 +410,41 @@ class Employee:
                 break
         else: 
             messagebox.showerror("Oops!!", "Employee ID: {} not found.".format(self.entry1.get()), parent=emp)
-    
+    def search_emp(self):
+        search_text = self.entry1.get()  # Lấy giá trị từ ô tìm kiếm
+        if not search_text:
+        # Hiển thị toàn bộ sản phẩm trên treeview
+            for item in self.all_items:
+                self.tree.insert("", "end", values=item)
+            return
+        # Xóa toàn bộ sản phẩm hiển thị trên treeview
+        for item in self.tree.get_children():
+            self.tree.delete(item)
+
+        found = False
+        for item in self.all_items:  # all_items là danh sách tất cả các sản phẩm trước khi tìm kiếm
+            if search_text in str(item[0]):  # Kiểm tra xem giá trị tìm kiếm có trong sản phẩm hay không
+                self.tree.insert("", "end", values=item)  # Nếu tìm thấy, thêm sản phẩm đó vào treeview
+                found = True
+
+            if search_text in str(item[1]):  # Kiểm tra xem giá trị tìm kiếm có trong sản phẩm hay không
+                self.tree.insert("", "end", values=item)  # Nếu tìm thấy, thêm sản phẩm đó vào treeview
+                found = True
+
+            if search_text in str(item[2]):  # Kiểm tra xem giá trị tìm kiếm có trong sản phẩm hay không
+                self.tree.insert("", "end", values=item)  # Nếu tìm thấy, thêm sản phẩm đó vào treeview
+                found = True
+
+            if search_text in str(item[3]):  # Kiểm tra xem giá trị tìm kiếm có trong sản phẩm hay không
+                self.tree.insert("", "end", values=item)  # Nếu tìm thấy, thêm sản phẩm đó vào treeview
+                found = True
+            if search_text in str(item[4]):  # Kiểm tra xem giá trị tìm kiếm có trong sản phẩm hay không
+                self.tree.insert("", "end", values=item)  # Nếu tìm thấy, thêm sản phẩm đó vào treeview
+                found = True
+
+        if not found:
+            messagebox.showerror("Oops!!", f"Product ID: {search_text} not found.", parent=inv)
+
     sel = []
     def on_tree_select(self, Event):
         self.sel.clear()
@@ -436,10 +478,10 @@ class Employee:
                             host='localhost',
                             user='root',
                             password='080102',
-                            database='store'
+                            database='mydatabase'
                         )
                         cursor = connection.cursor()
-                        delete = "DELETE FROM employee WHERE emp_id = ?"
+                        delete = "DELETE FROM employee WHERE emp_id = %s"
                         cursor.execute(delete, [k])
                         connection.commit()
 
@@ -453,53 +495,54 @@ class Employee:
         else:
             messagebox.showerror("Error!!","Please select an employee.", parent=emp)
 
-    # def update_emp(self):
+    def update_emp(self):
         
-    #     if len(self.sel)==1:
-    #         global e_update
-    #         e_update = Toplevel()
-    #         page8 = Update_Employee(e_update)
-    #         page8.time()
-    #         e_update.protocol("WM_DELETE_WINDOW", self.ex2)
-    #         global vall
-    #         vall = []
-    #         for i in self.sel:
-    #             for j in self.tree.item(i)["values"]:
-    #                 vall.append(j)
+        if len(self.sel)==1:
+            global e_update
+            e_update = Toplevel()
+            page8 = Update_Employee(e_update)
+            page8.time()
+            e_update.protocol("WM_DELETE_WINDOW", self.ex2)
+            global vall
+            vall = []
+            for i in self.sel:
+                for j in self.tree.item(i)["values"]:
+                    vall.append(j)
             
-    #         page8.entry1.insert(0, vall[1])
-    #         page8.entry2.insert(0, vall[2])
-    #         page8.entry3.insert(0, vall[4])
-    #         page8.entry4.insert(0, vall[6])
-    #         page8.entry5.insert(0, vall[3])
-    #         page8.entry6.insert(0, vall[5])
-    #         e_update.mainloop()
-    #     elif len(self.sel)==0:
-    #         messagebox.showerror("Error","Please select an employee to update.")
-    #     else:
-    #         messagebox.showerror("Error","Can only update one employee at a time.")
+            page8.entry1.insert(0, vall[1])
+            page8.entry2.insert(0, vall[2])
+            page8.entry3.insert(0, vall[3])
+            page8.entry4.insert(0, vall[4])
+            # page8.entry5.insert(0, vall[3])
+            # page8.entry6.insert(0, vall[5])
+            e_update.mainloop()
+        elif len(self.sel)==0:
+            messagebox.showerror("Error","Please select an employee to update.")
+        else:
+            messagebox.showerror("Error","Can only update one employee at a time.")
 
         
 
 
-    # def add_emp(self):
-    #     global e_add
-    #     e_add = Toplevel()
-    #     page6 = add_employee(e_add)
-    #     page6.time()
-    #     e_add.protocol("WM_DELETE_WINDOW", self.ex)
-    #     e_add.mainloop()
+    def add_emp(self):
+        global e_add
+        global page6
+        e_add = Toplevel()
+        page6 = add_employee(e_add)
+        page6.time()
+        e_add.protocol("WM_DELETE_WINDOW", self.ex)
+        e_add.mainloop()
 
 
-    # def ex(self):
-    #     e_add.destroy()
-    #     self.tree.delete(*self.tree.get_children())
-    #     self.DisplayData()   
+    def ex(self):
+        e_add.destroy()
+        self.tree.delete(*self.tree.get_children())
+        self.DisplayData()   
 
-    # def ex2(self):
-    #     e_update.destroy()
-    #     self.tree.delete(*self.tree.get_children())
-    #     self.DisplayData()  
+    def ex2(self):
+        e_update.destroy()
+        self.tree.delete(*self.tree.get_children())
+        self.DisplayData()  
 
 
 
@@ -722,7 +765,11 @@ class Inventory:
     
     def search_product(self):
         search_text = self.entry1.get()  # Lấy giá trị từ ô tìm kiếm
-
+        if not search_text:
+        # Hiển thị toàn bộ sản phẩm trên treeview
+            for item in self.all_items:
+                self.tree.insert("", "end", values=item)
+            return
         # Xóa toàn bộ sản phẩm hiển thị trên treeview
         for item in self.tree.get_children():
             self.tree.delete(item)
@@ -865,7 +912,7 @@ class add_product:
 
         self.label1 = Label(p_add)
         self.label1.place(relx=0, rely=0, width=1366, height=768)
-        self.img = PhotoImage(file="./images/add_product.png")
+        self.img = PhotoImage(file="./images/add_product2.png")
         self.label1.configure(image=self.img)
 
         self.clock = Label(p_add)
@@ -951,7 +998,7 @@ class add_product:
         psubcat = self.entry6.get()  
         pcp = self.entry7.get()  
         # pvendor = self.entry8.get()  
-       
+        product_id = random.randint(1000, 9999)
 
         if pname.strip():
             if pcat.strip():
@@ -978,9 +1025,9 @@ class add_product:
                                         cur = connection.cursor()
                                         # cur = db.cursor()
                                         insert = (
-                                                    "INSERT INTO inventory (product_name, category, product_price, stock, vendor, vendor_phoneno) VALUES(%s, %s, %s, %s, %s, %s)"
+                                                    "INSERT INTO inventory (product_id, product_name, category, product_price, stock, vendor, vendor_phoneno) VALUES(%s, %s, %s, %s, %s, %s, %s)"
                                                 )
-                                        cur.execute(insert, [pname, pcat, psubcat, int(pqty), float(pmrp), float(pcp)])
+                                        cur.execute(insert, [product_id,pname, pcat, psubcat, int(pqty), float(pmrp), float(pcp)])
                                         connection.commit()
                                         messagebox.showinfo("Success!!", "Product successfully added in inventory.", parent=p_add)
                                         p_add.destroy()
@@ -1030,7 +1077,7 @@ class Update_Product:
 
         self.label1 = Label(p_update)
         self.label1.place(relx=0, rely=0, width=1366, height=768)
-        self.img = PhotoImage(file="./images/update_product.png")
+        self.img = PhotoImage(file="./images/update_product1.png")
         self.label1.configure(image=self.img)
 
         self.clock = Label(p_update)
@@ -1143,16 +1190,14 @@ class Update_Product:
                                             )
                                             cursor = connection.cursor()
                                             update = (
-                                            "UPDATE inventory SET product_name = ?, category = ?, product_price = ?, stock = ?, vendor= ?, vendor_phonenoWHERE product_id = ?"
+                                            "UPDATE inventory SET product_name = ?, category = ?, product_price = ?, stock = ?, vendor= ?, vendor_phoneno WHERE product_id = ?"
                                             )
                                             cursor.execute(update, [pname, pcat, psubcat, int(pqty), float(pmrp), float(pcp), pvendor, product_id])
                                             connection.commit()
                                             messagebox.showinfo("Success!!", "Product successfully updated in inventory.", parent=p_update)
                                             valll.clear()
                                             Inventory.sel.clear()
-                                            page3.tree.delete(*page3.tree.get_children())
-                                            page3.DisplayData()
-                                            p_update.destroy()
+
                                         else:
                                             messagebox.showerror("Oops!", "Invalid phone number.", parent=p_update)
                                 else:
@@ -1189,7 +1234,305 @@ class Update_Product:
         self.clock.config(text=string)
         self.clock.after(1000, self.time)
     
+class add_employee:
+    def __init__(self, top=None):
+        top.geometry("1366x768")
+        top.resizable(0, 0)
+        top.title("Add Employee")
 
+        self.label1 = Label(e_add)
+        self.label1.place(relx=0, rely=0, width=1366, height=768)
+        self.img = PhotoImage(file="./images/add_employee.png")
+        self.label1.configure(image=self.img)
+
+        self.clock = Label(e_add)
+        self.clock.place(relx=0.84, rely=0.065, width=102, height=36)
+        self.clock.configure(font="-family {Poppins Light} -size 12")
+        self.clock.configure(foreground="#000000")
+        self.clock.configure(background="#ffffff")
+
+        self.r1 = e_add.register(self.testint)
+        self.r2 = e_add.register(self.testchar)
+
+        self.entry1 = Entry(e_add)
+        self.entry1.place(relx=0.132, rely=0.296, width=374, height=30)
+        self.entry1.configure(font="-family {Poppins} -size 12")
+        self.entry1.configure(relief="flat")
+        
+
+        self.entry2 = Entry(e_add)
+        self.entry2.place(relx=0.132, rely=0.413, width=374, height=30)
+        self.entry2.configure(font="-family {Poppins} -size 12")
+        self.entry2.configure(relief="flat")
+        # self.entry2.configure(validate="key", validatecommand=(self.r1, "%P"))
+
+        self.entry3 = Entry(e_add)
+        self.entry3.place(relx=0.132, rely=0.529, width=374, height=30)
+        self.entry3.configure(font="-family {Poppins} -size 12")
+        self.entry3.configure(relief="flat")
+        # self.entry3.configure(validate="key", validatecommand=(self.r1, "%P"))
+
+        self.entry4 = Entry(e_add)
+        self.entry4.place(relx=0.527, rely=0.296, width=374, height=30)
+        self.entry4.configure(font="-family {Poppins} -size 12")
+        self.entry4.configure(relief="flat")
+        self.entry4.configure(validate="key", validatecommand=(self.r1, "%P"))
+
+        # self.entry5 = Entry(e_add)
+        # self.entry5.place(relx=0.527, rely=0.413, width=374, height=30)
+        # self.entry5.configure(font="-family {Poppins} -size 12")
+        # self.entry5.configure(relief="flat")
+        # self.entry5.configure(validate="key", validatecommand=(self.r2, "%P"))
+
+        # self.entry6 = Entry(e_add)
+        # self.entry6.place(relx=0.527, rely=0.529, width=374, height=30)
+        # self.entry6.configure(font="-family {Poppins} -size 12")
+        # self.entry6.configure(relief="flat")
+        # self.entry6.configure(show="*")
+
+        self.button1 = Button(e_add)
+        self.button1.place(relx=0.408, rely=0.836, width=96, height=34)
+        self.button1.configure(relief="flat")
+        self.button1.configure(overrelief="flat")
+        self.button1.configure(activebackground="#CF1E14")
+        self.button1.configure(cursor="hand2")
+        self.button1.configure(foreground="#ffffff")
+        self.button1.configure(background="#CF1E14")
+        self.button1.configure(font="-family {Poppins SemiBold} -size 14")
+        self.button1.configure(borderwidth="0")
+        self.button1.configure(text="""ADD""")
+        self.button1.configure(command=self.add)
+
+        self.button2 = Button(e_add)
+        self.button2.place(relx=0.526, rely=0.836, width=86, height=34)
+        self.button2.configure(relief="flat")
+        self.button2.configure(overrelief="flat")
+        self.button2.configure(activebackground="#CF1E14")
+        self.button2.configure(cursor="hand2")
+        self.button2.configure(foreground="#ffffff")
+        self.button2.configure(background="#CF1E14")
+        self.button2.configure(font="-family {Poppins SemiBold} -size 14")
+        self.button2.configure(borderwidth="0")
+        self.button2.configure(text="""CLEAR""")
+        self.button2.configure(command=self.clearr)
+
+
+
+    def testint(self, val):
+        if val.isdigit():
+            return True
+        elif val == "":
+            return True
+        return False
+
+    def testchar(self, val):
+        if val.isalpha():
+            return True
+        elif val == "":
+            return True
+        return False
+
+    def time(self):
+        string = strftime("%H:%M:%S %p")
+        self.clock.config(text=string)
+        self.clock.after(1000, self.time)
+
+    
+    def add(self):
+        ename = self.entry1.get()
+        epass = self.entry2.get()
+        eadd = self.entry3.get()
+        ephone_number = self.entry4.get()
+        # eadd = self.entry5.get()
+        # epass = self.entry6.get()
+
+        if ename.strip():
+            if eadd:
+                if epass:
+                    if ephone_number:
+                        emp_id = random_emp_id(7)
+                        connection = mysql.connector.connect(
+                                            host='localhost',
+                                            user='root',
+                                            password='080102',
+                                            database='myDatabase'
+                                        )
+                        cur = connection.cursor()
+                        insert = (
+                            "INSERT INTO employee(emp_id, name, password, address, phone_number) VALUES(%s, %s, %s, %s, %s)"
+                                )
+                        cur.execute(insert, [emp_id, ename, eadd,epass, ephone_number])
+                        connection.commit()
+                        messagebox.showinfo("Success!!", "Employee ID: {} successfully added in database.".format(emp_id), parent=e_add)
+                        self.clearr()
+                        e_add.destroy()
+                        page5.tree.delete(*page5.tree.get_children())
+                        page5.DisplayData()
+                        e_add.destroy()
+                    else:
+                        messagebox.showerror("Hãy điền số điện thoại.", parent=ephone_number)
+                else:
+                    messagebox.showerror("Hãy điền mật khẩu", parent=epass)
+            else:
+                messagebox.showerror("Hãy điền địa chỉ.", parent=e_add)
+        else:
+            messagebox.showerror("Hãy điền tên nhân viên.", parent=ename)
+
+    def clearr(self):
+        self.entry1.delete(0, END)
+        self.entry2.delete(0, END)
+        self.entry3.delete(0, END)
+        self.entry4.delete(0, END)
+        # self.entry5.delete(0, END)
+        # self.entry6.delete(0, END)
+
+class Update_Employee:
+    def __init__(self, top=None):
+        top.geometry("1366x768")
+        top.resizable(0, 0)
+        top.title("Update Employee")
+
+        self.label1 = Label(e_update)
+        self.label1.place(relx=0, rely=0, width=1366, height=768)
+        self.img = PhotoImage(file="./images/update_employee.png")
+        self.label1.configure(image=self.img)
+
+        self.clock = Label(e_update)
+        self.clock.place(relx=0.84, rely=0.065, width=102, height=36)
+        self.clock.configure(font="-family {Poppins Light} -size 12")
+        self.clock.configure(foreground="#000000")
+        self.clock.configure(background="#ffffff")
+
+        self.r1 = e_update.register(self.testint)
+        self.r2 = e_update.register(self.testchar)
+
+        self.entry1 = Entry(e_update)
+        self.entry1.place(relx=0.132, rely=0.296, width=374, height=30)
+        self.entry1.configure(font="-family {Poppins} -size 12")
+        self.entry1.configure(relief="flat")
+        
+
+        self.entry2 = Entry(e_update)
+        self.entry2.place(relx=0.132, rely=0.413, width=374, height=30)
+        self.entry2.configure(font="-family {Poppins} -size 12")
+        self.entry2.configure(relief="flat")
+        # self.entry2.configure(validate="key", validatecommand=(self.r1, "%P"))
+
+        self.entry3 = Entry(e_update)
+        self.entry3.place(relx=0.132, rely=0.529, width=374, height=30)
+        self.entry3.configure(font="-family {Poppins} -size 12")
+        self.entry3.configure(relief="flat")
+        # self.entry3.configure(validate="key", validatecommand=(self.r1, "%P"))
+
+        self.entry4 = Entry(e_update)
+        self.entry4.place(relx=0.527, rely=0.296, width=374, height=30)
+        self.entry4.configure(font="-family {Poppins} -size 12")
+        self.entry4.configure(relief="flat")
+        self.entry4.configure(validate="key", validatecommand=(self.r1, "%P"))
+
+        # self.entry5 = Entry(e_update)
+        # self.entry5.place(relx=0.527, rely=0.413, width=374, height=30)
+        # self.entry5.configure(font="-family {Poppins} -size 12")
+        # self.entry5.configure(relief="flat")
+
+        # self.entry6 = Entry(e_update)
+        # self.entry6.place(relx=0.527, rely=0.529, width=374, height=30)
+        # self.entry6.configure(font="-family {Poppins} -size 12")
+        # self.entry6.configure(relief="flat")
+        # self.entry6.configure(show="*")
+
+        self.button1 = Button(e_update)
+        self.button1.place(relx=0.408, rely=0.836, width=96, height=34)
+        self.button1.configure(relief="flat")
+        self.button1.configure(overrelief="flat")
+        self.button1.configure(activebackground="#CF1E14")
+        self.button1.configure(cursor="hand2")
+        self.button1.configure(foreground="#ffffff")
+        self.button1.configure(background="#CF1E14")
+        self.button1.configure(font="-family {Poppins SemiBold} -size 14")
+        self.button1.configure(borderwidth="0")
+        self.button1.configure(text="""UPDATE""")
+        self.button1.configure(command=self.update)
+
+        self.button2 = Button(e_update)
+        self.button2.place(relx=0.526, rely=0.836, width=86, height=34)
+        self.button2.configure(relief="flat")
+        self.button2.configure(overrelief="flat")
+        self.button2.configure(activebackground="#CF1E14")
+        self.button2.configure(cursor="hand2")
+        self.button2.configure(foreground="#ffffff")
+        self.button2.configure(background="#CF1E14")
+        self.button2.configure(font="-family {Poppins SemiBold} -size 14")
+        self.button2.configure(borderwidth="0")
+        self.button2.configure(text="""CLEAR""")
+        self.button2.configure(command=self.clearr)
+
+    def update(self):
+        ename = self.entry1.get()
+        epass = self.entry2.get()
+        eadd = self.entry3.get()
+        ephone_number = self.entry4.get()
+        # eadd = self.entry5.get()
+        # epass = self.entry6.get()
+
+        if ename.strip():
+            if eadd:
+                if epass:
+                    if ephone_number:
+                        emp_id = vall[0]
+                        connection = mysql.connector.connect(
+                                            host='localhost',
+                                            user='root',
+                                            password='080102',
+                                            database='myDatabase'
+                                        )
+                        cur = connection.cursor()
+                        update = "UPDATE employee SET name = %s, password = %s, address = %s, phone_number = %s WHERE emp_id = %s"
+                        cur.execute(update, [ename,  epass, eadd, ephone_number, emp_id])
+                        connection.commit()
+                        messagebox.showinfo("Success!!", "Employee ID: {} successfully updated in database.".format(emp_id), parent=e_update)
+                        vall.clear()
+                        page5.tree.delete(*page5.tree.get_children())
+                        page5.DisplayData()
+                        Employee.sel.clear()
+                        e_update.destroy()
+                    else:
+                        messagebox.showerror("Hãy nhập số điện thoại nhân viên.", parent=e_add)
+                else:
+                    messagebox.showerror("Hãy nhập mật khẩu thay đổi.", parent=e_add)
+            else:
+                messagebox.showerror("Hãy nhập địa chỉ thay đổi.", parent=e_add)
+        else:
+            messagebox.showerror("Hãy nhập tên nhân viên.", parent=e_add)
+
+    def clearr(self):
+        self.entry1.delete(0, END)
+        self.entry2.delete(0, END)
+        self.entry3.delete(0, END)
+        self.entry4.delete(0, END)
+        # self.entry5.delete(0, END)
+        # self.entry6.delete(0, END)
+
+
+
+    def testint(self, val):
+        if val.isdigit():
+            return True
+        elif val == "":
+            return True
+        return False
+
+    def testchar(self, val):
+        if val.isalpha():
+            return True
+        elif val == "":
+            return True
+        return False
+
+    def time(self):
+        string = strftime("%H:%M:%S %p")
+        self.clock.config(text=string)
+        self.clock.after(1000, self.time)
 
 page1 = login_page(root)
 root.bind("<Return>", login_page.login)

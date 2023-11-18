@@ -1,133 +1,126 @@
-import tkinter as tk
-from tkinter import ttk
-from PIL import Image, ImageTk
+import sqlite3
+import re
 import os
-from sale import sell
-from home import homepage
-from addProduct import addProduct
-from contact import contact
-from shipping import deliver
-from history import history
-from setting import setting
-from statistict import statistics
-from warehouse import warehouse
-file_path = os.path.dirname(os.path.realpath(__file__))
-from styles import configure_for_main
+import random
+import mysql.connector
+import string
+from tkinter import *
+from tkinter import messagebox
+from tkinter import ttk
+from time import strftime
+from datetime import date
+from tkinter import scrolledtext as tkst
+#============================================
+import subprocess
 
 
-app = tk.Tk()
-app.resizable(width=False, height=False)
-# Lấy kích thước của màn hình
-screen_width = app.winfo_screenwidth()
-screen_height = app.winfo_screenheight()
+root = Tk()
 
-# Lấy kích thước của cửa sổ
-window_width = 1140  # Thay đổi kích thước theo nhu cầu
-window_height = 820  # Thay đổi kích thước theo nhu cầu
+root.geometry("1366x768")
+root.title("Retail Manager")
 
-# Tính toán vị trí để cửa sổ xuất hiện giữa màn hình
-x = (screen_width - window_width) // 2
-y = (screen_height - window_height) // 2
 
-# Đặt vị trí cửa sổ
-app.geometry(f"{window_width}x{window_height}+{x}+{y}")
-app.title("Ứng dụng Tkinter")
+user = StringVar()
+passwd = StringVar()
+fname = StringVar()
+lname = StringVar()
+new_user = StringVar()
+new_passwd = StringVar()
 
-frame = ttk.Frame(app)
-frame.pack(pady=20, padx=20, fill="both", expand=True)
-style = ttk.Style()
-#gọi hàm styles căn chỉnh button
-configure_for_main()
-def open_new_window_from_main():
-    app.withdraw()
-    homepage.home(app)
 
-def open_addProduct():
-    app.withdraw()
-    addProduct.addProduct(app)
+cust_name = StringVar()
+cust_num = StringVar()
+cust_new_bill = StringVar()
+cust_search_bill = StringVar()
+bill_date = StringVar()
 
-def open_contact():
-    app.withdraw()
-    contact.contact(app)
 
-def open_deliver():
-    app.withdraw()
-    deliver.deliver(app)
 
-def open_history():
-    app.withdraw()
-    history.history(app)
 
-def open_sell():
-    app.withdraw()
-    sell.sell(app)
+def random_bill_number(stringLength):
+    lettersAndDigits = string.ascii_letters.upper() + string.digits
+    strr=''.join(random.choice(lettersAndDigits) for i in range(stringLength-2))
+    return ('BB'+strr)
 
-def open_setting():
-    app.withdraw()
-    setting.setting(app)
 
-def open_statistics():
-    app.withdraw()
-    statistics.statistics(app)
-    
-def open_warehouse():
-    app.withdraw()
-    warehouse.warehouse(app)
 
-# Hàm để load và co nhỏ ảnh
-def load_and_resize_image(image_path, width, height):
-    image = Image.open(image_path)
-    image.thumbnail((width, height))
-    return ImageTk.PhotoImage(image)
 
-image_home = load_and_resize_image(file_path + "/images/house.png", 65, 65)
-button = ttk.Button(frame, image=image_home, text="Trang chủ   ",
-                    compound='right', command=open_new_window_from_main, style="Home.TButton")
-button.grid(row=0, column=0, pady=40, padx=40)
 
-image_sell = load_and_resize_image(file_path + "/images/selling.png", 65, 65)
-button = ttk.Button(frame, image=image_sell, text="Bán hàng   ",
-                    compound='right', style="Home.TButton", command=open_sell)
-button.grid(row=0, column=1, pady=40, padx=30)
+class login_page:
+    def __init__(self, top=None):
+        top.geometry("1366x768")
+        top.resizable(0, 0)
+        top.title("Retail Manager(ADMIN)")
 
-image_statistics = load_and_resize_image(file_path + "/images/statistics.png", 65, 65)
-button = ttk.Button(frame, image=image_statistics, text="Thống kê   ",
-                    compound='right', style="Home.TButton",command=open_statistics)
-button.grid(row=0, column=2, pady=40, padx=30,)
+        self.label1 = Label(root)
+        self.label1.place(relx=0, rely=0, width=1366, height=768)
+        self.img = PhotoImage(file="./images/employee_login.png")
+        self.label1.configure(image=self.img)
+        
 
-image_warehouse = load_and_resize_image(file_path + "/images/warehouse.png", 65, 65)
-button = ttk.Button(frame, image=image_warehouse, text="Kho hàng   ",
-                    compound='right', style="Home.TButton",command=open_warehouse) 
-button.grid(row=1, column=0, pady=40, padx=30)
+        self.entry1 = Entry(root)
+        self.entry1.place(relx=0.373, rely=0.273, width=374, height=24)
+        self.entry1.configure(font="-family {Poppins} -size 10")
+        self.entry1.configure(relief="flat")
+        self.entry1.configure(textvariable=user)
 
-image_history = load_and_resize_image(file_path + "/images/time-management.png", 65, 65)
-button = ttk.Button(frame, image=image_history, text="Lịch sử     ",
-                    compound='right', style="Home.TButton",command=open_history)
-button.grid(row=1, column=1, pady=40, padx=30)
+        self.entry2 = Entry(root)
+        self.entry2.place(relx=0.373, rely=0.384, width=374, height=24)
+        self.entry2.configure(font="-family {Poppins} -size 10")
+        self.entry2.configure(relief="flat")
+        self.entry2.configure(show="*")
+        self.entry2.configure(textvariable=passwd)
 
-image_shipped = load_and_resize_image(file_path + "/images/shipped.png", 65, 65)
-button = ttk.Button(frame, image=image_shipped, text="Giao hàng",
-                    compound='right', style="Home.TButton",command=open_deliver)
-button.grid(row=1, column=2, pady=40, padx=30)
+        self.button1 = Button(root)
+        self.button1.place(relx=0.366, rely=0.685, width=356, height=43)
+        self.button1.configure(relief="flat")
+        self.button1.configure(overrelief="flat")
+        self.button1.configure(activebackground="#D2463E")
+        self.button1.configure(cursor="hand2")
+        self.button1.configure(foreground="#ffffff")
+        self.button1.configure(background="#D2463E")
+        self.button1.configure(font="-family {Poppins SemiBold} -size 20")
+        self.button1.configure(borderwidth="0")
+        self.button1.configure(text="""LOGIN""")
+        self.button1.configure(command=self.login)
+        
+    def login(self, Event=None):
+        username = user.get()
+        password = passwd.get()
 
-image_forklift = load_and_resize_image(file_path + "/images/forklift.png", 65, 65)
-button = ttk.Button(frame, image=image_forklift, text="Nhập hàng  ",
-                    compound='right', style="Home.TButton",command=open_addProduct)
-button.grid(row=2, column=0, pady=40, padx=30)
+        connection = mysql.connector.connect(
+            host='localhost',
+            user='root',
+            password='080102',
+            # database='store'
+            database= 'mydatabase'
+        )
+        cursor = connection.cursor()
 
-image_gear = load_and_resize_image(file_path + "/images/gear.png", 65, 65)
-button = ttk.Button(frame, image=image_gear, text="Cài đặt     ",
-                    compound='right', style="Home.TButton",command=open_setting)
-button.grid(row=2, column=1, pady=40, padx=30)
+        find_user = "SELECT * FROM employee WHERE emp_id = %s AND password = %s"
+        cursor.execute(find_user, (username, password))
 
-image_contact = load_and_resize_image(file_path + "/images/contact.png", 65, 65)
-button = ttk.Button(frame, image=image_contact, text="Báo lỗi     ",
-                    compound='right', style="Home.TButton",command=open_contact)
-button.grid(row=2, column=2, pady=40, padx=30)
+        results = cursor.fetchall()
+        cursor.close()  # Đóng con trỏ sau khi thực hiện truy vấn
+        connection.close()  # Đóng kết nối cơ sở dữ liệu
+        if results:
+            messagebox.showinfo("Login Page", "The login is successful.")
+            page1.entry1.delete(0, END)
+            page1.entry2.delete(0, END)
+            root.withdraw()     
+            subprocess.run(["python", "employee1.py"])   
+            # adm = Toplevel()
+                #page2.time()
+            root.protocol("WM_DELETE_WINDOW", exitt)
 
-style = ttk.Style()
-style.configure("Home.TButton", font=("Arial", 25, "bold"), borderwidth=2, foreground="green")
-
-app.mainloop()
-if __name__ == "__main__":
-    app.mainloop()
+        else:
+            messagebox.showerror("Error", "Incorrect username or password.")
+            page1.entry2.delete(0, END)
+def exitt():
+    sure = messagebox.askyesno("Exit","Are you sure you want to exit?", parent=root)
+    if sure == True:
+        root.destroy()
+page1 = login_page(root)
+login_page(root)
+root.bind("<Return>", login_page.login)
+root.mainloop()

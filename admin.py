@@ -174,8 +174,6 @@ class login_page:
         self.button1.configure(borderwidth="0")
         self.button1.configure(text="""LOGIN""")
         self.button1.configure(command=self.login)
-
-
     def login(self, Event=None):
         username = user.get()
         password = passwd.get()
@@ -359,10 +357,10 @@ class Employee:
         )
 
         self.tree.heading("Employee ID", text="Employee ID", anchor=W)
-        self.tree.heading("Employee Name", text="Employee Name", anchor=W)
-        self.tree.heading("Password", text="Password", anchor=W)
-        self.tree.heading("Address", text="Address", anchor=W)
-        self.tree.heading("PhoneNumber", text="PhoneNumber", anchor=W)
+        self.tree.heading("Employee Name", text="Tên nhân viên", anchor=W)
+        self.tree.heading("Password", text="Mật khẩu", anchor=W)
+        self.tree.heading("Address", text="Địa chỉ", anchor=W)
+        self.tree.heading("PhoneNumber", text="Số điện thoại", anchor=W)
         # self.tree.heading("Password", text="Password", anchor=W)
         # self.tree.heading("Designation", text="Designation", anchor=W)
 

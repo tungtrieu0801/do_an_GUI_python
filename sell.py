@@ -17,8 +17,8 @@ def sell(root):
     screen_width = root.winfo_screenwidth()
     screen_height = root.winfo_screenheight()
     
-    window_width = 1600  # Thay đổi kích thước theo nhu cầu
-    window_height = 920  # Thay đổi kích thước theo nhu cầu
+    window_width = 1450  # Thay đổi kích thước theo nhu cầu
+    window_height = 820  # Thay đổi kích thước theo nhu cầu
     # Tính toán vị trí để cửa sổ xuất hiện giữa màn hình
     x = (screen_width - window_width) // 2
     y = (screen_height - window_height) // 2
@@ -41,7 +41,7 @@ def sell(root):
     
     #tao frame san pham
     product_frame = ttk.Frame(sell_window)
-    product_frame.place(x=50, y=100, width=1000, height=700)
+    product_frame.place(x=50, y=100, width=900, height=700)
     style = ttk.Style()
     style.configure("Custom.TFrame", background="#c8c3d9")  # Thay đổi màu nền ở đây
     product_frame["style"] = "Custom.TFrame"
@@ -84,7 +84,7 @@ def sell(root):
     option_fm = tk.Frame(product_frame)
     option_fm.grid(column=0, row=1,padx=(20,0))
     option_fm.pack_propagate(False)
-    option_fm.configure(width=900, height=200)
+    option_fm.configure(width=800, height=200)
 
     button_width = 125
     button_count = 4
@@ -114,7 +114,7 @@ def sell(root):
     about_indicator_lb = tk.Label(option_fm)
     about_indicator_lb.place(x=650, y=30, width=50, height=2)
     
-    main_fm = tk.Frame(product_frame,width=900, height=400)
+    main_fm = tk.Frame(product_frame,width=800, height=400)
     main_fm.grid(column=0, row=2,padx=(20,0))
     create_home_page(main_fm)  # Hiển thị trang Home ban đầu
 
@@ -126,7 +126,7 @@ def sell(root):
         total_label.config(text="Tổng tiền: $100.00")  # Thay đổi giá trị này bằng tổng tiền thực tế
 
     total_frame = ttk.Frame(sell_window)
-    total_frame.place(x=1080, y=100, width=470, height=700)
+    total_frame.place(x=880, y=100, width=470, height=700)
     style = ttk.Style()
     style.configure("Custom.TFrame", background="#c8c3d9")  # Thay đổi màu nền ở đây
     total_frame["style"] = "Custom.TFrame"

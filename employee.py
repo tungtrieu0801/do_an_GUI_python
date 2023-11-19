@@ -12,7 +12,7 @@ from datetime import date
 from tkinter import scrolledtext as tkst
 #============================================
 import subprocess
-
+import sell
 
 root = Tk()
 
@@ -108,7 +108,8 @@ class login_page:
             page1.entry1.delete(0, END)
             page1.entry2.delete(0, END)
             root.withdraw()     
-            subprocess.run(["python", "employee1.py"])   
+            # subprocess.run(["python", "employee1.py"])   
+            sell.sell(root)
             # adm = Toplevel()
                 #page2.time()
             root.protocol("WM_DELETE_WINDOW", exitt)

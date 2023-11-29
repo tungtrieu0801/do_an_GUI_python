@@ -8,7 +8,7 @@ def configure_styles():
     style.configure("Back_Bbutton.TButton",
                 foreground="green",   # Màu chữ
                 font=("Arial", 12),    # Phông chữ và kích thước
-                padding=(10, 10),      # Khoảng cách giữa nội dung và biên (điều chỉnh chiều rộng và chiều cao ở đây)
+                padding=(5, 5),      # Khoảng cách giữa nội dung và biên (điều chỉnh chiều rộng và chiều cao ở đây)
                 width=8,               # Chiều rộng của nút (giảm giá trị ở đây)
                 borderwidth=5,         # Độ dày viền
                 relief="flat"          # Kiểu viền

@@ -1,5 +1,9 @@
 import re
 from sqlite3 import Cursor
+from tkinter import simpledialog
+
+import pandas as pd
+from tkinter import filedialog
 import mysql.connector
 import random
 import string
@@ -73,7 +77,7 @@ class Admin_Page:
         self.button1.configure(background="#CF1E14")
         self.button1.configure(font="-family {Poppins SemiBold} -size 12")
         self.button1.configure(borderwidth="0")
-        self.button1.configure(text="""Logout""")
+        self.button1.configure(text="""Đăng xuất""")
         self.button1.configure(command=self.Logout)
 
         self.button2 = Button(adm)
@@ -86,7 +90,7 @@ class Admin_Page:
         self.button2.configure(background="#ffffff")
         self.button2.configure(font="-family {Poppins SemiBold} -size 12")
         self.button2.configure(borderwidth="0")
-        self.button2.configure(text="""Inventory""")
+        self.button2.configure(text="""Kho hàng""")
         self.button2.configure(command=inventory)
 
         self.button3 = Button(adm)
@@ -99,7 +103,7 @@ class Admin_Page:
         self.button3.configure(background="#ffffff")
         self.button3.configure(font="-family {Poppins SemiBold} -size 12")
         self.button3.configure(borderwidth="0")
-        self.button3.configure(text="""Employees""")
+        self.button3.configure(text="""Nhân viên""")
         self.button3.configure(command=employee)
 
 
@@ -113,7 +117,7 @@ class Admin_Page:
         self.button4.configure(background="#ffffff")
         self.button4.configure(font="-family {Poppins SemiBold} -size 12")
         self.button4.configure(borderwidth="0")
-        self.button4.configure(text="""Đơn hàngg""")
+        self.button4.configure(text="""Đơn hàng""")
         self.button4.configure(command=invoices)
 
 
@@ -267,7 +271,7 @@ class Employee:
         self.button1.configure(background="#CF1E14")
         self.button1.configure(font="-family {Poppins SemiBold} -size 10")
         self.button1.configure(borderwidth="0")
-        self.button1.configure(text="""Search""")
+        self.button1.configure(text="""Tìm kiếm""")
         self.button1.configure(command=self.search_emp)
 
         self.button2 = Button(emp)
@@ -280,7 +284,7 @@ class Employee:
         self.button2.configure(background="#CF1E14")
         self.button2.configure(font="-family {Poppins SemiBold} -size 12")
         self.button2.configure(borderwidth="0")
-        self.button2.configure(text="""Logout""")
+        self.button2.configure(text="""Đăng xuất""")
         self.button2.configure(command=self.Logout)
 
         self.button3 = Button(emp)
@@ -293,7 +297,7 @@ class Employee:
         self.button3.configure(background="#CF1E14")
         self.button3.configure(font="-family {Poppins SemiBold} -size 12")
         self.button3.configure(borderwidth="0")
-        self.button3.configure(text="""ADD EMPLOYEE""")
+        self.button3.configure(text="""THÊM NHÂN VIÊN""")
         self.button3.configure(command=self.add_emp)
 
         self.button4 = Button(emp)
@@ -306,7 +310,7 @@ class Employee:
         self.button4.configure(background="#CF1E14")
         self.button4.configure(font="-family {Poppins SemiBold} -size 12")
         self.button4.configure(borderwidth="0")
-        self.button4.configure(text="""UPDATE EMPLOYEE""")
+        self.button4.configure(text="""CẬP NHẬT THÔNG TIN""")
         self.button4.configure(command=self.update_emp)
 
         self.button5 = Button(emp)
@@ -319,7 +323,7 @@ class Employee:
         self.button5.configure(background="#CF1E14")
         self.button5.configure(font="-family {Poppins SemiBold} -size 12")
         self.button5.configure(borderwidth="0")
-        self.button5.configure(text="""DELETE EMPLOYEE""")
+        self.button5.configure(text="""XOÁ NHÂN VIÊN""")
         self.button5.configure(command=self.delete_emp)
 
         self.button6 = Button(emp)
@@ -332,7 +336,7 @@ class Employee:
         self.button6.configure(background="#CF1E14")
         self.button6.configure(font="-family {Poppins SemiBold} -size 12")
         self.button6.configure(borderwidth="0")
-        self.button6.configure(text="""EXIT""")
+        self.button6.configure(text="""THOÁT""")
         self.button6.configure(command=self.Exit)
 
         self.scrollbarx = Scrollbar(emp, orient=HORIZONTAL)
@@ -669,6 +673,33 @@ class Inventory:
         self.button5.configure(text="""XOÁ SẢN PHẨM""")
         self.button5.configure(command=self.delete_product)
 
+        self.button7 = Button(inv)
+        self.button7.place(relx=0.052, rely=0.67, width=306, height=28)
+        self.button7.configure(relief="flat")
+        self.button7.configure(overrelief="flat")
+        self.button7.configure(activebackground="#CF1E14")
+        self.button7.configure(cursor="hand2")
+        self.button7.configure(foreground="#ffffff")
+        self.button7.configure(background="#CF1E14")
+        self.button7.configure(font="-family {Poppins SemiBold} -size 12")
+        self.button7.configure(borderwidth="0")
+        self.button7.configure(text="""XUẤT EXCEL""")
+        self.button7.configure(command=self.export_excel)
+
+        self.button8 = Button(inv)
+        self.button8.place(relx=0.052, rely=0.77, width=306, height=28)
+        self.button8.configure(relief="flat")
+        self.button8.configure(overrelief="flat")
+        self.button8.configure(activebackground="#CF1E14")
+        self.button8.configure(cursor="hand2")
+        self.button8.configure(foreground="#ffffff")
+        self.button8.configure(background="#CF1E14")
+        self.button8.configure(font="-family {Poppins SemiBold} -size 12")
+        self.button8.configure(borderwidth="0")
+        self.button8.configure(text="""NHẬP EXCEL""")
+        self.button8.configure(command=self.import_excel)
+
+
         self.button6 = Button(inv)
         self.button6.place(relx=0.135, rely=0.885, width=76, height=23)
         self.button6.configure(relief="flat")
@@ -681,6 +712,7 @@ class Inventory:
         self.button6.configure(borderwidth="0")
         self.button6.configure(text="""EXIT""")
         self.button6.configure(command=self.Exit)
+
 
         self.scrollbarx = Scrollbar(inv, orient=HORIZONTAL)
         self.scrollbary = Scrollbar(inv, orient=VERTICAL)
@@ -729,7 +761,72 @@ class Inventory:
         self.tree.column("#7", stretch=NO, minwidth=0, width=80)
 
         self.DisplayData()
+    def import_excel(self):
+        # Ask the user to choose an Excel file for import
+        file_path = filedialog.askopenfilename(filetypes=[("Excel files", "*.xlsx")])
+        df = pd.read_excel(file_path)
+        df = df.dropna()
+        df = df.fillna(value='none')  # Thay 'default_value' bằng giá trị bạn muốn
 
+        # If the user selected a file, proceed with import
+        if file_path:
+            try:
+                # Connect to the MySQL database
+                connection = mysql.connector.connect(
+                host="localhost",
+                user="root",
+                password='080102',
+                database='myDatabase'
+                )  # Replace with your database credentials
+
+                cursor = connection.cursor()
+
+                # Tên bảng trong MySQL để lưu trữ dữ liệu
+                table_name = "inventory"
+
+                # Xóa bảng cũ nếu tồn tại
+                cursor.execute(f"DROP TABLE IF EXISTS {table_name}")
+
+                # Tạo bảng mới với các cột tương ứng từ tệp Excel
+                cursor.execute(f"CREATE TABLE {table_name} ({', '.join([f'{col} VARCHAR(255)' for col in df.columns])})")
+
+                # Chuyển dữ liệu từ pandas DataFrame vào MySQL
+                for _, row in df.iterrows():
+                    cursor.execute(f"INSERT INTO {table_name} VALUES ({', '.join(['%s' for _ in df.columns])})", tuple(row))
+
+                # Lưu thay đổi và đóng kết nối
+                connection.commit()
+                connection.close()
+                page3.tree.delete(*page3.tree.get_children())
+                self.DisplayData()
+                
+            except Exception as e:
+                print(f"Lỗi: {e}")
+
+    def export_excel(self):
+        connection = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password='080102',
+        database='myDatabase'
+        )  # Replace with your database credentials
+
+        # Query to fetch data from your MySQL table
+        query = "SELECT * FROM inventory"  # Replace with your table name
+
+        # Use pandas to read the SQL query result into a DataFrame
+        df = pd.read_sql_query(query, connection)
+
+        # Ask the user to choose a file location to save the Excel file
+        file_path = filedialog.asksaveasfilename(defaultextension=".xlsx", filetypes=[("Excel files", "*.xlsx")])
+
+        # If the user selected a file, export the DataFrame to Excel
+        if file_path:
+            df.to_excel(file_path, index=False)
+            print(f"Data exported to {file_path}")
+
+        # Close the database connection
+        connection.close()
     def DisplayData(self):
         connection = mysql.connector.connect(
             host='localhost',

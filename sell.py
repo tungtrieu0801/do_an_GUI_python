@@ -8,6 +8,20 @@ from sale.home import create_home_page
 from sale.contact_page import create_contact_page
 from sale.about_page import create_about_page
 from sale.product_page import create_product_page
+import re
+from sqlite3 import Cursor
+from tkinter import simpledialog
+
+import pandas as pd
+from tkinter import filedialog
+import mysql.connector
+import random
+import string
+from tkinter import *
+from tkinter import messagebox
+from tkinter import ttk
+from time import strftime
+from datetime import date
 def sell(root):
     #gọi hàm style căn chỉnh
     configure_styles()
@@ -16,9 +30,9 @@ def sell(root):
         # Lấy kích thước của màn hình
     screen_width = root.winfo_screenwidth()
     screen_height = root.winfo_screenheight()
-    
-    window_width = 1450  # Thay đổi kích thước theo nhu cầu
-    window_height = 820  # Thay đổi kích thước theo nhu cầu
+    #1366x768
+    window_width = 1366  # Thay đổi kích thước theo nhu cầu
+    window_height = 768  # Thay đổi kích thước theo nhu cầu
     # Tính toán vị trí để cửa sổ xuất hiện giữa màn hình
     x = (screen_width - window_width) // 2
     y = (screen_height - window_height) // 2
@@ -30,120 +44,73 @@ def sell(root):
     def close_window_2():
         sell_window.destroy()  # Đóng cửa sổ 2
         root.deiconify() 
-    frame_back = ttk.Frame(sell_window)
-    frame_back.place(x=20,y=20)
-    back_button = ttk.Button(frame_back, text="Quay lại", command=close_window_2, style='Back_Bbutton.TButton')
-    back_button.grid(column=0,row=0,padx=(0,250))
+    # frame_back = ttk.Frame(sell_window)
+    # frame_back.place(x=20,y=20)
+    back_button = ttk.Button(sell_window, text="Quay lại", command=close_window_2, style='Back_Bbutton.TButton')
+    back_button.place(relx=0.007, rely=0.003, width=100, height=45)
     
-    def search():
-        query = search_widget.get()
-    # Thực hiện tìm kiếm hoặc xử lý dữ liệu theo query ở đây
+    scrollbarx = Scrollbar(sell_window, orient=HORIZONTAL)
+    scrollbary = Scrollbar(sell_window, orient=VERTICAL)
+    tree = ttk.Treeview(sell_window)
+    tree.place(relx=0.03, rely=0.073, width=880, height=550)
+    tree.configure(
+            yscrollcommand=scrollbary.set, xscrollcommand=scrollbarx.set
+        )
+    tree.configure(selectmode="extended")
+
+    # tree.bind("<<TreeviewSelect>>", on_tree_select)
+
+    scrollbary.configure(command=tree.yview)
+    scrollbarx.configure(command=tree.xview)
+
+    scrollbary.place(relx=0.694, rely=0.003, width=22, height=548)
+    scrollbarx.place(relx=0.007, rely=0.824, width=884, height=22)
+    tree.configure(
+            columns=(
+                "ID",
+                "Tên sản phẩm",
+                "Loại sản phẩm",
+                "Số lượng",
+                "Giá",
+                "Nhà cung cấp",
+                "Liên lạc nhà cung cấp"
+            )
+        )
+#product_id, product_name,category ,stock, product_price
+    tree.heading("ID", text="Employee ID", anchor=W)
+    tree.heading("Tên sản phẩm", text="Tên sản phẩm", anchor=W)
+    tree.heading("Loại sản phẩm", text="Loại sản phẩm", anchor=W)
+    tree.heading("Số lượng", text="Số lượng", anchor=W)
+    tree.heading("Giá", text="Giá", anchor=W)
+    tree.heading("Nhà cung cấp", text="Nhà cung cấp", anchor=W)
+    tree.heading("Liên lạc nhà cung cấp", text="Liên lạc nhà cung cấp", anchor=W)
+
+
+    tree.column("#0", stretch=NO, minwidth=0, width=10)
+    tree.column("#1", stretch=NO, minwidth=0, width=80)
+    tree.column("#2", stretch=NO, minwidth=0, width=260)
+    tree.column("#3", stretch=NO, minwidth=0, width=100)
+    tree.column("#4", stretch=NO, minwidth=0, width=120)
+    tree.column("#5", stretch=NO, minwidth=0, width=80)
+    tree.column("#6", stretch=NO, minwidth=0, width=80)
+    tree.column("#7", stretch=NO, minwidth=0, width=80)
+    DisplayData(tree)
     
-    #tao frame san pham
-    product_frame = ttk.Frame(sell_window)
-    product_frame.place(x=50, y=100, width=900, height=700)
-    style = ttk.Style()
-    style.configure("Custom.TFrame", background="#c8c3d9")  # Thay đổi màu nền ở đây
-    product_frame["style"] = "Custom.TFrame"
+def DisplayData(tree):
+    connection = mysql.connector.connect(
+        host='localhost',
+            user='root',
+            password='080102',
+            database='myDatabase'
+        )
+    cursor = connection.cursor()
 
-    def on_entry_click(event):
-        if search_widget.get() == "Tìm kiếm":
-            search_widget.delete(0, "end")
-            search_widget.configure(foreground="black")  # Thay đổi màu chữ thành đen
+        # find_user = "SELECT * FROM inventory"
+    cursor.execute("SELECT * FROM inventory")
 
-    def on_entry_leave(event):
-        if search_widget.get() == "":
-            search_widget.insert(0, "Tìm kiếm")
-            search_widget.configure(foreground="gray")  # Thay đổi màu chữ thành màu xám
-    style = ttk.Style()
-    style.configure("Search.TEntry", padding=(5, 5), font=("Helvetica", 20), background="white", bordercolor="gray", relief="flat")
-
-    search_widget = ttk.Entry(product_frame, foreground="gray", width=30, style="Search.TEntry")
-    search_widget.insert(0, "Tìm kiếm")
-    search_widget.configure(font=("Helvetica", 17))  # Điều chỉnh font size
-    search_widget.grid(column=0, row=0, padx=(50, 0), pady=20)
-
-    search_widget.bind("<FocusIn>", on_entry_click)
-    search_widget.bind("<FocusOut>", on_entry_leave)
-
-
-
-    def switch_indicator(indicator_color, create_page_function):
-        for child in option_fm.winfo_children():
-            if isinstance(child, tk.Label):
-                child['bg'] = 'SystemButtonFace'
-        indicator_color['bg'] = 'green'
-
-        for fm in main_fm.winfo_children():
-            fm.destroy()
-            root.update()
-
-        create_page_function(main_fm)
-        # create_page_function(sell_window)
-
-    option_fm = tk.Frame(product_frame)
-    option_fm.grid(column=0, row=1,padx=(20,0))
-    option_fm.pack_propagate(False)
-    option_fm.configure(width=800, height=200)
-
-    button_width = 125
-    button_count = 4
-    space_between_buttons = (800 - (button_count * button_width)) // (button_count + 1)
-
-    btn_home = tk.Button(option_fm, text="Đồ ăn nhanh", activeforeground="red", bd=0, fg="black", command=lambda: switch_indicator(home_indicator_lb, create_home_page))
-    btn_home.place(x=space_between_buttons, y=0, width=button_width)
-
-    btn_product = tk.Button(option_fm, text="Đồ uống", activeforeground="red", bd=0, fg="black", command=lambda: switch_indicator(product_indicator_lb, create_product_page))
-    btn_product.place(x=2 * space_between_buttons + button_width, y=0, width=button_width)
-
-    btn_contact = tk.Button(option_fm, text="Hoa quả", activeforeground="red", bd=0, fg="black", command=lambda: switch_indicator(contact_indicator_lb, create_contact_page))
-    btn_contact.place(x=3 * space_between_buttons + 2 * button_width, y=0, width=button_width)
-
-    btn_about = tk.Button(option_fm, text="Khác", activeforeground="red", bd=0, fg="black", command=lambda: switch_indicator(about_indicator_lb, create_about_page))
-    btn_about.place(x=4 * space_between_buttons + 3 * button_width, y=0, width=button_width)
-
-    home_indicator_lb = tk.Label(option_fm, bg='green')
-    home_indicator_lb.place(x=98, y=30, width=50, height=2)
-
-    product_indicator_lb = tk.Label(option_fm)
-    product_indicator_lb.place(x=285, y=30, width=50, height=2)
-
-    contact_indicator_lb = tk.Label(option_fm)
-    contact_indicator_lb.place(x=470, y=30, width=50, height=2)
-
-    about_indicator_lb = tk.Label(option_fm)
-    about_indicator_lb.place(x=650, y=30, width=50, height=2)
+        # cur.execute("SELECT * FROM raw_inventory")
+    fetch = cursor.fetchall()
+    for data in fetch:
+        tree.insert("", "end", values=(data))
+    # all_items = fetch
     
-    main_fm = tk.Frame(product_frame,width=800, height=400)
-    main_fm.grid(column=0, row=2,padx=(20,0))
-    create_home_page(main_fm)  # Hiển thị trang Home ban đầu
-
-
-
-    #tao frame tinh tien
-
-    def update_total():
-        total_label.config(text="Tổng tiền: $100.00")  # Thay đổi giá trị này bằng tổng tiền thực tế
-
-    total_frame = ttk.Frame(sell_window)
-    total_frame.place(x=880, y=100, width=470, height=700)
-    style = ttk.Style()
-    style.configure("Custom.TFrame", background="#c8c3d9")  # Thay đổi màu nền ở đây
-    total_frame["style"] = "Custom.TFrame"
-
-    # Thêm một Label để hiển thị tổng tiền
-    total_label = ttk.Label(total_frame, text="Tổng tiền: $0.00", font=("Helvetica", 20))
-    total_label.pack(pady=20)
-
-    # Thêm một Treeview để hiển thị danh sách sản phẩm trong giỏ hàng
-    
-    cart_treeview = ttk.Treeview(total_frame, columns=("Name", "Quantity", "Price"), show="headings")
-    cart_treeview.heading("Name", text="Tên sản phẩm")
-    cart_treeview.heading("Quantity", text="Số lượng")
-    cart_treeview.heading("Price", text="Giá tiền")
-    cart_treeview.pack(fill="both", expand=True)
-    
-    # Thêm một nút để cập nhật tổng tiền
-    update_button = ttk.Button(total_frame, text="Cập nhật tổng tiền", command=update_total)
-    update_button.pack(pady=20)
-

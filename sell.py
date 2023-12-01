@@ -197,7 +197,7 @@ def sell(root):
     search_entry = ttk.Entry(sell_window)
     search_entry.place(relx=0.03, rely=0.1, width=200, height=30)
     button1 = Button(sell_window)
-    button1.place(relx=0.19, rely=0.105, width=76, height=23)
+    button1.place(relx=0.19, rely=0.105, width=76, height=28)
     button1.configure(relief="flat")
     button1.configure(overrelief="flat")
     button1.configure(activebackground="#CF1E14")
@@ -208,7 +208,26 @@ def sell(root):
     button1.configure(borderwidth="0")
     button1.configure(text="""Tìm kiếm""")
     button1.configure(command=search_product)
+    style = ttk.Style()
+    style.configure("Round.TLabel", foreground="white", background="green", borderwidth=2, relief="solid", padding=(10, 5))
 
+    # Tạo Label với kiểu đã đặt
+    name_label = ttk.Label(sell_window, text="Tên khách hàng", style="Round.TLabel")
+    name_label.place(relx=0.38, rely=0.1, width=115, height=30)
+    name_entry = ttk.Entry(sell_window)
+    name_entry.place(relx=0.47, rely=0.1,  width=130, height=30)
+
+    phone_label = ttk.Label(sell_window, text="Số điện thoại", style="Round.TLabel")
+    phone_label.place(relx=0.61, rely=0.1, width=100, height=30)
+    phone_entry = ttk.Entry(sell_window)
+    phone_entry.place(relx=0.69, rely=0.1,  width=120, height=30)
+    
+
+    email_label = ttk.Label(sell_window, text="Email", style="Round.TLabel")
+    email_label.place(relx=0.82, rely=0.1, width=60, height=30)
+    email_entry = ttk.Entry(sell_window)
+    email_entry.place(relx=0.87, rely=0.1,  width=120, height=30)
+    
     
 
 

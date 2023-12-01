@@ -423,6 +423,8 @@ class Employee:
     def search_emp(self):
         search_text = self.entry1.get()  # Lấy giá trị từ ô tìm kiếm
         if not search_text:
+            for item in self.tree.get_children():
+                self.tree.delete(item)
         # Hiển thị toàn bộ sản phẩm trên treeview
             for item in self.all_items:
                 self.tree.insert("", "end", values=item)
@@ -869,6 +871,9 @@ class Inventory:
     def search_product(self):
         search_text = self.entry1.get()  # Lấy giá trị từ ô tìm kiếm
         if not search_text:
+            for item in self.tree.get_children():
+                self.tree.delete(item)
+
         # Hiển thị toàn bộ sản phẩm trên treeview
             for item in self.all_items:
                 self.tree.insert("", "end", values=item)

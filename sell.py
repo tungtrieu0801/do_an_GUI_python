@@ -23,6 +23,105 @@ from tkinter import ttk
 from time import strftime
 from datetime import date
 def sell(root):
+    def display_data(tree):
+        connection = mysql.connector.connect(
+            host='localhost',
+            user='root',
+            password='080102',
+            database='myDatabase'
+        )
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM inventory")
+        fetch = cursor.fetchall()
+        for data in fetch:
+            tree.insert("", "end", values=data)
+        tree.all_items = fetch
+    # def search_product():
+    #     # Lấy giá trị từ ô tìm kiếm
+    #     search_text = search_entry.get()
+
+    #     # Xóa tất cả các dòng trong treeview1
+    #     tree.delete(*tree.get_children())
+
+    #     # Kết nối cơ sở dữ liệu MySQL
+    #     connection = mysql.connector.connect(
+    #         host='localhost',
+    #         user='root',
+    #         password='080102',
+    #         database='mydatabase'
+    #     )
+
+    #     # Tạo con trỏ để thao tác với cơ sở dữ liệu
+    #     cursor = connection.cursor()
+    #     if search_text:  # Nếu có giá trị trong ô tìm kiếm
+    #     # Truy vấn để lấy dữ liệu từ bảng "inventory" dựa trên tên sản phẩm hoặc loại sản phẩm
+    #         query = "SELECT * FROM inventory WHERE product_name LIKE %s OR category LIKE %s"
+    #         values = (f"%{search_text}%", f"%{search_text}%")
+
+    #     # Thực thi truy vấn
+    #         cursor.execute(query, values)
+    #     else:  # Nếu không có giá trị trong ô tìm kiếm, lấy toàn bộ dữ liệu
+    #     # Truy vấn để lấy toàn bộ dữ liệu từ bảng "inventory"
+    #         query = "SELECT * FROM inventory"
+
+    #     # Thực thi truy vấn
+    #     cursor.execute(query)
+    #     for row in cursor:
+    #         product_name = row[1]
+    #         category = row[2]
+    #         quantity = row[4]  # Assuming "stock" is the correct column index
+    #         unit_price = row[3]  # Assuming "product_price" is the correct column index
+
+    #     tree.insert("", "end", values=(product_name, category, quantity, unit_price))
+
+
+    #     # Đóng con trỏ và kết nối cơ sở dữ liệu
+    #     cursor.close()
+    #     connection.close()
+    def search_product():
+        connection = mysql.connector.connect(
+            host='localhost',
+            user='root',
+            password='080102',
+            database='myDatabase'
+        )
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM inventory")
+        fetch = cursor.fetchall()
+        for data in fetch:
+            tree.insert("", "end", values=data)
+        all_items = fetch
+        search_text = search_entry.get()  # Lấy giá trị từ ô tìm kiếm
+        if not search_text:
+            for item in tree.get_children():
+                tree.delete(item)
+        # Hiển thị toàn bộ sản phẩm trên treeview
+            for item in all_items:
+                tree.insert("", "end", values=item)
+            return
+        # Xóa toàn bộ sản phẩm hiển thị trên treeview
+        for item in tree.get_children():
+            tree.delete(item)
+
+        found = False
+        for item in all_items:  # all_items là danh sách tất cả các sản phẩm trước khi tìm kiếm
+            if search_text in str(item[0]):  # Kiểm tra xem giá trị tìm kiếm có trong sản phẩm hay không
+                tree.insert("", "end", values=item)  # Nếu tìm thấy, thêm sản phẩm đó vào treeview
+                found = True
+
+            if search_text in str(item[1]):  # Kiểm tra xem giá trị tìm kiếm có trong sản phẩm hay không
+                tree.insert("", "end", values=item)  # Nếu tìm thấy, thêm sản phẩm đó vào treeview
+                found = True
+
+            if search_text in str(item[2]):  # Kiểm tra xem giá trị tìm kiếm có trong sản phẩm hay không
+                tree.insert("", "end", values=item)  # Nếu tìm thấy, thêm sản phẩm đó vào treeview
+                found = True
+
+        if not found:
+            messagebox.showerror("Oops!!", f"Product ID: {search_text} not found.")
+
+
+
     #gọi hàm style căn chỉnh
     configure_styles()
     sell_window = tk.Toplevel(root)
@@ -47,12 +146,12 @@ def sell(root):
     # frame_back = ttk.Frame(sell_window)
     # frame_back.place(x=20,y=20)
     back_button = ttk.Button(sell_window, text="Quay lại", command=close_window_2, style='Back_Bbutton.TButton')
-    back_button.place(relx=0.007, rely=0.003, width=100, height=45)
+    back_button.place(relx=0.007, rely=0.008, width=100, height=45)
     
     scrollbarx = Scrollbar(sell_window, orient=HORIZONTAL)
     scrollbary = Scrollbar(sell_window, orient=VERTICAL)
     tree = ttk.Treeview(sell_window)
-    tree.place(relx=0.03, rely=0.073, width=880, height=550)
+    tree.place(relx=0.03, rely=0.2, width=880, height=550)
     tree.configure(
             yscrollcommand=scrollbary.set, xscrollcommand=scrollbarx.set
         )
@@ -63,8 +162,8 @@ def sell(root):
     scrollbary.configure(command=tree.yview)
     scrollbarx.configure(command=tree.xview)
 
-    scrollbary.place(relx=0.694, rely=0.003, width=22, height=548)
-    scrollbarx.place(relx=0.007, rely=0.824, width=884, height=22)
+    scrollbary.place(relx=0.68, rely=0.2, width=22, height=548)
+    scrollbarx.place(relx=0.03, rely=0.92, width=884, height=22)
     tree.configure(
             columns=(
                 "ID",
@@ -94,25 +193,25 @@ def sell(root):
     tree.column("#5", stretch=NO, minwidth=0, width=80)
     tree.column("#6", stretch=NO, minwidth=0, width=80)
     tree.column("#7", stretch=NO, minwidth=0, width=80)
-    DisplayData(tree)
+    display_data(tree)
     side_frame = Frame(sell_window, bd=1, relief="solid")
-    side_frame.place(relx=0.7, rely=0.073, width=350, height=550)
-    
-def DisplayData(tree):
-    connection = mysql.connector.connect(
-        host='localhost',
-            user='root',
-            password='080102',
-            database='myDatabase'
-        )
-    cursor = connection.cursor()
+    side_frame.place(relx=0.7, rely=0.2, width=350, height=550)
 
-        # find_user = "SELECT * FROM inventory"
-    cursor.execute("SELECT * FROM inventory")
+    search_entry = ttk.Entry(sell_window)
+    search_entry.place(relx=0.03, rely=0.1, width=200, height=30)
+    button1 = Button(sell_window)
+    button1.place(relx=0.19, rely=0.105, width=76, height=23)
+    button1.configure(relief="flat")
+    button1.configure(overrelief="flat")
+    button1.configure(activebackground="#CF1E14")
+    button1.configure(cursor="hand2")
+    button1.configure(foreground="#ffffff")
+    button1.configure(background="#CF1E14")
+    button1.configure(font="-family {Poppins SemiBold} -size 10")
+    button1.configure(borderwidth="0")
+    button1.configure(text="""Tìm kiếm""")
+    button1.configure(command=search_product)
 
-        # cur.execute("SELECT * FROM raw_inventory")
-    fetch = cursor.fetchall()
-    for data in fetch:
-        tree.insert("", "end", values=(data))
-    # all_items = fetch
     
+
+

@@ -4,7 +4,7 @@ from tkinter import messagebox
 
 main = Tk()
 main.geometry("1366x768")
-main.title("Big Bazaar")
+main.title("Home")
 main.resizable(0, 0)
 def Exit():
     sure = messagebox.askyesno("Exit","Are you sure you want to exit?", parent=main)

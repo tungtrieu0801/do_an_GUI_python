@@ -1,0 +1,28 @@
+def on_tree_select(event):
+        selected_items = tree.selection()
+        for item in selected_items:
+            values = tree.item(item, "values")
+            product_name = values[0]
+            product_type = values[1]
+            price = values[3]
+
+            # Kiểm tra xem sản phẩm đã tồn tại trong treeview_selected chưa
+            item_exists = False
+            for child in treeview_selected.get_children():
+                values_selected = treeview_selected.item(child, "values")
+                selected_name = values_selected[0]
+                selected_type = values_selected[1]
+                if product_name == selected_name and product_type == selected_type:
+                    # Sản phẩm đã tồn tại, cộng số lượng
+                    current_stock = int(values_selected[2])
+                    new_stock = current_stock + 1
+                    treeview_selected.set(child, "Số lượng", new_stock)
+                    item_exists = True
+                    break
+
+            if not item_exists:
+                # Thêm sản phẩm mới vào treeview_selected
+                treeview_selected.insert("", "end", values=(product_name, product_type, 1, price))
+
+    # Gắn sự kiện "<<TreeviewSelect>>" cho tree
+    tree.bind("<<TreeviewSelect>>", on_tree_select)

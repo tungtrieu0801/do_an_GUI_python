@@ -51,7 +51,7 @@ def sell(root):
     #         host='localhost',
     #         user='root',
     #         password='080102',
-    #         database='mydatabase'
+    #         database='myDatabase'
     #     )
 
     #     # Tạo con trỏ để thao tác với cơ sở dữ liệu
@@ -154,7 +154,7 @@ def sell(root):
     scrollbarx = Scrollbar(sell_window, orient=HORIZONTAL)
     scrollbary = Scrollbar(sell_window, orient=VERTICAL)
     tree = ttk.Treeview(sell_window)
-    tree.place(relx=0.03, rely=0.2, width=880, height=550)
+    tree.place(relx=0.03, rely=0.2, width=850, height=550)
     tree.configure(
             yscrollcommand=scrollbary.set, xscrollcommand=scrollbarx.set
         )
@@ -165,7 +165,7 @@ def sell(root):
     scrollbary.configure(command=tree.yview)
     scrollbarx.configure(command=tree.xview)
 
-    scrollbary.place(relx=0.68, rely=0.2, width=22, height=548)
+    scrollbary.place(relx=0.65, rely=0.2, width=22, height=548)
     scrollbarx.place(relx=0.03, rely=0.92, width=884, height=22)
     tree.configure(
             columns=(
@@ -190,10 +190,88 @@ def sell(root):
     tree.column("#3", stretch=NO, minwidth=0, width=165)
     tree.column("#4", stretch=NO, minwidth=0, width=165)
 
-    display_data(tree)
-    side_frame = Frame(sell_window, bd=1, relief="solid")
-    side_frame.place(relx=0.7, rely=0.2, width=350, height=550)
+    # Tạo treeview_selected
+    treeview_selected = ttk.Treeview(sell_window)
+    treeview_selected.place(relx=0.68, rely=0.2, width=380, height=550)
+    # Cấu hình các cột cho treeview_selected
+    treeview_selected.configure(
+        columns=(
+            "Tên sản phẩm",
+            "Loại sản phẩm",
+            "Số lượng",
+            "Đơn Giá"
+        )
+    )
 
+    # Đặt tiêu đề cho các cột
+    treeview_selected.heading("Tên sản phẩm", text="Tên sản phẩm", anchor=tk.W)
+    treeview_selected.heading("Loại sản phẩm", text="Loại sản phẩm", anchor=tk.W)
+    treeview_selected.heading("Số lượng", text="Số lượng", anchor=tk.W)
+    treeview_selected.heading("Đơn Giá", text="Đơn Giá", anchor=tk.W)
+
+    # Cấu hình các cột cho treeview_selected
+    treeview_selected.column("#0", stretch=tk.NO, minwidth=0, width=0)
+    treeview_selected.column("#1", stretch=tk.NO, minwidth=0, width=100)
+    treeview_selected.column("#2", stretch=tk.NO, minwidth=0, width=100)
+    treeview_selected.column("#3", stretch=tk.NO, minwidth=0, width=100)
+    treeview_selected.column("#4", stretch=tk.NO, minwidth=0, width=79)
+
+    def on_tree_select(event):
+        selected_items = tree.selection()
+        for item in selected_items:
+            values = tree.item(item, "values")
+            product_name = values[0]
+            product_type = values[1]
+            price = values[3]
+
+            # Kiểm tra xem sản phẩm đã tồn tại trong treeview_selected chưa
+            item_exists = False
+            for child in treeview_selected.get_children():
+                values_selected = treeview_selected.item(child, "values")
+                selected_name = values_selected[0]
+                selected_type = values_selected[1]
+                if product_name == selected_name and product_type == selected_type:
+                    # Sản phẩm đã tồn tại, cộng số lượng
+                    current_stock = int(values_selected[2])
+                    new_stock = current_stock + 1
+                    treeview_selected.set(child, "Số lượng", new_stock)
+                    item_exists = True
+                    break
+
+            if not item_exists:
+                # Thêm sản phẩm mới vào treeview_selected
+                treeview_selected.insert("", "end", values=(product_name, product_type, 1, price))
+
+    # Gắn sự kiện "<<TreeviewSelect>>" cho tree
+    tree.bind("<<TreeviewSelect>>", on_tree_select)
+    # Tạo hàm xử lý sự kiện khi nhấn nút "Thanh toán"
+    def calculate_total():
+        total = 0
+        selected_items = treeview_selected.get_children()
+        for item in selected_items:
+            quantity = float(treeview_selected.item(item, "values")[2])  # Số lượng là cột thứ 3
+            price = float(treeview_selected.item(item, "values")[3])  # Đơn giá là cột thứ 4
+            subtotal = quantity * price
+            total += subtotal
+        
+        treeview_selected.insert("", "end", text="")
+        treeview_selected.insert("", "end",  values=["Thành tiền", "", "", f"{total} đồng"])
+        
+
+    # Tạo nút "Thanh toán"
+    button_payment = ttk.Button(sell_window, text="Thanh toán", command=calculate_total)
+    button_payment.place(relx=0.68, rely=0.16)
+    # Tạo hàm xử lý sự kiện khi nhấn nút "Xóa"
+    def delete_all_data():
+        treeview_selected.delete(*treeview_selected.get_children())
+
+    # Tạo nút "Xóa"
+    button_delete = ttk.Button(sell_window, text="Xóa", command=delete_all_data)
+    button_delete.place(relx=0.75, rely=0.16)
+
+
+    display_data(tree)
+   
     search_entry = ttk.Entry(sell_window)
     search_entry.place(relx=0.03, rely=0.1, width=200, height=30)
     button1 = Button(sell_window)
@@ -228,6 +306,48 @@ def sell(root):
     email_entry = ttk.Entry(sell_window)
     email_entry.place(relx=0.87, rely=0.1,  width=120, height=30)
     
-    
+    def edit_quantity():
+        # Lấy item được chọn trong treeview_selected
+        selected_item = treeview_selected.focus()
 
+        if selected_item:
+            # Lấy giá trị của cột "Số lượng" của item đang được chọn
+            current_quantity = treeview_selected.item(selected_item, "values")[2]
 
+            # Tạo một cửa sổ popup cho phép chỉnh sửa số lượng
+            popup_window = tk.Toplevel(sell_window)
+
+            # Tính toán vị trí giữa màn hình cho cửa sổ popup
+            window_width = 200
+            window_height = 150
+            screen_width = sell_window.winfo_screenwidth()
+            screen_height = sell_window.winfo_screenheight()
+            x = (screen_width - window_width) // 2
+            y = (screen_height - window_height) // 2
+
+            # Đặt tọa độ cửa sổ popup
+            popup_window.geometry(f"{window_width}x{window_height}+{x}+{y}")
+
+            # Tạo một nhãn và ô văn bản để hiển thị và chỉnh sửa số lượng
+            quantity_label = ttk.Label(popup_window, text="Số lượng:")
+            quantity_label.pack()
+
+            quantity_entry = ttk.Entry(popup_window)
+            quantity_entry.insert(0, current_quantity)
+            quantity_entry.pack()
+
+            # Tạo một hàm xử lý sự kiện khi nhấn nút "Lưu"
+            def save_quantity():
+                new_quantity = quantity_entry.get()
+
+                # Cập nhật giá trị số lượng trong treeview_selected
+                treeview_selected.set(selected_item, "Số lượng", new_quantity)
+
+                # Đóng cửa sổ popup
+                popup_window.destroy()
+
+            # Tạo nút "Lưu" để lưu giá trị mới của số lượng
+            save_button = ttk.Button(popup_window, text="Lưu", command=save_quantity)
+            save_button.pack()
+    edit_button = ttk.Button(sell_window, text="Chỉnh số lượng", command=edit_quantity)
+    edit_button.place(relx=0.84, rely=0.16)

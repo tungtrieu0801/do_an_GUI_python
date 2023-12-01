@@ -1,5 +1,6 @@
 from ast import main
 import tkinter as tk
+from datetime import datetime
 from tkinter import ttk
 from styles import *
 from tkinter import PhotoImage
@@ -241,21 +242,73 @@ def sell(root):
             if not item_exists:
                 # Thêm sản phẩm mới vào treeview_selected
                 treeview_selected.insert("", "end", values=(product_name, product_type, 1, price))
+    # Tạo Label với kiểu đã đặt
+    name_label = ttk.Label(sell_window, text="Tên khách hàng", style="Round.TLabel")
+    name_label.place(relx=0.38, rely=0.1, width=115, height=30)
+    name_entry = ttk.Entry(sell_window)
+    name_entry.place(relx=0.47, rely=0.1,  width=130, height=30)
 
+    phone_label = ttk.Label(sell_window, text="Số điện thoại", style="Round.TLabel")
+    phone_label.place(relx=0.61, rely=0.1, width=100, height=30)
+    phone_entry = ttk.Entry(sell_window)
+    phone_entry.place(relx=0.69, rely=0.1,  width=120, height=30)
+    
+
+    email_label = ttk.Label(sell_window, text="Email", style="Round.TLabel")
+    email_label.place(relx=0.82, rely=0.1, width=60, height=30)
+    email_entry = ttk.Entry(sell_window)
+    email_entry.place(relx=0.87, rely=0.1,  width=120, height=30)
     # Gắn sự kiện "<<TreeviewSelect>>" cho tree
     tree.bind("<<TreeviewSelect>>", on_tree_select)
     # Tạo hàm xử lý sự kiện khi nhấn nút "Thanh toán"
+    connection = mysql.connector.connect(
+            host='localhost',
+            user='root',
+            password='080102',
+            database='myDatabase'
+    )
+    cursor = connection.cursor()
     def calculate_total():
+        customer_name = name_entry.get()
+        phone_number = phone_entry.get()
+        email = email_entry.get()
+        purchase_datetime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         total = 0
         selected_items = treeview_selected.get_children()
+        invoice_items = []  # Danh sách để lưu chi tiết các món hàng trong hoá đơn
+
         for item in selected_items:
+            product_name = treeview_selected.item(item, "values")[0]  # Tên sản phẩm là cột đầu tiên
             quantity = float(treeview_selected.item(item, "values")[2])  # Số lượng là cột thứ 3
             price = float(treeview_selected.item(item, "values")[3])  # Đơn giá là cột thứ 4
             subtotal = quantity * price
             total += subtotal
-        
+
+            # Thêm chi tiết món hàng vào danh sách
+            invoice_items.append((product_name, quantity, price, subtotal))
+
+        # Lưu thông tin hoá đơn vào bảng invoices
+        sql_invoice = "INSERT INTO invoices (total) VALUES (%s)"
+        values_invoice = (total,)
+        cursor.execute(sql_invoice, values_invoice)
+        cursor.execute("INSERT INTO invoices (customer_name, phone_number, email) VALUES (%s, %s, %s)",
+                   (customer_name, phone_number, email))
+        connection.commit()
+
+        # Lấy ID của hoá đơn vừa được thêm vào
+        invoice_id = cursor.lastrowid
+
+        # Lưu chi tiết hoá đơn vào bảng invoice_details
+        sql_invoice_detail = "INSERT INTO invoice_details (invoice_id, product_name, quantity, price, subtotal, customer_name, purchase_datetime) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+        values_invoice_detail = [(invoice_id, item[0], item[1], item[2], item[3], customer_name, purchase_datetime) for item in invoice_items]
+        cursor.executemany(sql_invoice_detail, values_invoice_detail)
+        connection.commit()
+
+        # Hiển thị giá tổng đơn hàng bằng hộp thoại thông báo
+        messagebox.showinfo("Thông báo", f"Tổng đơn hàng: {total} đồng")
         treeview_selected.insert("", "end", text="")
         treeview_selected.insert("", "end",  values=["Thành tiền", "", "", f"{total} đồng"])
+
         
 
     # Tạo nút "Thanh toán"
@@ -289,22 +342,7 @@ def sell(root):
     style = ttk.Style()
     style.configure("Round.TLabel", foreground="white", background="green", borderwidth=2, relief="solid", padding=(10, 5))
 
-    # Tạo Label với kiểu đã đặt
-    name_label = ttk.Label(sell_window, text="Tên khách hàng", style="Round.TLabel")
-    name_label.place(relx=0.38, rely=0.1, width=115, height=30)
-    name_entry = ttk.Entry(sell_window)
-    name_entry.place(relx=0.47, rely=0.1,  width=130, height=30)
 
-    phone_label = ttk.Label(sell_window, text="Số điện thoại", style="Round.TLabel")
-    phone_label.place(relx=0.61, rely=0.1, width=100, height=30)
-    phone_entry = ttk.Entry(sell_window)
-    phone_entry.place(relx=0.69, rely=0.1,  width=120, height=30)
-    
-
-    email_label = ttk.Label(sell_window, text="Email", style="Round.TLabel")
-    email_label.place(relx=0.82, rely=0.1, width=60, height=30)
-    email_entry = ttk.Entry(sell_window)
-    email_entry.place(relx=0.87, rely=0.1,  width=120, height=30)
     
     def edit_quantity():
         # Lấy item được chọn trong treeview_selected
@@ -350,4 +388,7 @@ def sell(root):
             save_button = ttk.Button(popup_window, text="Lưu", command=save_quantity)
             save_button.pack()
     edit_button = ttk.Button(sell_window, text="Chỉnh số lượng", command=edit_quantity)
-    edit_button.place(relx=0.84, rely=0.16)
+    edit_button.place(relx=0.82, rely=0.16)
+
+    send_email_button = ttk.Button(sell_window, text='Gửi email')
+    send_email_button.place(relx=0.9,rely=0.16)

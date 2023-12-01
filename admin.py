@@ -1650,6 +1650,7 @@ class Update_Employee:
         string = strftime("%H:%M:%S %p")
         self.clock.config(text=string)
         self.clock.after(1000, self.time)
+
 class Invoice:
     def __init__(self, top=None):
         top.geometry("1366x768")
@@ -1703,7 +1704,7 @@ class Invoice:
         self.button2.configure(background="#CF1E14")
         self.button2.configure(font="-family {Poppins SemiBold} -size 12")
         self.button2.configure(borderwidth="0")
-        self.button2.configure(text="""Đăng xuất""")
+        self.button2.configure(text="""Logout""")
         self.button2.configure(command=self.Logout)
 
         self.button3 = Button(invoice)
@@ -1752,34 +1753,48 @@ class Invoice:
 
         self.tree.configure(
             columns=(
-                "Bill Number",
-                "Date",
-                "Customer Name",
-                "Customer Phone No.",
+                "invoice_id",
+                "total",
+                "name",
+                "phone",
+                "email",
             )
         )
 
-        self.tree.heading("Bill Number", text="Bill Number", anchor=W)
-        self.tree.heading("Date", text="Date", anchor=W)
-        self.tree.heading("Customer Name", text="Customer Name", anchor=W)
-        self.tree.heading("Customer Phone No.", text="Customer Phone No.", anchor=W)
-        
+        self.tree.heading("invoice_id", text="ID", anchor=W)
+        self.tree.heading("total", text="Tổng giá", anchor=W)
+        self.tree.heading("name", text="Tên khách hàng", anchor=W)
+        self.tree.heading("phone", text="Số điện thoại", anchor=W)
+        self.tree.heading("email", text="Email", anchor=W)
 
         self.tree.column("#0", stretch=NO, minwidth=0, width=0)
-        self.tree.column("#1", stretch=NO, minwidth=0, width=219)
-        self.tree.column("#2", stretch=NO, minwidth=0, width=219)
-        self.tree.column("#3", stretch=NO, minwidth=0, width=219)
-        self.tree.column("#4", stretch=NO, minwidth=0, width=219)
+        self.tree.column("#1", stretch=NO, minwidth=0, width=179)
+        self.tree.column("#2", stretch=NO, minwidth=0, width=179)
+        self.tree.column("#3", stretch=NO, minwidth=0, width=179)
+        self.tree.column("#4", stretch=NO, minwidth=0, width=179)
+        self.tree.column("#4", stretch=NO, minwidth=0, width=179)
         
 
         self.DisplayData()
 
 
-    # def DisplayData(self):
-    #     cur.execute("SELECT * FROM bill")
-    #     fetch = cur.fetchall()
-    #     for data in fetch:
-    #         self.tree.insert("", "end", values=(data))
+    def DisplayData(self):
+        connection = mysql.connector.connect(
+            host='localhost',
+            user='root',
+            password='080102',
+            database='myDatabase'
+        )
+        cursor = connection.cursor()
+                # find_user = "SELECT * FROM inventory"
+        cursor.execute("SELECT * FROM invoices")
+
+        # cur.execute("SELECT * FROM raw_inventory")
+        fetch = cursor.fetchall()
+        for data in fetch:
+            self.tree.insert("", "end", values=(data))
+        self.all_items = fetch
+
 
     sel = []
     def on_tree_select(self, Event):
@@ -1796,14 +1811,14 @@ class Invoice:
 
         global bill
         bill = Toplevel()
-        # pg = open_bill(bill)
+        pg = open_bill(bill)
         #bill.protocol("WM_DELETE_WINDOW", exitt)
         bill.mainloop()
 
         
 
 
-    # def delete_invoice(self):
+    def delete_invoice(self):
         val = []
         to_delete = []
 
@@ -1867,7 +1882,6 @@ class Invoice:
         if sure == True:
             invoice.destroy()
             adm.deiconify()
-
 
 class Customer:
     def __init__(self, top=None):

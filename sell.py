@@ -95,6 +95,8 @@ def sell(root):
     tree.column("#6", stretch=NO, minwidth=0, width=80)
     tree.column("#7", stretch=NO, minwidth=0, width=80)
     DisplayData(tree)
+    side_frame = Frame(sell_window, bd=1, relief="solid")
+    side_frame.place(relx=0.7, rely=0.073, width=350, height=550)
     
 def DisplayData(tree):
     connection = mysql.connector.connect(

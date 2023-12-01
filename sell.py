@@ -31,8 +31,11 @@ def sell(root):
             database='myDatabase'
         )
         cursor = connection.cursor()
-        cursor.execute("SELECT * FROM inventory")
+        cursor.execute("SELECT product_name, category, product_price, stock FROM inventory")
         fetch = cursor.fetchall()
+        
+        # Xóa tất cả các cột trước khi thêm mới để tránh việc trùng lặp dữ liệu
+        tree.delete(*tree.get_children())
         for data in fetch:
             tree.insert("", "end", values=data)
         tree.all_items = fetch
@@ -86,7 +89,7 @@ def sell(root):
             database='myDatabase'
         )
         cursor = connection.cursor()
-        cursor.execute("SELECT * FROM inventory")
+        cursor.execute("SELECT product_name, category, product_price, stock FROM inventory")
         fetch = cursor.fetchall()
         for data in fetch:
             tree.insert("", "end", values=data)
@@ -146,7 +149,7 @@ def sell(root):
     # frame_back = ttk.Frame(sell_window)
     # frame_back.place(x=20,y=20)
     back_button = ttk.Button(sell_window, text="Quay lại", command=close_window_2, style='Back_Bbutton.TButton')
-    back_button.place(relx=0.007, rely=0.008, width=100, height=45)
+    back_button.place(relx=0.007, rely=0.006, width=100, height=45)
     
     scrollbarx = Scrollbar(sell_window, orient=HORIZONTAL)
     scrollbary = Scrollbar(sell_window, orient=VERTICAL)
@@ -166,33 +169,27 @@ def sell(root):
     scrollbarx.place(relx=0.03, rely=0.92, width=884, height=22)
     tree.configure(
             columns=(
-                "ID",
                 "Tên sản phẩm",
                 "Loại sản phẩm",
                 "Số lượng",
                 "Giá",
-                "Nhà cung cấp",
-                "Liên lạc nhà cung cấp"
             )
         )
 #product_id, product_name,category ,stock, product_price
-    tree.heading("ID", text="Employee ID", anchor=W)
+
     tree.heading("Tên sản phẩm", text="Tên sản phẩm", anchor=W)
     tree.heading("Loại sản phẩm", text="Loại sản phẩm", anchor=W)
     tree.heading("Số lượng", text="Số lượng", anchor=W)
-    tree.heading("Giá", text="Giá", anchor=W)
-    tree.heading("Nhà cung cấp", text="Nhà cung cấp", anchor=W)
-    tree.heading("Liên lạc nhà cung cấp", text="Liên lạc nhà cung cấp", anchor=W)
+    tree.heading("Giá", text="Giá tiền (VND)", anchor=W)
 
 
-    tree.column("#0", stretch=NO, minwidth=0, width=10)
-    tree.column("#1", stretch=NO, minwidth=0, width=80)
+
+    tree.column("#0", stretch=NO, minwidth=0, width=2)
+    tree.column("#1", stretch=NO, minwidth=0, width=280)
     tree.column("#2", stretch=NO, minwidth=0, width=260)
-    tree.column("#3", stretch=NO, minwidth=0, width=100)
-    tree.column("#4", stretch=NO, minwidth=0, width=120)
-    tree.column("#5", stretch=NO, minwidth=0, width=80)
-    tree.column("#6", stretch=NO, minwidth=0, width=80)
-    tree.column("#7", stretch=NO, minwidth=0, width=80)
+    tree.column("#3", stretch=NO, minwidth=0, width=165)
+    tree.column("#4", stretch=NO, minwidth=0, width=165)
+
     display_data(tree)
     side_frame = Frame(sell_window, bd=1, relief="solid")
     side_frame.place(relx=0.7, rely=0.2, width=350, height=550)

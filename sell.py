@@ -193,7 +193,7 @@ def sell(root):
 
     # Tạo treeview_selected
     treeview_selected = ttk.Treeview(sell_window)
-    treeview_selected.place(relx=0.68, rely=0.2, width=380, height=550)
+    treeview_selected.place(relx=0.68, rely=0.2, width=380, height=400)
     # Cấu hình các cột cho treeview_selected
     treeview_selected.configure(
         columns=(

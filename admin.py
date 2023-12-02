@@ -1864,6 +1864,13 @@ class Invoice:
 
 
     def delete_invoice(self):
+        connection = mysql.connector.connect(
+            host='localhost',
+            user='root',
+            password='080102',
+            database='myDatabase'
+        )
+        cursor = connection.cursor()
         val = []
         to_delete = []
 
@@ -1879,9 +1886,16 @@ class Invoice:
                         to_delete.append(val[j])
                 
                 for k in to_delete:
-                    delete = "DELETE FROM bill WHERE bill_no = ?"
-                    cur.execute(delete, [k])
-                    db.commit()
+                    # Xóa các bản ghi liên quan trong bảng invoice_details
+                    delete_details = "DELETE FROM invoice_details WHERE invoice_id = %s"
+                    cursor.execute(delete_details, (k,))
+                    connection.commit()
+
+                    # Sau đó, xóa bản ghi trong bảng invoices
+                    delete_invoice = "DELETE FROM invoices WHERE invoice_id = %s"
+                    cursor.execute(delete_invoice, (k,))
+                    connection.commit()
+
 
                 messagebox.showinfo("Success!!", "Invoice(s) deleted from database.", parent=invoice)
                 self.sel.clear()
@@ -1890,6 +1904,7 @@ class Invoice:
                 self.DisplayData()
         else:
             messagebox.showerror("Error!!","Please select an invoice", parent=invoice)
+
 
     def search_inv(self):
         val = []

@@ -292,12 +292,11 @@ def sell(root):
             invoice_items.append((product_name, quantity, price, subtotal))
 
         # Lưu thông tin hoá đơn vào bảng invoices
-        sql_invoice = "INSERT INTO invoices (total) VALUES (%s)"
-        values_invoice = (total,)
+        sql_invoice = "INSERT INTO invoices (total, customer_name, phone_number, email) VALUES (%s, %s, %s, %s)"
+        values_invoice = (total, customer_name, phone_number, email)
         cursor.execute(sql_invoice, values_invoice)
-        cursor.execute("INSERT INTO invoices (customer_name, phone_number, email) VALUES (%s, %s, %s)",
-                   (customer_name, phone_number, email))
         connection.commit()
+
 
         # Lấy ID của hoá đơn vừa được thêm vào
         invoice_id = cursor.lastrowid

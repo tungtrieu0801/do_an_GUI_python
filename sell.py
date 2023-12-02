@@ -433,9 +433,7 @@ def sell(root):
                 if not new_quantity.isdigit() or int(new_quantity) <= 0:
                     messagebox.showerror("Lỗi", "Số lượng phải là một số nguyên dương.")
                     return
-                # Lấy item được chọn trong treeview_selected
                 selected_item = treeview_selected.focus()
-
                 if selected_item:
                     # Lấy giá trị số lượng từ dữ liệu hiển thị
                     current_quantity = treeview_selected.item(selected_item, "values")[3]

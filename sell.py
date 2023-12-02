@@ -2,6 +2,8 @@ from ast import main
 import tkinter as tk
 from datetime import datetime
 from tkinter import ttk
+import smtplib
+from email.message import EmailMessage
 from styles import *
 from tkinter import PhotoImage
 from PIL import Image, ImageTk
@@ -193,7 +195,7 @@ def sell(root):
 
     # Tạo treeview_selected
     treeview_selected = ttk.Treeview(sell_window)
-    treeview_selected.place(relx=0.68, rely=0.2, width=380, height=550)
+    treeview_selected.place(relx=0.68, rely=0.2, width=380, height=400)
     # Cấu hình các cột cho treeview_selected
     treeview_selected.configure(
         columns=(
@@ -393,7 +395,24 @@ def sell(root):
     button1.configure(command=search_product)
     style = ttk.Style()
     style.configure("Round.TLabel", foreground="white", background="green", borderwidth=2, relief="solid", padding=(10, 5))
-
+    def sendEmail():
+        EMAIL = 'trieutungvp@outlook.com'
+        PASSWORD = 'trieuthanhtung@0801'
+        DESTINATION_EMAIL = email_entry.get()
+        SUBJECT_EMAIL = "Tiêu đề: Lập trình mạng"
+        BODY_EMAIL = "Cảm ơn bạn đã mua hàng tại đây"
+        msg = EmailMessage()
+        msg['To'] = DESTINATION_EMAIL
+        msg['From'] = EMAIL
+        msg['Subject'] = SUBJECT_EMAIL
+        msg.set_content(BODY_EMAIL)
+        mailServer = 'smtp.office365.com'
+        mailPort = 587
+        connection = smtplib.SMTP(mailServer, mailPort)
+        connection.starttls()
+        connection.login(EMAIL, PASSWORD)
+        connection.send_message(msg=msg, from_addr=EMAIL, to_addrs=DESTINATION_EMAIL)
+        connection.quit()
 
     
     def edit_quantity():
@@ -454,8 +473,10 @@ def sell(root):
     edit_button = ttk.Button(sell_window, text="Chỉnh số lượng", command=edit_quantity)
     edit_button.place(relx=0.82, rely=0.16)
 
-    send_email_button = ttk.Button(sell_window, text='Gửi email')
+    send_email_button = ttk.Button(sell_window, text='Gửi email',command=sendEmail)
     send_email_button.place(relx=0.9,rely=0.16)
+
+
 
     label_payment = ttk.Label(sell_window, text="Khuyến mãi", font=("Arial", 12, "bold"))
     label_payment.place(relx=0.68, rely=0.75)

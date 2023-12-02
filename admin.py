@@ -19,14 +19,14 @@ user = StringVar()
 passwd = StringVar()
 fname = StringVar()
 lname = StringVar()
-def customers():
+def statistics():
     adm.withdraw()
-    global customer
-    customer = Toplevel()
-    page10 = Customer(customer)
+    global statistic
+    statistic = Toplevel()
+    page10 = Statistics(statistic)
     page10.time()
-    customer.protocol("WM_DELETE_WINDOW", exitt)
-    customer.mainloop()
+    statistic.protocol("WM_DELETE_WINDOW", exitt)
+    statistic.mainloop()
 def invoices():
     adm.withdraw()
     global invoice
@@ -138,8 +138,8 @@ class Admin_Page:
         self.button5.configure(background="#ffffff")
         self.button5.configure(font="-family {Poppins SemiBold} -size 12")
         self.button5.configure(borderwidth="0")
-        self.button5.configure(text="""Khách hàng""")
-        self.button5.configure(command=customers)
+        self.button5.configure(text="""THỐNG KÊ""")
+        self.button5.configure(command=statistics)
     def Logout(self):
         sure = messagebox.askyesno("Logout", "Are you sure you want to logout?", parent=adm)
         if sure == True:
@@ -1720,6 +1720,51 @@ class Invoice:
         self.button3.configure(text="""DELETE INVOICE""")
         self.button3.configure(command=self.delete_invoice)
 
+
+
+        self.button6 = Button(invoice)
+        self.button6.place(relx=0.052, rely=0.552, width=306, height=28)
+        self.button6.configure(relief="flat")
+        self.button6.configure(overrelief="flat")
+        self.button6.configure(activebackground="#CF1E14")
+        self.button6.configure(cursor="hand2")
+        self.button6.configure(foreground="#ffffff")
+        self.button6.configure(background="#CF1E14")
+        self.button6.configure(font="-family {Poppins SemiBold} -size 12")
+        self.button6.configure(borderwidth="0")
+        self.button6.configure(text="""Danh sách giao hàng""")
+        # self.button6.configure(command=self.delete_invoice)
+
+
+
+
+        self.button5 = Button(invoice)
+        self.button5.place(relx=0.052, rely=0.602, width=306, height=28)
+        self.button5.configure(relief="flat")
+        self.button5.configure(overrelief="flat")
+        self.button5.configure(activebackground="#CF1E14")
+        self.button5.configure(cursor="hand2")
+        self.button5.configure(foreground="#ffffff")
+        self.button5.configure(background="#CF1E14")
+        self.button5.configure(font="-family {Poppins SemiBold} -size 12")
+        self.button5.configure(borderwidth="0")
+        self.button5.configure(text="""Danh sách khách hàng""")
+        # self.button5.configure(command=self.delete_invoice)
+
+        self.button7 = Button(invoice)
+        self.button7.place(relx=0.052, rely=0.7, width=306, height=28)
+        self.button7.configure(relief="flat")
+        self.button7.configure(overrelief="flat")
+        self.button7.configure(activebackground="#CF1E14")
+        self.button7.configure(cursor="hand2")
+        self.button7.configure(foreground="#ffffff")
+        self.button7.configure(background="#CF1E14") 
+        self.button7.configure(font="-family {Poppins SemiBold} -size 12")
+        self.button7.configure(borderwidth="0")
+        self.button7.configure(text="""Thùng rác""")
+        # self.button7.configure(command=self.delete_invoice)
+
+
         self.button4 = Button(invoice)
         self.button4.place(relx=0.135, rely=0.885, width=76, height=23)
         self.button4.configure(relief="flat")
@@ -1883,18 +1928,18 @@ class Invoice:
             invoice.destroy()
             adm.deiconify()
 
-class Customer:
+class Statistics:
     def __init__(self, top=None):
         top.geometry("1366x768")
         top.resizable(0, 0)
         top.title("Invoices")
 
-        self.label1 = Label(customer)
+        self.label1 = Label(statistic)
         self.label1.place(relx=0, rely=0, width=1366, height=768)
         self.img = PhotoImage(file="./images/invoices.png")
         self.label1.configure(image=self.img)
 
-        self.message = Label(customer)
+        self.message = Label(statistic)
         self.message.place(relx=0.046, rely=0.055, width=136, height=30)
         self.message.configure(font="-family {Poppins} -size 10")
         self.message.configure(foreground="#000000")
@@ -1902,18 +1947,18 @@ class Customer:
         self.message.configure(text="""ADMIN""")
         self.message.configure(anchor="w")
 
-        self.clock = Label(customer)
+        self.clock = Label(statistic)
         self.clock.place(relx=0.9, rely=0.065, width=102, height=36)
         self.clock.configure(font="-family {Poppins Light} -size 12")
         self.clock.configure(foreground="#000000")
         self.clock.configure(background="#ffffff")
 
-        self.entry1 = Entry(customer)
+        self.entry1 = Entry(statistic)
         self.entry1.place(relx=0.040, rely=0.286, width=240, height=28)
         self.entry1.configure(font="-family {Poppins} -size 12")
         self.entry1.configure(relief="flat")
 
-        self.button1 = Button(customer)
+        self.button1 = Button(statistic)
         self.button1.place(relx=0.229, rely=0.289, width=76, height=23)
         self.button1.configure(relief="flat")
         self.button1.configure(overrelief="flat")
@@ -1926,7 +1971,7 @@ class Customer:
         self.button1.configure(text="""Search""")
         # self.button1.configure(command=self.search_inv)
 
-        self.button2 = Button(customer)
+        self.button2 = Button(statistic)
         self.button2.place(relx=0.035, rely=0.106, width=76, height=23)
         self.button2.configure(relief="flat")
         self.button2.configure(overrelief="flat")
@@ -1939,7 +1984,7 @@ class Customer:
         self.button2.configure(text="""Logout""")
         self.button2.configure(command=self.Logout)
 
-        self.button3 = Button(customer)
+        self.button3 = Button(statistic)
         self.button3.place(relx=0.052, rely=0.432, width=306, height=28)
         self.button3.configure(relief="flat")
         self.button3.configure(overrelief="flat")
@@ -1952,7 +1997,9 @@ class Customer:
         self.button3.configure(text="""DELETE INVOICE""")
         # self.button3.configure(command=self.delete_invoice)
 
-        self.button4 = Button(customer)
+    
+
+        self.button4 = Button(statistic)
         self.button4.place(relx=0.135, rely=0.885, width=76, height=23)
         self.button4.configure(relief="flat")
         self.button4.configure(overrelief="flat")
@@ -1965,9 +2012,9 @@ class Customer:
         self.button4.configure(text="""EXIT""")
         self.button4.configure(command=self.Exit)
 
-        self.scrollbarx = Scrollbar(customer, orient=HORIZONTAL)
-        self.scrollbary = Scrollbar(customer, orient=VERTICAL)
-        self.tree = ttk.Treeview(customer)
+        self.scrollbarx = Scrollbar(statistic, orient=HORIZONTAL)
+        self.scrollbary = Scrollbar(statistic, orient=VERTICAL)
+        self.tree = ttk.Treeview(statistic)
         self.tree.place(relx=0.307, rely=0.203, width=880, height=550)
         self.tree.configure(
             yscrollcommand=self.scrollbary.set, xscrollcommand=self.scrollbarx.set
@@ -2085,7 +2132,7 @@ class Customer:
     def Logout(self):
         sure = messagebox.askyesno("Logout", "Are you sure you want to logout?")
         if sure == True:
-            customer.destroy()
+            statistic.destroy()
             root.deiconify()
             page1.entry1.delete(0, END)
             page1.entry2.delete(0, END)
@@ -2096,9 +2143,9 @@ class Customer:
         self.clock.after(1000, self.time)
 
     def Exit(self):
-        sure = messagebox.askyesno("Exit","Are you sure you want to exit?", parent=customer)
+        sure = messagebox.askyesno("Exit","Are you sure you want to exit?", parent=statistic)
         if sure == True:
-            customer.destroy()
+            statistic.destroy()
             adm.deiconify()
 
 

@@ -248,7 +248,7 @@ class Employee:
 
         self.label1 = Label(emp)
         self.label1.place(relx=0, rely=0, width=1366, height=768)
-        self.img = PhotoImage(file="./images/employee.png")
+        self.img = PhotoImage(file="./images/employee_fix.png")
         self.label1.configure(image=self.img)
 
         self.message = Label(emp)
@@ -1659,7 +1659,7 @@ class Invoice:
 
         self.label1 = Label(invoice)
         self.label1.place(relx=0, rely=0, width=1366, height=768)
-        self.img = PhotoImage(file="./images/invoices.png")
+        self.img = PhotoImage(file="./images/invoices_fix.png")
         self.label1.configure(image=self.img)
 
         self.message = Label(invoice)

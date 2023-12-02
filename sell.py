@@ -314,6 +314,34 @@ def sell(root):
     # Tạo nút "Thanh toán"
     button_payment = ttk.Button(sell_window, text="Thanh toán", command=calculate_total)
     button_payment.place(relx=0.68, rely=0.16)
+
+    #tao nut ship hang
+
+    button_deliver = ttk.Button(sell_window, text="Giao hàng tại nhà")
+    button_deliver.place(relx=0.58, rely=0.16)
+
+    #tạo nút "hàng hoá giảm giá"
+    button_display_discount = ttk.Button(sell_window, text="Hàng giảm giá")
+    button_display_discount.place(relx=0.03, rely=0.16)
+
+    #tạo nút "hàng hoá hết"
+
+    button_display_zero = ttk.Button(sell_window, text="Sản phẩm hết hàng")
+    button_display_zero.place(relx=0.11, rely=0.16)
+
+    #sap xep hang hoa theo abc
+    button_arrange = ttk.Button(sell_window, text="Sắp xếp tên")
+    button_arrange.place(relx=0.21, rely=0.16)
+
+    #để lại lời nhắn cho ca sau
+    button_notification = ttk.Button(sell_window, text="Lời nhắn")
+    button_notification.place(relx=0.28, rely=0.16)
+
+
+
+    button_deliver = ttk.Button(sell_window, text="Giao hàng tại nhà")
+    button_deliver.place(relx=0.58, rely=0.16)
+
     # Tạo hàm xử lý sự kiện khi nhấn nút "Xóa"
     def delete_all_data():
         treeview_selected.delete(*treeview_selected.get_children())

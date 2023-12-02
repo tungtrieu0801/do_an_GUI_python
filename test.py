@@ -1,45 +1,48 @@
-def edit_quantity():
-        # Lấy item được chọn trong treeview_selected
-        selected_item = treeview_selected.focus()
+import tkinter as tk
+from tkinter import ttk
+import matplotlib.pyplot as plt
 
-        if selected_item:
-            # Lấy giá trị của cột "Số lượng" của item đang được chọn
-            current_quantity = treeview_selected.item(selected_item, "values")[2]
+def draw_bar_chart():
+    # Dữ liệu mẫu (tên sản phẩm và số lượng bán ra)
+    product_names = ["Sản phẩm A", "Sản phẩm B", "Sản phẩm C", "Sản phẩm D"]
+    quantity_sold = [10, 25, 15, 30]
 
-            # Tạo một cửa sổ popup cho phép chỉnh sửa số lượng
-            popup_window = tk.Toplevel(sell_window)
+    # Vẽ biểu đồ cột
+    plt.bar(product_names, quantity_sold, color='blue')
 
-            # Tính toán vị trí giữa màn hình cho cửa sổ popup
-            window_width = 200
-            window_height = 150
-            screen_width = sell_window.winfo_screenwidth()
-            screen_height = sell_window.winfo_screenheight()
-            x = (screen_width - window_width) // 2
-            y = (screen_height - window_height) // 2
+    # Hiển thị biểu đồ
+    plt.show()
 
-            # Đặt tọa độ cửa sổ popup
-            popup_window.geometry(f"{window_width}x{window_height}+{x}+{y}")
+def populate_treeview():
+    # Xóa dữ liệu cũ trên Treeview (nếu có)
+    for row in tree.get_children():
+        tree.delete(row)
 
-            # Tạo một nhãn và ô văn bản để hiển thị và chỉnh sửa số lượng
-            quantity_label = ttk.Label(popup_window, text="Số lượng:")
-            quantity_label.pack()
+    # Dữ liệu mẫu (tên sản phẩm và số lượng bán ra)
+    product_names = ["Sản phẩm A", "Sản phẩm B", "Sản phẩm C", "Sản phẩm D"]
+    quantity_sold = [10, 25, 15, 30]
 
-            quantity_entry = ttk.Entry(popup_window)
-            quantity_entry.insert(0, current_quantity)
-            quantity_entry.pack()
+    # Thêm dữ liệu vào Treeview
+    for i in range(len(product_names)):
+        tree.insert("", i, values=(product_names[i], quantity_sold[i]))
 
-            # Tạo một hàm xử lý sự kiện khi nhấn nút "Lưu"
-            def save_quantity():
-                new_quantity = quantity_entry.get()
+# Tạo cửa sổ
+root = tk.Tk()
+root.title("Thống Kê Số Lượng Bán Ra")
 
-                # Cập nhật giá trị số lượng trong treeview_selected
-                treeview_selected.set(selected_item, "Số lượng", new_quantity)
+# Tạo nút "Vẽ Biểu Đồ"
+draw_chart_button = ttk.Button(root, text="Vẽ Biểu Đồ", command=draw_bar_chart)
+draw_chart_button.pack(pady=10)
 
-                # Đóng cửa sổ popup
-                popup_window.destroy()
+# Tạo Treeview
+tree = ttk.Treeview(root, columns=("Product", "Quantity"), show="headings")
+tree.heading("Product", text="Tên Sản Phẩm")
+tree.heading("Quantity", text="Số Lượng Bán Ra")
+tree.pack(pady=10)
 
-            # Tạo nút "Lưu" để lưu giá trị mới của số lượng
-            save_button = ttk.Button(popup_window, text="Lưu", command=save_quantity)
-            save_button.pack()
-    edit_button = ttk.Button(sell_window, text="Chỉnh số lượng", command=edit_quantity)
-    edit_button.place(relx=0.84, rely=0.16)
+# Tạo nút "Hiển Thị Thông Tin Trên Treeview"
+show_info_button = ttk.Button(root, text="Hiển Thị Thông Tin", command=populate_treeview)
+show_info_button.pack(pady=10)
+
+# Chạy ứng dụng
+root.mainloop()

@@ -277,12 +277,14 @@ def sell(root):
         selected_items = treeview_selected.get_children()
         invoice_items = []  # Danh sách để lưu chi tiết các món hàng trong hoá đơn
 
+        khuyenmai = float(khuyenmai_combobox.get().strip("%")) / 100
         for item in selected_items:
             product_name = treeview_selected.item(item, "values")[0]  # Tên sản phẩm là cột đầu tiên
             quantity = float(treeview_selected.item(item, "values")[2])  # Số lượng là cột thứ 3
             price = float(treeview_selected.item(item, "values")[3])  # Đơn giá là cột thứ 4
             subtotal = quantity * price
-            total += subtotal
+            subtotal_with_discount = subtotal -subtotal*khuyenmai
+            total += subtotal_with_discount
 
             # Thêm chi tiết món hàng vào danh sách
             invoice_items.append((product_name, quantity, price, subtotal))
@@ -304,6 +306,28 @@ def sell(root):
         cursor.executemany(sql_invoice_detail, values_invoice_detail)
         connection.commit()
 
+        # Cập nhật số lượng trong cơ sở dữ liệu
+        for item in selected_items:
+            product_name = treeview_selected.item(item, "values")[0]
+            quantity = float(treeview_selected.item(item, "values")[2])
+
+            # Lấy số lượng ban đầu từ cơ sở dữ liệu
+            sql_get_initial_quantity = "SELECT stock FROM inventory WHERE product_name = %s"
+            cursor.execute(sql_get_initial_quantity, (product_name,))
+            initial_quantity = cursor.fetchone()[0]
+
+            # Tính toán số lượng mới
+            new_quantity = initial_quantity - quantity
+
+            # Cập nhật số lượng mới trong cơ sở dữ liệu
+            sql_update_quantity = "UPDATE inventory SET stock = %s WHERE product_name = %s"
+            cursor.execute(sql_update_quantity, (new_quantity, product_name))
+            connection.commit()
+
+
+        # Hiển thị lại dữ liệu trên display_data
+        display_data(tree)
+        
         # Hiển thị giá tổng đơn hàng bằng hộp thoại thông báo
         messagebox.showinfo("Thông báo", f"Tổng đơn hàng: {total} đồng")
         treeview_selected.insert("", "end", text="")
@@ -405,7 +429,21 @@ def sell(root):
             # Tạo một hàm xử lý sự kiện khi nhấn nút "Lưu"
             def save_quantity():
                 new_quantity = quantity_entry.get()
+                
+                if not new_quantity.isdigit() or int(new_quantity) <= 0:
+                    messagebox.showerror("Lỗi", "Số lượng phải là một số nguyên dương.")
+                    return
+                # Lấy item được chọn trong treeview_selected
+                selected_item = treeview_selected.focus()
 
+                if selected_item:
+                    # Lấy giá trị số lượng từ dữ liệu hiển thị
+                    current_quantity = treeview_selected.item(selected_item, "values")[3]
+
+                    # Kiểm tra xem new_quantity có lớn hơn số lượng hiển thị từ dữ liệu hay không
+                    if int(new_quantity) > int(current_quantity):
+                        messagebox.showwarning("Cảnh báo", "Số lượng không đủ.")
+                        return
                 # Cập nhật giá trị số lượng trong treeview_selected
                 treeview_selected.set(selected_item, "Số lượng", new_quantity)
 
@@ -420,3 +458,12 @@ def sell(root):
 
     send_email_button = ttk.Button(sell_window, text='Gửi email')
     send_email_button.place(relx=0.9,rely=0.16)
+
+    label_payment = ttk.Label(sell_window, text="Khuyến mãi", font=("Arial", 12, "bold"))
+    label_payment.place(relx=0.68, rely=0.75)
+    # Tạo combobox
+    khuyenmai_combobox = ttk.Combobox(sell_window, values=["0%", "5%", "10%", "15%"],state="readonly")
+    # Đặt giá trị mặc định cho combobox
+    khuyenmai_combobox.set("0%")
+    # Định vị trí và kích thước của combobox
+    khuyenmai_combobox.place(relx=0.68, rely=0.8, width=100, height=25)

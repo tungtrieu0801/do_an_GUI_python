@@ -1,0 +1,27 @@
+def display_zero_stock():
+        connection = mysql.connector.connect(
+            host='localhost',
+            user='root',
+            password='080102',
+            database='myDatabase'
+        )
+        cursor = connection.cursor()
+        cursor.execute("SELECT product_name, category, stock, product_price FROM inventory WHERE stock = 0")
+        fetch = cursor.fetchall()
+        
+        window = tk.Toplevel(sell_window)  # Tạo cửa sổ con
+        window.title("Sản phẩm hết hàng")
+        treeview = ttk.Treeview(window, columns=("Product Name", "Category", "Stock", "Price"), show="headings")
+        treeview.heading("Product Name", text="Tên Sản Phẩm")
+        treeview.heading("Category", text="Loại Sản Phẩm")
+        treeview.heading("Stock", text="Số Lượng")
+        treeview.heading("Price", text="Giá")
+        
+        for data in fetch:
+            treeview.insert("", "end", values=data)
+        
+        treeview.pack()
+
+    # Tạo nút "Sản phẩm hết hàng"
+    button_display_zero = ttk.Button(sell_window, text="Sản phẩm hết hàng", command=display_zero_stock)
+    button_display_zero.place(relx=0.11, rely=0.16)

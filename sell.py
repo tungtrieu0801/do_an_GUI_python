@@ -349,8 +349,8 @@ def sell(root):
 
     #tạo nút "hàng hoá hết"
 
-    button_display_zero = ttk.Button(sell_window, text="Sản phẩm hết hàng")
-    button_display_zero.place(relx=0.11, rely=0.16)
+    # button_display_zero = ttk.Button(sell_window, text="Sản phẩm hết hàng")
+    # button_display_zero.place(relx=0.11, rely=0.16)
 
     #sap xep hang hoa theo abc
     button_arrange = ttk.Button(sell_window, text="Sắp xếp tên")
@@ -452,7 +452,7 @@ def sell(root):
                 selected_item = treeview_selected.focus()
                 if selected_item:
                     # Lấy giá trị số lượng từ dữ liệu hiển thị
-                    current_quantity = treeview_selected.item(selected_item, "values")[3]
+                    current_quantity = treeview_selected.item(selected_item, "values")[2]
 
                     # Kiểm tra xem new_quantity có lớn hơn số lượng hiển thị từ dữ liệu hay không
                     if int(new_quantity) > int(current_quantity):
@@ -489,3 +489,30 @@ def sell(root):
     # Tạo nút "Thanh toán"
     button_payment = ttk.Button(sell_window, text="Thanh toán", command=calculate_total)
     button_payment.place(relx=0.68, rely=0.86, width=100, height=25)
+    def display_zero_stock():
+        connection = mysql.connector.connect(
+            host='localhost',
+            user='root',
+            password='080102',
+            database='myDatabase'
+        )
+        cursor = connection.cursor()
+        cursor.execute("SELECT product_name, category, stock, product_price FROM inventory WHERE stock = 0")
+        fetch = cursor.fetchall()
+        
+        window = tk.Toplevel(sell_window)  # Tạo cửa sổ con
+        window.title("Sản phẩm hết hàng")
+        treeview = ttk.Treeview(window, columns=("Product Name", "Category", "Stock", "Price"), show="headings")
+        treeview.heading("Product Name", text="Tên Sản Phẩm")
+        treeview.heading("Category", text="Loại Sản Phẩm")
+        treeview.heading("Stock", text="Số Lượng")
+        treeview.heading("Price", text="Giá")
+        
+        for data in fetch:
+            treeview.insert("", "end", values=data)
+        
+        treeview.pack()
+
+    # Tạo nút "Sản phẩm hết hàng"
+    button_display_zero = ttk.Button(sell_window, text="Sản phẩm hết hàng", command=display_zero_stock)
+    button_display_zero.place(relx=0.11, rely=0.16)

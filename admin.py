@@ -2,6 +2,7 @@ import re
 from sqlite3 import Cursor
 from tkinter import simpledialog
 import tkinter
+from turtle import color
 
 import pandas as pd
 from tkinter import filedialog
@@ -20,6 +21,10 @@ user = StringVar()
 passwd = StringVar()
 fname = StringVar()
 lname = StringVar()
+def valid_phone(phn):
+    if re.match(r"[789]\d{9}$", phn):
+        return True
+    return False
 def statistics():
     adm.withdraw()
     global statistic
@@ -42,10 +47,7 @@ def random_emp_id(stringLength):
     return ('EMP'+strr)
 
 
-def valid_phone(phn):
-    if re.match(r"[789]\d{9}$", phn):
-        return True
-    return False
+
 def inventory():
     adm.withdraw()
     global inv
@@ -60,7 +62,7 @@ class Admin_Page:
     def __init__(self, top=None):
         top.geometry("1366x768")
         top.resizable(0, 0)
-        top.title("ADMIN Mode")
+        top.title("Quản trị")
 
         self.label1 = Label(adm)
         self.label1.place(relx=0, rely=0, width=1366, height=768)
@@ -142,7 +144,7 @@ class Admin_Page:
         self.button5.configure(text="""THỐNG KÊ""")
         self.button5.configure(command=statistics)
     def Logout(self):
-        sure = messagebox.askyesno("Logout", "Are you sure you want to logout?", parent=adm)
+        sure = messagebox.askyesno("Đăng xuất", "Bạn muốn đăng xuất?", parent=adm)
         if sure == True:
             adm.destroy()
             root.deiconify()
@@ -167,7 +169,7 @@ class login_page:
 
         self.label1 = Label(root)
         self.label1.place(relx=0, rely=0, width=1366, height=768)
-        self.img = PhotoImage(file="./images/admin_login_fix.png")
+        self.img = PhotoImage(file="./images/admin_login_fixx.png")
         self.label1.configure(image=self.img)
         
 
@@ -217,7 +219,7 @@ class login_page:
         connection.close()  # Đóng kết nối cơ sở dữ liệu
         if results:
             if results[0][1]=="admin":
-                messagebox.showinfo("Login Page", "The login is successful.")
+                messagebox.showinfo("OK", "Đăng nhập thành công.")
                 page1.entry1.delete(0, END)
                 page1.entry2.delete(0, END)
 
@@ -230,13 +232,13 @@ class login_page:
                 adm.protocol("WM_DELETE_WINDOW", exitt)
                 adm.mainloop()
             else:
-                messagebox.showerror("Oops!!", "You are not an admin.")
+                messagebox.showerror("No!!", "Bạn không phải người quản trị.")
 
         else:
             messagebox.showerror("Error", "Incorrect username or password.")
             page1.entry2.delete(0, END)
 def exitt():
-    sure = messagebox.askyesno("Exit","Are you sure you want to exit?", parent=root)
+    sure = messagebox.askyesno("Thoát","Bạn muốn thoát?", parent=root)
     if sure == True:
         adm.destroy()
         root.destroy()
@@ -245,7 +247,7 @@ class Employee:
     def __init__(self, top=None):
         top.geometry("1366x768")
         top.resizable(0, 0)
-        top.title("Employee Management")
+        top.title("Quản lí nhân viên")
 
         self.label1 = Label(emp)
         self.label1.place(relx=0, rely=0, width=1366, height=768)
@@ -368,7 +370,7 @@ class Employee:
 
         self.tree.configure(
             columns=(
-                "Employee ID",
+                "Account",
                 "Employee Name",
                 "Password",
                 "Address",
@@ -378,7 +380,7 @@ class Employee:
             )
         )
 
-        self.tree.heading("Employee ID", text="Employee ID", anchor=W)
+        self.tree.heading("Account", text="Tài khoản", anchor=W)
         self.tree.heading("Employee Name", text="Tên nhân viên", anchor=W)
         self.tree.heading("Password", text="Mật khẩu", anchor=W)
         self.tree.heading("Address", text="Địa chỉ", anchor=W)
@@ -387,10 +389,10 @@ class Employee:
         # self.tree.heading("Designation", text="Designation", anchor=W)
 
         self.tree.column("#0", stretch=NO, minwidth=0, width=0)
-        self.tree.column("#1", stretch=NO, minwidth=0, width=80)
-        self.tree.column("#2", stretch=NO, minwidth=0, width=260)
-        self.tree.column("#3", stretch=NO, minwidth=0, width=100)
-        self.tree.column("#4", stretch=NO, minwidth=0, width=198)
+        self.tree.column("#1", stretch=NO, minwidth=0, width=100)
+        self.tree.column("#2", stretch=NO, minwidth=0, width=200)
+        self.tree.column("#3", stretch=NO, minwidth=0, width=160)
+        self.tree.column("#4", stretch=NO, minwidth=0, width=178)
         # self.tree.column("#5", stretch=NO, minwidth=0, width=80)
         # self.tree.column("#6", stretch=NO, minwidth=0, width=80)
         # self.tree.column("#7", stretch=NO, minwidth=0, width=80)
@@ -426,10 +428,10 @@ class Employee:
             if search==to_search:
                 self.tree.selection_set(val[val.index(search)-1])
                 self.tree.focus(val[val.index(search)-1])
-                messagebox.showinfo("Success!!", "Employee ID: {} found.".format(self.entry1.get()), parent=emp)
+                messagebox.showinfo("Thành công!!", "Tìm thấy nhân viên: {} ".format(self.entry1.get()), parent=emp)
                 break
         else: 
-            messagebox.showerror("Oops!!", "Employee ID: {} not found.".format(self.entry1.get()), parent=emp)
+            messagebox.showerror("Xin lỗi!!", "Không tồn tại nhân viên: {} .".format(self.entry1.get()), parent=emp)
     def search_emp(self):
         search_text = self.entry1.get()  # Lấy giá trị từ ô tìm kiếm
         if not search_text:
@@ -465,7 +467,7 @@ class Employee:
                 found = True
 
         if not found:
-            messagebox.showerror("Oops!!", f"Product ID: {search_text} not found.", parent=inv)
+            messagebox.showerror("Ôi không!!", f"Không tìm thấy nhân viên: {search_text} .", parent=inv)
 
     sel = []
     def on_tree_select(self, Event):
@@ -479,7 +481,7 @@ class Employee:
         to_delete = []
 
         if len(self.sel)!=0:
-            sure = messagebox.askyesno("Confirm", "Are you sure you want to delete selected employee(s)?", parent=emp)
+            sure = messagebox.askyesno("Xác nhận", "Bạn có chắc chắn muốn xoá không?", parent=emp)
             if sure == True:
                 for i in self.sel:
                     for j in self.tree.item(i)["values"]:
@@ -508,14 +510,14 @@ class Employee:
                         connection.commit()
 
                 if flag==1:
-                    messagebox.showinfo("Success!!", "Employee(s) deleted from database.", parent=emp)
+                    messagebox.showinfo("Thành công!!", "Đã xoá tài khoản nhân viên.", parent=emp)
                     self.sel.clear()
                     self.tree.delete(*self.tree.get_children())
                     self.DisplayData()
                 else:
-                    messagebox.showerror("Error!!","Cannot delete master admin.")
+                    messagebox.showerror("Lỗi!!","Không thể xoá tài quản quản trị viên .")
         else:
-            messagebox.showerror("Error!!","Please select an employee.", parent=emp)
+            messagebox.showerror("Lỗi!!","Hãy chọn một nhân viên.", parent=emp)
 
     def update_emp(self):
         
@@ -539,9 +541,9 @@ class Employee:
             # page8.entry6.insert(0, vall[5])
             e_update.mainloop()
         elif len(self.sel)==0:
-            messagebox.showerror("Error","Please select an employee to update.")
+            messagebox.showerror("Lỗi","Vui lòng chọn một nhân viên để cập nhật.")
         else:
-            messagebox.showerror("Error","Can only update one employee at a time.")
+            messagebox.showerror("Lỗi","Can only update one employee at a time.")
 
         
 
@@ -574,14 +576,14 @@ class Employee:
         self.clock.after(1000, self.time)
 
     def Exit(self):
-        sure = messagebox.askyesno("Exit","Are you sure you want to exit?", parent=emp)
+        sure = messagebox.askyesno("Thoát","Bạn muốn thoát?", parent=emp)
         if sure == True:
             emp.destroy()
             adm.deiconify()
 
 
     def Logout(self):
-        sure = messagebox.askyesno("Logout", "Are you sure you want to logout?")
+        sure = messagebox.askyesno("Đăng xuất", "Bạn muốn đăng xuất?")
         if sure == True:
             emp.destroy()
             root.deiconify()
@@ -643,7 +645,7 @@ class Inventory:
         self.button2.configure(background="#CF1E14")
         self.button2.configure(font="-family {Poppins SemiBold} -size 12")
         self.button2.configure(borderwidth="0")
-        self.button2.configure(text="""Logout""")
+        self.button2.configure(text="""Đăng xuất""")
         self.button2.configure(command=self.Logout)
 
         self.button3 = Button(inv)
@@ -685,30 +687,30 @@ class Inventory:
         self.button5.configure(text="""XOÁ SẢN PHẨM""")
         self.button5.configure(command=self.delete_product)
 
-        self.button7 = Button(inv)
-        self.button7.place(relx=0.052, rely=0.67, width=306, height=28)
-        self.button7.configure(relief="flat")
-        self.button7.configure(overrelief="flat")
-        self.button7.configure(activebackground="#CF1E14")
-        self.button7.configure(cursor="hand2")
-        self.button7.configure(foreground="#ffffff")
-        self.button7.configure(background="#CF1E14")
-        self.button7.configure(font="-family {Poppins SemiBold} -size 12")
-        self.button7.configure(borderwidth="0")
-        self.button7.configure(text="""XUẤT EXCEL""")
+        self.button7 = ttk.Button(inv)
+        self.button7.place(relx=0.052, rely=0.67)
+        # self.button7.configure(relief="flat")
+        # self.button7.configure(overrelief="flat")
+        # self.button7.configure(activebackground="#CF1E14")
+        # self.button7.configure(cursor="hand2")
+        # self.button7.configure(foreground="#ffffff")
+        # self.button7.configure(background="#CF1E14")
+        # self.button7.configure(font="-family {Poppins SemiBold} -size 12")
+        # self.button7.configure(borderwidth="0")
+        self.button7.configure(text="Xuất excel")
         self.button7.configure(command=self.export_excel)
 
-        self.button8 = Button(inv)
-        self.button8.place(relx=0.052, rely=0.77, width=306, height=28)
-        self.button8.configure(relief="flat")
-        self.button8.configure(overrelief="flat")
-        self.button8.configure(activebackground="#CF1E14")
-        self.button8.configure(cursor="hand2")
-        self.button8.configure(foreground="#ffffff")
-        self.button8.configure(background="#CF1E14")
-        self.button8.configure(font="-family {Poppins SemiBold} -size 12")
-        self.button8.configure(borderwidth="0")
-        self.button8.configure(text="""NHẬP EXCEL""")
+        self.button8 = ttk.Button(inv)
+        self.button8.place(relx=0.052, rely=0.77)
+        # self.button8.configure(relief="flat")
+        # self.button8.configure(overrelief="flat")
+        # self.button8.configure(activebackground="#CF1E14")
+        # self.button8.configure(cursor="hand2")
+        # self.button8.configure(foreground="#ffffff")
+        # self.button8.configure(background="#CF1E14")
+        # self.button8.configure(font="-family {Poppins SemiBold} -size 12")
+        # self.button8.configure(borderwidth="0")
+        self.button8.configure(text="Nhập excel")
         self.button8.configure(command=self.import_excel)
 
 
@@ -722,7 +724,7 @@ class Inventory:
         self.button6.configure(background="#CF1E14")
         self.button6.configure(font="-family {Poppins SemiBold} -size 12")
         self.button6.configure(borderwidth="0")
-        self.button6.configure(text="""EXIT""")
+        self.button6.configure(text="""Thoát""")
         self.button6.configure(command=self.Exit)
 
 
@@ -754,23 +756,23 @@ class Inventory:
             )
         )
 #product_id, product_name,category ,stock, product_price
-        self.tree.heading("ID", text="Employee ID", anchor=W)
+        self.tree.heading("ID", text="ID", anchor=W)
         self.tree.heading("Tên sản phẩm", text="Tên sản phẩm", anchor=W)
         self.tree.heading("Loại sản phẩm", text="Loại sản phẩm", anchor=W)
         self.tree.heading("Số lượng", text="Số lượng", anchor=W)
         self.tree.heading("Giá", text="Giá", anchor=W)
         self.tree.heading("Nhà cung cấp", text="Nhà cung cấp", anchor=W)
-        self.tree.heading("Liên lạc nhà cung cấp", text="Liên lạc nhà cung cấp", anchor=W)
+        self.tree.heading("Liên lạc nhà cung cấp", text="Số điện thoại", anchor=W)
 
 
         self.tree.column("#0", stretch=NO, minwidth=0, width=10)
-        self.tree.column("#1", stretch=NO, minwidth=0, width=80)
-        self.tree.column("#2", stretch=NO, minwidth=0, width=260)
-        self.tree.column("#3", stretch=NO, minwidth=0, width=100)
-        self.tree.column("#4", stretch=NO, minwidth=0, width=120)
+        self.tree.column("#1", stretch=NO, minwidth=0, width=60)
+        self.tree.column("#2", stretch=NO, minwidth=0, width=240)
+        self.tree.column("#3", stretch=NO, minwidth=0, width=110)
+        self.tree.column("#4", stretch=NO, minwidth=0, width=70)
         self.tree.column("#5", stretch=NO, minwidth=0, width=80)
-        self.tree.column("#6", stretch=NO, minwidth=0, width=80)
-        self.tree.column("#7", stretch=NO, minwidth=0, width=80)
+        self.tree.column("#6", stretch=NO, minwidth=0, width=100)
+        self.tree.column("#7", stretch=NO, minwidth=0, width=120)
 
         self.DisplayData()
     def import_excel(self):
@@ -867,16 +869,16 @@ class Inventory:
         try:
             to_search = int(self.entry1.get())
         except ValueError:
-            messagebox.showerror("Oops!!", "Invalid Product Id.", parent=inv)
+            messagebox.showerror("Lỗi!!", "Không hợp lệ.", parent=inv)
         else:
             for search in val:
                 if search==to_search:
                     self.tree.selection_set(val[val.index(search)-1])
                     self.tree.focus(val[val.index(search)-1])
-                    messagebox.showinfo("Success!!", "Product ID: {} found.".format(self.entry1.get()), parent=inv)
+                    messagebox.showinfo("Thành công!!", "Tìm thấy sản phẩm: {} .".format(self.entry1.get()), parent=inv)
                     break
             else: 
-                messagebox.showerror("Oops!!", "Product ID: {} not found.".format(self.entry1.get()), parent=inv)
+                messagebox.showerror("Lỗi!!", "Không tìm thấy sản phẩm: {} .".format(self.entry1.get()), parent=inv)
     
     def search_product(self):
         search_text = self.entry1.get()  # Lấy giá trị từ ô tìm kiếm
@@ -911,7 +913,7 @@ class Inventory:
                 found = True
 
         if not found:
-            messagebox.showerror("Oops!!", f"Product ID: {search_text} not found.", parent=inv)
+            messagebox.showerror("Lỗi!!", f"Không tìm thấy sản phẩm: {search_text}.", parent=inv)
 
     sel = []
     def on_tree_select(self, Event):
@@ -949,13 +951,13 @@ class Inventory:
 
                     connection.commit()
 
-                messagebox.showinfo("Success!!", "Products deleted from database.", parent=inv)
+                messagebox.showinfo("Thành công!!", "Xoá sản phẩm thành công.", parent=inv)
                 self.sel.clear()
                 self.tree.delete(*self.tree.get_children())
 
                 self.DisplayData()
         else:
-            messagebox.showerror("Error!!","Please select a product.", parent=inv)
+            messagebox.showerror("Lỗi!!","Hãy chọn một sản phẩm.", parent=inv)
 
     def update_product(self):
         if len(self.sel)==1:
@@ -980,9 +982,9 @@ class Inventory:
 
 
         elif len(self.sel)==0:
-            messagebox.showerror("Error","Please choose a product to update.", parent=inv)
+            messagebox.showerror("Lỗi","Hãy chọn sản phẩm muốn cập nhật.", parent=inv)
         else:
-            messagebox.showerror("Error","Can only update one product at a time.", parent=inv)
+            messagebox.showerror("Lỗi","Can only update one product at a time.", parent=inv)
 
         p_update.mainloop()
 
@@ -1002,13 +1004,13 @@ class Inventory:
         self.clock.after(1000, self.time)
 
     def Exit(self):
-        sure = messagebox.askyesno("Exit","Are you sure you want to exit?", parent=inv)
+        sure = messagebox.askyesno("Thoát","Bạn muốn thoát?", parent=inv)
         if sure == True:
             inv.destroy()
             adm.deiconify()
 
     def ex2(self):
-        sure = messagebox.askyesno("Exit","Are you sure you want to exit?", parent=p_update)
+        sure = messagebox.askyesno("Thoát","Bạn muốn thoát??", parent=p_update)
         if sure == True:
             p_update.destroy()
             inv.deiconify()
@@ -1016,7 +1018,7 @@ class Inventory:
 
 
     def Logout(self):
-        sure = messagebox.askyesno("Logout", "Are you sure you want to logout?")
+        sure = messagebox.askyesno("Đăng xuất", "Bạn muốn đăng xuất?")
         if sure == True:
             root.deiconify()
             page1.entry1.delete(0, END)
@@ -1092,7 +1094,7 @@ class add_product:
         self.button1.configure(background="#CF1E14")
         self.button1.configure(font="-family {Poppins SemiBold} -size 14")
         self.button1.configure(borderwidth="0")
-        self.button1.configure(text="""ADD""")
+        self.button1.configure(text="""Thêm""")
         self.button1.configure(command=self.add)
 
         self.button2 = Button(p_add)
@@ -1105,7 +1107,7 @@ class add_product:
         self.button2.configure(background="#CF1E14")
         self.button2.configure(font="-family {Poppins SemiBold} -size 14")
         self.button2.configure(borderwidth="0")
-        self.button2.configure(text="""CLEAR""")
+        self.button2.configure(text="""Xoá""")
         self.button2.configure(command=self.clearr)
 
     def add(self):
@@ -1126,13 +1128,13 @@ class add_product:
                             try:
                                 float(pcp)
                             except ValueError:
-                                messagebox.showerror("Oops!", "Invalid cost price.", parent=p_add)
+                                messagebox.showerror("Lỗi!", "Invalid cost price.", parent=p_add)
                             else:
                                 if pmrp:
                                     try:
                                         float(pmrp)
                                     except ValueError:
-                                        messagebox.showerror("Oops!", "Invalid MRP.", parent=p_add)
+                                        messagebox.showerror("Lỗi!", "Invalid MRP.", parent=p_add)
                                     else:
                                         connection = mysql.connector.connect(
                                             host='localhost',
@@ -1418,7 +1420,7 @@ class add_employee:
         self.button1.configure(background="#CF1E14")
         self.button1.configure(font="-family {Poppins SemiBold} -size 14")
         self.button1.configure(borderwidth="0")
-        self.button1.configure(text="""ADD""")
+        self.button1.configure(text="""Thêm""")
         self.button1.configure(command=self.add)
 
         self.button2 = Button(e_add)
@@ -1431,7 +1433,7 @@ class add_employee:
         self.button2.configure(background="#CF1E14")
         self.button2.configure(font="-family {Poppins SemiBold} -size 14")
         self.button2.configure(borderwidth="0")
-        self.button2.configure(text="""CLEAR""")
+        self.button2.configure(text="""Xoá""")
         self.button2.configure(command=self.clearr)
 
 
@@ -1569,7 +1571,7 @@ class Update_Employee:
         self.button1.configure(background="#CF1E14")
         self.button1.configure(font="-family {Poppins SemiBold} -size 14")
         self.button1.configure(borderwidth="0")
-        self.button1.configure(text="""UPDATE""")
+        self.button1.configure(text="""Cập nhật""")
         self.button1.configure(command=self.update)
 
         self.button2 = Button(e_update)
@@ -1582,7 +1584,7 @@ class Update_Employee:
         self.button2.configure(background="#CF1E14")
         self.button2.configure(font="-family {Poppins SemiBold} -size 14")
         self.button2.configure(borderwidth="0")
-        self.button2.configure(text="""CLEAR""")
+        self.button2.configure(text="""Xoá""")
         self.button2.configure(command=self.clearr)
 
     def update(self):
@@ -1692,7 +1694,7 @@ class Invoice:
         self.button1.configure(background="#CF1E14")
         self.button1.configure(font="-family {Poppins SemiBold} -size 10")
         self.button1.configure(borderwidth="0")
-        self.button1.configure(text="""Search""")
+        self.button1.configure(text="""Tìm kiếm""")
         self.button1.configure(command=self.search_inv)
 
         self.button2 = Button(invoice)
@@ -1705,64 +1707,71 @@ class Invoice:
         self.button2.configure(background="#CF1E14")
         self.button2.configure(font="-family {Poppins SemiBold} -size 12")
         self.button2.configure(borderwidth="0")
-        self.button2.configure(text="""Logout""")
+        self.button2.configure(text="""Đăng xuất""")
         self.button2.configure(command=self.Logout)
 
-        self.button3 = Button(invoice)
-        self.button3.place(relx=0.052, rely=0.432, width=306, height=28)
-        self.button3.configure(relief="flat")
-        self.button3.configure(overrelief="flat")
-        self.button3.configure(activebackground="#CF1E14")
-        self.button3.configure(cursor="hand2")
-        self.button3.configure(foreground="#ffffff")
-        self.button3.configure(background="#CF1E14")
-        self.button3.configure(font="-family {Poppins SemiBold} -size 12")
-        self.button3.configure(borderwidth="0")
-        self.button3.configure(text="""DELETE INVOICE""")
+        self.button3 = ttk.Button(invoice)
+        self.button3.place(relx=0.052, rely=0.432)
+        # self.button3.configure(relief="flat")
+        # self.button3.configure(overrelief="flat")
+        # self.button3.configure(activebackground="#CF1E14")
+        # self.button3.configure(cursor="hand2")
+        # self.button3.configure(foreground="#ffffff")
+        # self.button3.configure(background="#CF1E14")
+        # self.button3.configure(font="-family {Poppins SemiBold} -size 12")
+        # self.button3.configure(borderwidth="0")
+
+        # Đặt cỡ chữ
+        style = ttk.Style()
+        style.configure("TButton", font=("Arial", 13))  # Thay "Arial" và 12 bằng font và cỡ chữ bạn muốn
+
+        # Kết hợp với style
+        self.button3.configure(style="TButton")
+        self.button3.configure(text="""Xoá đơn hàng""")
         self.button3.configure(command=self.delete_invoice)
 
 
 
-        self.button6 = Button(invoice)
-        self.button6.place(relx=0.052, rely=0.552, width=306, height=28)
-        self.button6.configure(relief="flat")
-        self.button6.configure(overrelief="flat")
-        self.button6.configure(activebackground="#CF1E14")
-        self.button6.configure(cursor="hand2")
-        self.button6.configure(foreground="#ffffff")
-        self.button6.configure(background="#CF1E14")
-        self.button6.configure(font="-family {Poppins SemiBold} -size 12")
-        self.button6.configure(borderwidth="0")
+        self.button6 = ttk.Button(invoice)
+        self.button6.place(relx=0.052, rely=0.552)
+        # self.button6.configure(relief="flat")
+        # self.button6.configure(overrelief="flat")
+        # self.button6.configure(activebackground="#CF1E14")
+        # self.button6.configure(cursor="hand2")
+        # self.button6.configure(foreground="#ffffff")
+        # self.button6.configure(background="#CF1E14")
+        # self.button6.configure(font="-family {Poppins SemiBold} -size 12")
+        # self.button6.configure(borderwidth="0")
         self.button6.configure(text="""Danh sách giao hàng""")
         self.button6.configure(command=self.show_deliver)
 
 
 
 
-        self.button5 = Button(invoice)
-        self.button5.place(relx=0.052, rely=0.602, width=306, height=28)
-        self.button5.configure(relief="flat")
-        self.button5.configure(overrelief="flat")
-        self.button5.configure(activebackground="#CF1E14")
-        self.button5.configure(cursor="hand2")
-        self.button5.configure(foreground="#ffffff")
-        self.button5.configure(background="#CF1E14")
-        self.button5.configure(font="-family {Poppins SemiBold} -size 12")
-        self.button5.configure(borderwidth="0")
+        self.button5 = ttk.Button(invoice)
+        self.button5.place(relx=0.052, rely=0.602)
+        # self.button5.configure(relief="flat")
+        # self.button5.configure(overrelief="flat")
+        # self.button5.configure(activebackground="#CF1E14")
+        # self.button5.configure(cursor="hand2")
+        # self.button5.configure(foreground="#ffffff")
+        # self.button5.configure(background="#CF1E14")
+        # self.button5.configure(font="-family {Poppins SemiBold} -size 12")
+        # self.button5.configure(borderwidth="0")
         self.button5.configure(text="""Danh sách khách hàng""")
         self.button5.configure(command=self.show_customers)
 
-        self.button7 = Button(invoice)
-        self.button7.place(relx=0.052, rely=0.7, width=306, height=28)
-        self.button7.configure(relief="flat")
-        self.button7.configure(overrelief="flat")
-        self.button7.configure(activebackground="#CF1E14")
-        self.button7.configure(cursor="hand2")
-        self.button7.configure(foreground="#ffffff")
-        self.button7.configure(background="#CF1E14") 
-        self.button7.configure(font="-family {Poppins SemiBold} -size 12")
-        self.button7.configure(borderwidth="0")
-        self.button7.configure(text="""Thùng rác""")
+        self.button7 = ttk.Button(invoice)
+        self.button7.place(relx=0.052, rely=0.7)
+        # self.button7.configure(relief="flat")
+        # self.button7.configure(overrelief="flat")
+        # self.button7.configure(activebackground="#CF1E14")
+        # self.button7.configure(cursor="hand2")
+        # self.button7.configure(foreground="#ffffff")
+        # self.button7.configure(background="#CF1E14") 
+        # self.button7.configure(font="-family {Poppins SemiBold} -size 12")
+        # self.button7.configure(borderwidth="0")
+        self.button7.configure(text="""Danh sách đơn hàng""")
         self.button7.configure(command=self.DisplayData)
 
 
@@ -1776,7 +1785,7 @@ class Invoice:
         self.button4.configure(background="#CF1E14")
         self.button4.configure(font="-family {Poppins SemiBold} -size 12")
         self.button4.configure(borderwidth="0")
-        self.button4.configure(text="""EXIT""")
+        self.button4.configure(text="""Thoát""")
         self.button4.configure(command=self.Exit)
 
         self.scrollbarx = Scrollbar(invoice, orient=HORIZONTAL)
@@ -1809,7 +1818,7 @@ class Invoice:
 
         # self.tree.heading("invoice_id", text="ID", anchor=W)
         self.tree.heading("name", text="Tên khách hàng", anchor=W)
-        self.tree.heading("total", text="Tổng giá", anchor=W)
+        self.tree.heading("total", text="Giá trị đơn hàng", anchor=W)
         self.tree.heading("phone", text="Số điện thoại", anchor=W)
         self.tree.heading("email", text="Email", anchor=W)
 
@@ -1817,7 +1826,7 @@ class Invoice:
         self.tree.column("#1", stretch=NO, minwidth=0, width=179)
         self.tree.column("#2", stretch=NO, minwidth=0, width=179)
         self.tree.column("#3", stretch=NO, minwidth=0, width=179)
-        self.tree.column("#4", stretch=NO, minwidth=0, width=179)
+        self.tree.column("#4", stretch=NO, minwidth=0, width=185)
         # self.tree.column("#4", stretch=NO, minwidth=0, width=179)
         
     
@@ -1981,8 +1990,8 @@ class Invoice:
         self.tree.column("#1", stretch=tkinter.NO, minwidth=0, width=50)
         self.tree.column("#2", stretch=tkinter.NO, minwidth=0, width=149)
         self.tree.column("#3", stretch=tkinter.NO, minwidth=0, width=179)
-        self.tree.column("#4", stretch=tkinter.NO, minwidth=0, width=179)
-        self.tree.column("#5", stretch=tkinter.NO, minwidth=0, width=129)
+        self.tree.column("#4", stretch=tkinter.NO, minwidth=0, width=159)
+        self.tree.column("#5", stretch=tkinter.NO, minwidth=0, width=179)
         self.tree.column("#6", stretch=tkinter.NO, minwidth=0, width=129)
 
 
@@ -2101,7 +2110,7 @@ class Invoice:
         to_delete = []
 
         if len(self.sel)!=0:
-            sure = messagebox.askyesno("Confirm", "Are you sure you want to delete selected invoice(s)?", parent=invoice)
+            sure = messagebox.askyesno("Xác nhận", "Bạn muốn xoá đơn hàng?", parent=invoice)
             if sure == True:
                 for i in self.sel:
                     for j in self.tree.item(i)["values"]:
@@ -2126,13 +2135,13 @@ class Invoice:
                     connection.commit()
 
 
-                messagebox.showinfo("Success!!", "Invoice(s) deleted from database.", parent=invoice)
+                messagebox.showinfo("Thành công!!", "Đã xoá đơn hàng.", parent=invoice)
                 self.sel.clear()
                 self.tree.delete(*self.tree.get_children())
 
                 self.DisplayData()
         else:
-            messagebox.showerror("Error!!","Please select an invoice", parent=invoice)
+            messagebox.showerror("Lỗi!!","Hãy chọn một đơn hàng", parent=invoice)
 
 
 
@@ -2148,14 +2157,14 @@ class Invoice:
             if search==to_search:
                 self.tree.selection_set(val[val.index(search)-1])
                 self.tree.focus(val[val.index(search)-1])
-                messagebox.showinfo("Success!!", "Bill Number: {} found.".format(self.entry1.get()), parent=invoice)
+                messagebox.showinfo("Thành công!!", "Bill Number: {} found.".format(self.entry1.get()), parent=invoice)
                 break
         else: 
             messagebox.showerror("Oops!!", "Bill NUmber: {} not found.".format(self.entry1.get()), parent=invoice)
 
 
     def Logout(self):
-        sure = messagebox.askyesno("Logout", "Are you sure you want to logout?")
+        sure = messagebox.askyesno("Đăng xuất", "Bạn muốn đăng xuất?")
         if sure == True:
             invoice.destroy()
             root.deiconify()
@@ -2168,7 +2177,7 @@ class Invoice:
         self.clock.after(1000, self.time)
 
     def Exit(self):
-        sure = messagebox.askyesno("Exit","Are you sure you want to exit?", parent=invoice)
+        sure = messagebox.askyesno("Thoát","Bạn muốn thoát?", parent=invoice)
         if sure == True:
             invoice.destroy()
             adm.deiconify()

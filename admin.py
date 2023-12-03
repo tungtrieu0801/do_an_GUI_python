@@ -1734,7 +1734,7 @@ class Invoice:
         self.button6.configure(font="-family {Poppins SemiBold} -size 12")
         self.button6.configure(borderwidth="0")
         self.button6.configure(text="""Danh sách giao hàng""")
-        # self.button6.configure(command=self.delete_invoice)
+        self.button6.configure(command=self.show_deliver)
 
 
 
@@ -1763,7 +1763,7 @@ class Invoice:
         self.button7.configure(font="-family {Poppins SemiBold} -size 12")
         self.button7.configure(borderwidth="0")
         self.button7.configure(text="""Thùng rác""")
-        # self.button7.configure(command=self.delete_invoice)
+        self.button7.configure(command=self.DisplayData)
 
 
         self.button4 = Button(invoice)
@@ -1852,13 +1852,13 @@ class Invoice:
         self.data = [(customer_name, total) for customer_name, total in rows]
 
         # Update TreeView
-        self.update_treeview()
+        self.update_treeview_customer()
 
         # Close the database connection
         cursor.close()
         conn.close()
 
-    def update_treeview(self):
+    def update_treeview_customer(self):
         # Clear existing data
         for item in self.tree.get_children():
             self.tree.delete(item)
@@ -1907,8 +1907,86 @@ class Invoice:
         self.tree.column("#3", stretch=tkinter.NO, minwidth=0, width=179)
         self.tree.column("#3", stretch=tkinter.NO, minwidth=0, width=179)
 
+#----------------------------------------------------------------------------------------------------------------------------
+    def show_deliver(self):
+        # Connect to the MySQL database
+        connection = mysql.connector.connect(
+            host='localhost',
+            user='root',
+            password='080102',
+            database='myDatabase'
+        )
+        cursor = connection.cursor()
+                # find_user = "SELECT * FROM inventory"
+        cursor.execute("SELECT * FROM deliver_detail")
+
+        # cur.execute("SELECT * FROM raw_inventory")
+        fetch = cursor.fetchall()
+        for data in fetch:
+            self.tree.insert("", "end", values=(data[1], data[2], data[3], data[4], data[5]))
+        self.all_items = fetch
 
 
+        # Update TreeView
+        self.update_treeview()
+
+        # Close the database connection
+        cursor.close()
+        connection.close()
+
+    def update_treeview(self):
+        # Clear existing data
+        for item in self.tree.get_children():
+            self.tree.delete(item)
+
+        # Add updated data to the tree
+        # for item in self.data:
+        #     self.tree.insert("", tkinter.END, values=item)
+        # for index, item in enumerate(self.data, start=1):
+        #     self.tree.insert("", tkinter.END, iid=index, values=(index,) + item)
+        for index, data in enumerate(self.all_items, start=1):
+            self.tree.insert("", tkinter.END, iid=index, values=(index,) + tuple(data[1:6]))
+
+
+
+        # Configure and place the tree
+        self.tree.place(relx=0.307, rely=0.203, width=880, height=550)
+        self.tree.configure(
+            yscrollcommand=self.scrollbary.set, xscrollcommand=self.scrollbarx.set
+        )
+        self.tree.configure(selectmode="extended")
+
+        self.tree.bind("<<TreeviewSelect>>", self.on_tree_select)
+        self.tree.bind("<Double-1>", self.double_tap)
+
+        self.scrollbary.configure(command=self.tree.yview)
+        self.scrollbarx.configure(command=self.tree.xview)
+
+        self.scrollbary.place(relx=0.954, rely=0.203, width=22, height=548)
+        self.scrollbarx.place(relx=0.307, rely=0.924, width=884, height=22)
+
+        self.tree.configure(
+            columns=(
+                "ID","Customer Name", "Paying Total","Phone Number", "Address", "Status"
+            )
+        )
+        self.tree.heading("ID", text="ID", anchor=tkinter.W)
+        self.tree.heading("Customer Name", text="Tên khách hàng", anchor=tkinter.W)
+        self.tree.heading("Paying Total", text="Tổng giá", anchor=tkinter.W)
+        self.tree.heading("Phone Number", text="Số điện thoại", anchor=tkinter.W)
+        self.tree.heading("Address", text="Address", anchor=tkinter.W)
+        self.tree.heading("Status", text="Status", anchor=tkinter.W)
+
+        self.tree.column("#0", stretch=tkinter.NO, minwidth=0, width=0)
+        self.tree.column("#1", stretch=tkinter.NO, minwidth=0, width=50)
+        self.tree.column("#2", stretch=tkinter.NO, minwidth=0, width=149)
+        self.tree.column("#3", stretch=tkinter.NO, minwidth=0, width=179)
+        self.tree.column("#4", stretch=tkinter.NO, minwidth=0, width=179)
+        self.tree.column("#5", stretch=tkinter.NO, minwidth=0, width=129)
+        self.tree.column("#6", stretch=tkinter.NO, minwidth=0, width=129)
+
+
+#------------------------------------------------------------------------------
 
 
     def DisplayData(self):
@@ -1924,9 +2002,48 @@ class Invoice:
 
         # cur.execute("SELECT * FROM raw_inventory")
         fetch = cursor.fetchall()
+        for item in self.tree.get_children():
+            self.tree.delete(item)
         for data in fetch:
             self.tree.insert("", "end", values=(data[1], data[2], data[3], data[4]))
         self.all_items = fetch
+
+        self.tree.place(relx=0.307, rely=0.203, width=880, height=550)
+        self.tree.configure(
+            yscrollcommand=self.scrollbary.set, xscrollcommand=self.scrollbarx.set
+        )
+        self.tree.configure(selectmode="extended")
+
+        self.tree.bind("<<TreeviewSelect>>", self.on_tree_select)
+        self.tree.bind("<Double-1>", self.double_tap)
+
+        self.scrollbary.configure(command=self.tree.yview)
+        self.scrollbarx.configure(command=self.tree.xview)
+
+        self.scrollbary.place(relx=0.954, rely=0.203, width=22, height=548)
+        self.scrollbarx.place(relx=0.307, rely=0.924, width=884, height=22)
+
+        self.tree.configure(
+            columns=(
+                # "invoice_id",
+                "name",
+                "total",
+                "phone",
+                "email",
+            )
+        )
+
+        # self.tree.heading("invoice_id", text="ID", anchor=W)
+        self.tree.heading("name", text="Tên khách hàng", anchor=W)
+        self.tree.heading("total", text="Tổng giá", anchor=W)
+        self.tree.heading("phone", text="Số điện thoại", anchor=W)
+        self.tree.heading("email", text="Email", anchor=W)
+
+        self.tree.column("#0", stretch=NO, minwidth=0, width=0)
+        self.tree.column("#1", stretch=NO, minwidth=0, width=179)
+        self.tree.column("#2", stretch=NO, minwidth=0, width=179)
+        self.tree.column("#3", stretch=NO, minwidth=0, width=179)
+        self.tree.column("#4", stretch=NO, minwidth=0, width=179)
 
     # def show_customers(self):
     #     # Truy vấn dữ liệu từ bảng customers

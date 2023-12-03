@@ -34,7 +34,7 @@ def sell(root):
             database='myDatabase'
         )
         cursor = connection.cursor()
-        cursor.execute("SELECT product_name, category, product_price, stock FROM inventory")
+        cursor.execute("SELECT product_name, category, stock, product_price FROM inventory")
         fetch = cursor.fetchall()
         
         # Xóa tất cả các cột trước khi thêm mới để tránh việc trùng lặp dữ liệu
@@ -336,14 +336,12 @@ def sell(root):
 
         
 
-    # Tạo nút "Thanh toán"
-    button_payment = ttk.Button(sell_window, text="Thanh toán", command=calculate_total)
-    button_payment.place(relx=0.68, rely=0.16)
+
 
     #tao nut ship hang
 
     button_deliver = ttk.Button(sell_window, text="Giao hàng tại nhà")
-    button_deliver.place(relx=0.58, rely=0.16)
+    button_deliver.place(relx=0.68, rely=0.16)
 
     #tạo nút "hàng hoá giảm giá"
     button_display_discount = ttk.Button(sell_window, text="Hàng giảm giá")
@@ -373,7 +371,7 @@ def sell(root):
 
     # Tạo nút "Xóa"
     button_delete = ttk.Button(sell_window, text="Xóa", command=delete_all_data)
-    button_delete.place(relx=0.75, rely=0.16)
+    button_delete.place(relx=0.762, rely=0.16)
 
 
     display_data(tree)
@@ -470,10 +468,13 @@ def sell(root):
             save_button = ttk.Button(popup_window, text="Lưu", command=save_quantity)
             save_button.pack()
     edit_button = ttk.Button(sell_window, text="Chỉnh số lượng", command=edit_quantity)
-    edit_button.place(relx=0.82, rely=0.16)
+    edit_button.place(relx=0.825, rely=0.16)
 
     send_email_button = ttk.Button(sell_window, text='Gửi email',command=sendEmail)
     send_email_button.place(relx=0.9,rely=0.16)
+
+    notification_button = ttk.Button(sell_window, text='Thông báo',command=sendEmail)
+    notification_button.place(relx=0.9, rely=0.02)
 
 
 
@@ -485,3 +486,6 @@ def sell(root):
     khuyenmai_combobox.set("0%")
     # Định vị trí và kích thước của combobox
     khuyenmai_combobox.place(relx=0.68, rely=0.8, width=100, height=25)
+    # Tạo nút "Thanh toán"
+    button_payment = ttk.Button(sell_window, text="Thanh toán", command=calculate_total)
+    button_payment.place(relx=0.68, rely=0.86, width=100, height=25)

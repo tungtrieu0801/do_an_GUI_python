@@ -34,7 +34,7 @@ def sell(root):
             database='myDatabase'
         )
         cursor = connection.cursor()
-        cursor.execute("SELECT product_name, category, stock, product_price FROM inventory")
+        cursor.execute("SELECT product_name, category, stock, product_price FROM inventory WHERE stock>0")
         fetch = cursor.fetchall()
         
         # Xóa tất cả các cột trước khi thêm mới để tránh việc trùng lặp dữ liệu

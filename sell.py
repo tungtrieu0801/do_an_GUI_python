@@ -437,19 +437,29 @@ def sell(root):
             # Tạo một hàm xử lý sự kiện khi nhấn nút "Lưu"
             def save_quantity():
                 new_quantity = quantity_entry.get()
-                
                 if not new_quantity.isdigit() or int(new_quantity) <= 0:
                     messagebox.showerror("Lỗi", "Số lượng phải là một số nguyên dương.")
                     return
+                # Lấy item được chọn trong treeview_selected
                 selected_item = treeview_selected.focus()
-                if selected_item:
-                    # Lấy giá trị số lượng từ dữ liệu hiển thị
-                    current_quantity = treeview_selected.item(selected_item, "values")[2]
 
-                    # Kiểm tra xem new_quantity có lớn hơn số lượng hiển thị từ dữ liệu hay không
-                    if int(new_quantity) > int(current_quantity):
-                        messagebox.showwarning("Cảnh báo", "Số lượng không đủ.")
-                        return
+                # Kết nối đến cơ sở dữ liệu MySQL
+                connection = mysql.connector.connect(
+                    host='localhost',
+                    user='root',
+                    password='080102',
+                    database='myDatabase'
+                )
+                cursor = connection.cursor()
+                product_name = treeview_selected.item(selected_item, "values")[0]
+
+                # Truy vấn số lượng sản phẩm từ bảng inventory
+                query = "SELECT stock FROM inventory WHERE product_name=%s"
+                cursor.execute(query, (product_name,))
+                result = cursor.fetchone()
+                if new_quantity>result[0]:
+                    messagebox.showwarning("Lỗi", "Số lượng không đủ.")
+                    return
                 # Cập nhật giá trị số lượng trong treeview_selected
                 treeview_selected.set(selected_item, "Số lượng", new_quantity)
 
@@ -460,7 +470,7 @@ def sell(root):
             save_button = ttk.Button(popup_window, text="Lưu", command=save_quantity)
             save_button.pack()
     edit_button = ttk.Button(sell_window, text="Chỉnh số lượng", command=edit_quantity)
-    edit_button.place(relx=0.825, rely=0.16)
+    edit_button.place(relx=0.82, rely=0.16)
 
     send_email_button = ttk.Button(sell_window, text='Gửi email',command=sendEmail)
     send_email_button.place(relx=0.9,rely=0.16)

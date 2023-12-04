@@ -92,7 +92,7 @@ def sell(root):
             database='myDatabase'
         )
         cursor = connection.cursor()
-        cursor.execute("SELECT product_name, category, product_price, stock FROM inventory")
+        cursor.execute("SELECT product_name, category, product_price, stock FROM inventory WHERE stock>0")
         fetch = cursor.fetchall()
         for data in fetch:
             tree.insert("", "end", values=data)

@@ -346,19 +346,11 @@ def sell(root):
     #tạo nút "hàng hoá giảm giá"
     button_display_discount = ttk.Button(sell_window, text="Hàng giảm giá")
     button_display_discount.place(relx=0.03, rely=0.16)
-
-    #tạo nút "hàng hoá hết"
-
-    # button_display_zero = ttk.Button(sell_window, text="Sản phẩm hết hàng")
-    # button_display_zero.place(relx=0.11, rely=0.16)
+   
 
     #sap xep hang hoa theo abc
     button_arrange = ttk.Button(sell_window, text="Sắp xếp tên")
     button_arrange.place(relx=0.21, rely=0.16)
-
-    #để lại lời nhắn cho ca sau
-    button_notification = ttk.Button(sell_window, text="Lời nhắn")
-    button_notification.place(relx=0.28, rely=0.16)
 
 
 
@@ -554,3 +546,66 @@ def sell(root):
             tree.move(item, '', index)
 
     tree.heading("Giá", text="Giá tiền (VND)", anchor=tk.W, command=sort_by_product_price)
+
+    def open_word_file():
+        # Đường dẫn tới file Word "loinhan.docx"
+        file_path = "loinhan.docx"
+        
+        # Đọc dữ liệu từ file Word
+        doc = docx.Document(file_path)
+        text = "\n".join([paragraph.text for paragraph in doc.paragraphs])
+
+        # Hiển thị dữ liệu trong cửa sổ mới
+        new_window = tk.Toplevel()
+        new_window.title("Lịch sử lời nhắn")
+        text_widget = tk.Text(new_window)
+        text_widget.insert(tk.END, text)
+        text_widget.configure(state='disabled')  # Chỉ cho phép đọc
+        text_widget.pack()
+        # Hiển thị emp_id trong Text widget
+        text_widget.insert(tk.END, f"Emp ID: {shared_variables.emp_id}\n")
+        # Tạo nút "Ghi lại"
+        button_save = ttk.Button(new_window, text="Ghi lại", command=lambda: open_save_window(new_window))
+        button_save.pack()
+
+    def open_save_window(parent_window):
+        # Tạo cửa sổ con mới
+        save_window = tk.Toplevel(parent_window)
+        save_window.title("Ghi lời nhắn")
+        # Tạo Text widget cho việc nhập liệu
+        text_widget = tk.Text(save_window)
+        text_widget.pack()
+        
+        # Tạo nút "Lưu"
+        button_save = ttk.Button(save_window, text="Lưu", command=lambda: save_message(text_widget, save_window))
+        button_save.pack()
+
+    def save_message(text_widget, save_window):
+        # Đường dẫn tới file Word "loinhan.docx"
+        file_path = "loinhan.docx"
+        
+        # Tạo đối tượng Document từ file Word
+        doc = Document(file_path)
+        
+        # Lấy ngày và giờ hiện tại
+        now = datetime.now()
+        timestamp = now.strftime("%d/%m/%Y %H:%M:%S")
+        
+        # Lấy nội dung tin nhắn từ Text widget
+        message = text_widget.get("1.0", tk.END)
+        
+        # Ghi lại lời nhắn vào tài liệu
+        doc.add_paragraph(f"<{timestamp}> <{shared_variables.emp_id}>: {message}")
+        
+        # Lưu tài liệu
+        doc.save(file_path)
+        
+        messagebox.showinfo("Thông báo", f"Lưu tin nhắn thành công")
+
+        # Đóng cửa sổ con
+        save_window.destroy()
+
+    # Tạo nút "Lời nhắn"
+    button_notification = ttk.Button(sell_window, text="Lời nhắn", command=open_word_file)
+    button_notification.place(relx=0.28, rely=0.16)
+

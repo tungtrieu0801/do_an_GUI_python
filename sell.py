@@ -516,3 +516,41 @@ def sell(root):
     # Tạo nút "Sản phẩm hết hàng"
     button_display_zero = ttk.Button(sell_window, text="Sản phẩm hết hàng", command=display_zero_stock)
     button_display_zero.place(relx=0.11, rely=0.16)
+
+    def sort_by_product_name():
+       
+        tree_data = [(tree.set(item, "Tên sản phẩm"), item) for item in tree.get_children()]
+        sorted_data = sorted(tree_data, key=lambda x: x[0])
+        for index, (product_name, item) in enumerate(sorted_data):
+            tree.move(item, '', index)
+
+ 
+    tree.heading("Tên sản phẩm", text="Tên sản phẩm", anchor=tk.W, command=sort_by_product_name)
+
+    def sort_by_category():
+       
+        tree_data = [(tree.set(item, "Loại sản phẩm"), item) for item in tree.get_children()]
+        sorted_data = sorted(tree_data, key=lambda x: x[0])
+        for index, (category, item) in enumerate(sorted_data):
+            tree.move(item, '', index)
+
+  
+    tree.heading("Loại sản phẩm", text="Loại sản phẩm", anchor=tk.W, command=sort_by_category)
+
+    def sort_by_stock():
+  
+        tree_data = [(int(tree.set(item, "Số lượng")), item) for item in tree.get_children()]
+        sorted_data = sorted(tree_data, key=lambda x: x[0])
+        for index, (stock, item) in enumerate(sorted_data):
+            tree.move(item, '', index)
+
+    tree.heading("Số lượng", text="Số lượng", anchor=tk.W, command=sort_by_stock)
+
+    def sort_by_product_price():
+       
+        tree_data = [(int(tree.set(item, "Giá")), item) for item in tree.get_children()]
+        sorted_data = sorted(tree_data, key=lambda x: x[0])
+        for index, (product_price, item) in enumerate(sorted_data):
+            tree.move(item, '', index)
+
+    tree.heading("Giá", text="Giá tiền (VND)", anchor=tk.W, command=sort_by_product_price)

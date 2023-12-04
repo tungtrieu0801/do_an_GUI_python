@@ -13,7 +13,7 @@ from tkinter import scrolledtext as tkst
 #============================================
 import subprocess
 import sell
-
+import shared_variables
 root = Tk()
 
 root.geometry("1366x768")

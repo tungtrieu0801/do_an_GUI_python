@@ -3,7 +3,8 @@ from sqlite3 import Cursor
 from tkinter import simpledialog
 import tkinter
 from turtle import color
-
+from sqlalchemy import create_engine
+import pandas as pd
 import pandas as pd
 from tkinter import filedialog
 import mysql.connector
@@ -22,9 +23,7 @@ passwd = StringVar()
 fname = StringVar()
 lname = StringVar()
 def valid_phone(phn):
-    if re.match(r"[789]\d{9}$", phn):
-        return True
-    return False
+    pass
 def statistics():
     adm.withdraw()
     global statistic
@@ -218,7 +217,7 @@ class login_page:
         cursor.close()  # Đóng con trỏ sau khi thực hiện truy vấn
         connection.close()  # Đóng kết nối cơ sở dữ liệu
         if results:
-            if results[0][1]=="admin":
+            if results[0][0]=="ADMIN":
                 messagebox.showinfo("OK", "Đăng nhập thành công.")
                 page1.entry1.delete(0, END)
                 page1.entry2.delete(0, END)
@@ -830,7 +829,14 @@ class Inventory:
 
         # Use pandas to read the SQL query result into a DataFrame
         df = pd.read_sql_query(query, connection)
+        # db_uri = "mysql://root:080102@localhost:3306/mydatabase"
 
+        # # Tạo đối tượng engine
+        # engine = create_engine(db_uri)
+
+        # # Sử dụng engine để đọc dữ liệu
+        # query = "SELECT * FROM inventory"
+        # df = pd.read_sql_query(query, engine)
         # Ask the user to choose a file location to save the Excel file
         file_path = filedialog.asksaveasfilename(defaultextension=".xlsx", filetypes=[("Excel files", "*.xlsx")])
 
@@ -1197,7 +1203,7 @@ class Update_Product:
 
         self.label1 = Label(p_update)
         self.label1.place(relx=0, rely=0, width=1366, height=768)
-        self.img = PhotoImage(file="./images/update_product1.png")
+        self.img = PhotoImage(file="./images/update_product2.png")
         self.label1.configure(image=self.img)
 
         self.clock = Label(p_update)
@@ -1242,10 +1248,10 @@ class Update_Product:
         self.entry7.configure(relief="flat")
        
 
-        self.entry8 = Entry(p_update)
-        self.entry8.place(relx=0.527, rely=0.646, width=374, height=30)
-        self.entry8.configure(font="-family {Poppins} -size 12")
-        self.entry8.configure(relief="flat")
+        # self.entry8 = Entry(p_update)
+        # self.entry8.place(relx=0.527, rely=0.646, width=374, height=30)
+        # self.entry8.configure(font="-family {Poppins} -size 12")
+        # self.entry8.configure(relief="flat")
        
 
         self.button1 = Button(p_update)
@@ -1258,7 +1264,7 @@ class Update_Product:
         self.button1.configure(background="#CF1E14")
         self.button1.configure(font="-family {Poppins SemiBold} -size 14")
         self.button1.configure(borderwidth="0")
-        self.button1.configure(text="""UPDATE""")
+        self.button1.configure(text="""Cập nhật""")
         self.button1.configure(command=self.update)
 
         self.button2 = Button(p_update)
@@ -1271,67 +1277,96 @@ class Update_Product:
         self.button2.configure(background="#CF1E14")
         self.button2.configure(font="-family {Poppins SemiBold} -size 14")
         self.button2.configure(borderwidth="0")
-        self.button2.configure(text="""CLEAR""")
+        self.button2.configure(text="""Xoá""")
         self.button2.configure(command=self.clearr)
 
     def update(self):
-        pqty = self.entry3.get()
-        pcat = self.entry2.get()  
-        pmrp = self.entry4.get()  
-        pname = self.entry1.get()  
-        psubcat = self.entry6.get()  
-        pcp = self.entry7.get()  
-        pvendor = self.entry8.get()  
+            pname = self.entry1.get()  # Tên
+            pcat = self.entry2.get()   # Loại
+            pqty = self.entry3.get()   # Số lượng
+            pvender = self.entry4.get()  # Nhà cung cấp
+            pprice = self.entry6.get()  # Giá tiền
+            pphone = self.entry7.get()  # Số điện thoại
+
+            if pname.strip() and pcat.strip() and pvender.strip() and pprice.strip() and pphone.strip() and pqty.strip():
+                try:
+                    product_id = valll[0]
+                    connection = mysql.connector.connect(
+                        host='localhost',
+                        user='root',
+                        password='080102',
+                        database='myDatabase'
+                    )
+                    cursor = connection.cursor()
+                    update_query = "UPDATE inventory SET product_name = %s, category = %s, product_price = %s, stock = %s, vendor = %s, vendor_phoneno = %s WHERE product_id = %s"
+                    cursor.execute(update_query, [pname, pcat, pprice, pqty, pvender, pphone, product_id])
+                    connection.commit()
+                    messagebox.showinfo("Success!!", "Product successfully updated in inventory.", parent=p_update)
+                    valll.clear()
+                    Inventory.sel.clear()
+                    p_update.destroy()
+                    page3.tree.delete(*page3.tree.get_children())
+                    page3.DisplayData()
+                except Exception as e:
+                    messagebox.showerror("Error", "An error occurred: {}".format(str(e)), parent=p_update)
+                finally:
+                    connection.close()
+            else:
+                messagebox.showerror("Error!", "Please fill in all the fields.", parent=p_update)
+
+
+
+
+
+
+    # def update(self):
+    #     pname = self.entry1.get() #ten
+    #     pcat = self.entry2.get()  #loai
+    #     pqty = self.entry3.get() #soluong
+    #     pvender = self.entry4.get()  #nha cung cap
+          
+    #     pprice = self.entry6.get()  #giatien
+    #     pphone  = self.entry7.get()  #sdt
+    #     # pvendor = self.entry8.get()  
        
 
-        if pname.strip():
-            if pcat.strip():
-                if psubcat.strip():
-                    if pqty:
-                        if pcp:
-                            try:
-                                float(pcp)
-                            except ValueError:
-                                messagebox.showerror("Oops!", "Invalid cost price.", parent=p_update)
-                            else:
-                                if pmrp:
-                                    try:
-                                        float(pmrp)
-                                    except ValueError:
-                                        messagebox.showerror("Oops!", "Invalid MRP.", parent=p_update)
-                                    else:
-                                        if valid_phone(pvendor):
-                                            product_id = valll[0]
-                                            connection = mysql.connector.connect(
-                                                host='localhost',
-                                                user='root',
-                                                password='080102',
-                                                database='myDatabase'
-                                            )
-                                            cursor = connection.cursor()
-                                            update = (
-                                            "UPDATE inventory SET product_name = ?, category = ?, product_price = ?, stock = ?, vendor= ?, vendor_phoneno WHERE product_id = ?"
-                                            )
-                                            cursor.execute(update, [pname, pcat, psubcat, int(pqty), float(pmrp), float(pcp), pvendor, product_id])
-                                            connection.commit()
-                                            messagebox.showinfo("Success!!", "Product successfully updated in inventory.", parent=p_update)
-                                            valll.clear()
-                                            Inventory.sel.clear()
+    #     if pname.strip():
+    #         if pcat.strip():
+    #             if pvender.strip():
+    #                 if pprice.strip():
+    #                     if pphone.strip():
+    #                             if pqty.strip():
+    #                                         product_id = valll[0]
+    #                                         connection = mysql.connector.connect(
+    #                                             host='localhost',
+    #                                             user='root',
+    #                                             password='080102',
+    #                                             database='myDatabase'
+    #                                         )
+    #                                         cursor = connection.cursor()
+    #                                         update = (
+    #                                         "UPDATE inventory SET product_name = ?, category = ?, product_price = ?, stock = ?, vendor= ?, vendor_phoneno WHERE product_id = ?"
+    #                                         )
+    #                                         cursor.execute(update, [pname, pcat, pprice, pqty,pvender, pphone, product_id])
+    #                                         connection.commit()
+    #                                         messagebox.showinfo("Success!!", "Product successfully updated in inventory.", parent=p_update)
+    #                                         valll.clear()
+    #                                         Inventory.sel.clear()
 
-                                        else:
-                                            messagebox.showerror("Oops!", "Invalid phone number.", parent=p_update)
-                                else:
-                                    messagebox.showerror("Oops!", "Please enter MRP.", parent=p_update)
-                        else:
-                            messagebox.showerror("Oops!", "Please enter product cost price.", parent=p_update)
-                    else:
-                        messagebox.showerror("Oops!", "Please enter product quantity.", parent=p_update)
-                else:
-                    messagebox.showerror("Oops!", "Please enter product sub-category.", parent=p_update)
-            else:
-                messagebox.showerror("Oops!", "Please enter product category.", parent=p_update)
-        else:
-            messagebox.showerror("Oops!", "Please enter product name", parent=p_update)
+    #                                     # else:
+    #                                     #     messagebox.showerror("Lỗi!", "Hãy điền đủ thông tin", parent=p_update)
+    #                             else:
+    #                                 messagebox.showerror("Lỗi!", "Hãy điền đủ thông tin", parent=p_update)
+    #                     else:
+    #                         messagebox.showerror("Lỗi!", "Hãy điền đủ thông tin", parent=p_update)
+    #                 else:
+    #                     messagebox.showerror("Lỗi!", "Hãy điền đủ thông tin", parent=p_update)
+    #             else:
+    #                 messagebox.showerror("Lỗi!", "Hãy điền đủ thông tin", parent=p_update)
+    #         else:
+    #             messagebox.showerror("Lỗi!", "Hãy điền đủ thông tin", parent=p_update)
+    #     else:
+    #         messagebox.showerror("Lỗi!", "Hãy điền đủ thông tin", parent=p_update)
 
     def clearr(self):
         self.entry1.delete(0, END)
@@ -1457,46 +1492,79 @@ class add_employee:
         self.clock.config(text=string)
         self.clock.after(1000, self.time)
 
-    
     def add(self):
-        ename = self.entry1.get()
-        epass = self.entry2.get()
-        eadd = self.entry3.get()
-        ephone_number = self.entry4.get()
-        # eadd = self.entry5.get()
-        # epass = self.entry6.get()
+            ename = self.entry1.get()
+            epass = self.entry2.get()
+            eadd = self.entry3.get()
+            ephone_number = self.entry4.get()
 
-        if ename.strip():
-            if eadd:
-                if epass:
-                    if ephone_number:
-                        emp_id = random_emp_id(7)
-                        connection = mysql.connector.connect(
-                                            host='localhost',
-                                            user='root',
-                                            password='080102',
-                                            database='myDatabase'
-                                        )
-                        cur = connection.cursor()
-                        insert = (
-                            "INSERT INTO employee(emp_id, name, password, address, phone_number) VALUES(%s, %s, %s, %s, %s)"
-                                )
-                        cur.execute(insert, [emp_id, ename, eadd,epass, ephone_number])
-                        connection.commit()
-                        messagebox.showinfo("Success!!", "Employee ID: {} successfully added in database.".format(emp_id), parent=e_add)
-                        self.clearr()
-                        e_add.destroy()
-                        page5.tree.delete(*page5.tree.get_children())
-                        page5.DisplayData()
-                        e_add.destroy()
-                    else:
-                        messagebox.showerror("Hãy điền số điện thoại.", parent=ephone_number)
-                else:
-                    messagebox.showerror("Hãy điền mật khẩu", parent=epass)
+            if ename.strip() and eadd and epass and ephone_number:
+                try:
+                    emp_id = random_emp_id(7)
+                    connection = mysql.connector.connect(
+                        host='localhost',
+                        user='root',
+                        password='080102',
+                        database='myDatabase'
+                    )
+                    cur = connection.cursor()
+                    insert = "INSERT INTO employee(emp_id, name, address, password, phone_number) VALUES (%s, %s, %s, %s, %s)"
+                    cur.execute(insert, [emp_id, ename, eadd, epass, ephone_number])
+                    connection.commit()
+                    messagebox.showinfo("Success!!", "Employee ID: {} successfully added in database.".format(emp_id))
+                    self.clearr()
+                    page5.tree.delete(*page5.tree.get_children())
+                    page5.DisplayData()
+                except Exception as e:
+                    messagebox.showerror("Error", "An error occurred: {}".format(str(e)))
+                finally:
+                    connection.close()
             else:
-                messagebox.showerror("Hãy điền địa chỉ.", parent=e_add)
-        else:
-            messagebox.showerror("Hãy điền tên nhân viên.", parent=ename)
+                messagebox.showerror("Validation Error", "Please fill in all the fields.")
+
+
+
+
+
+    # def add(self):
+    #     ename = self.entry1.get()
+    #     epass = self.entry2.get()
+    #     eadd = self.entry3.get()
+    #     ephone_number = self.entry4.get()
+    #     # eadd = self.entry5.get()
+    #     # epass = self.entry6.get()
+
+    #     if ename.strip():
+    #         if eadd:
+    #             if epass:
+    #                 if ephone_number:
+    #                     emp_id = random_emp_id(7)
+    #                     connection = mysql.connector.connect(
+    #                                         host='localhost',
+    #                                         user='root',
+    #                                         password='080102',
+    #                                         database='myDatabase'
+    #                                     )
+    #                     cur = connection.cursor()
+    #                     insert = (
+    #                         "INSERT INTO employee(emp_id, name,address, password, phone_number) VALUES(%s, %s, %s, %s, %s)"
+    #                             )
+    #                     cur.execute(insert, [emp_id, ename, eadd,epass, ephone_number])
+    #                     connection.commit()
+    #                     messagebox.showinfo("Success!!", "Employee ID: {} successfully added in database.".format(emp_id), parent=e_add)
+    #                     self.clearr()
+    #                     e_add.destroy()
+    #                     page5.tree.delete(*page5.tree.get_children())
+    #                     page5.DisplayData()
+    #                     e_add.destroy()
+    #                 else:
+    #                     messagebox.showerror("Hãy điền số điện thoại.", parent=ephone_number)
+    #             else:
+    #                 messagebox.showerror("Hãy điền mật khẩu", parent=epass)
+    #         else:
+    #             messagebox.showerror("Hãy điền địa chỉ.", parent=e_add)
+    #     else:
+    #         messagebox.showerror("Hãy điền tên nhân viên.", parent=ename)
 
     def clearr(self):
         self.entry1.delete(0, END)
@@ -1514,7 +1582,7 @@ class Update_Employee:
 
         self.label1 = Label(e_update)
         self.label1.place(relx=0, rely=0, width=1366, height=768)
-        self.img = PhotoImage(file="./images/update_employee.png")
+        self.img = PhotoImage(file="./images/update_employee_fix.png")
         self.label1.configure(image=self.img)
 
         self.clock = Label(e_update)
@@ -1588,42 +1656,78 @@ class Update_Employee:
         self.button2.configure(command=self.clearr)
 
     def update(self):
-        ename = self.entry1.get()
-        epass = self.entry2.get()
-        eadd = self.entry3.get()
-        ephone_number = self.entry4.get()
-        # eadd = self.entry5.get()
-        # epass = self.entry6.get()
+            ename = self.entry1.get()
+            epass = self.entry2.get()
+            eadd = self.entry3.get()
+            ephone_number = self.entry4.get()
 
-        if ename.strip():
-            if eadd:
-                if epass:
-                    if ephone_number:
-                        emp_id = vall[0]
-                        connection = mysql.connector.connect(
-                                            host='localhost',
-                                            user='root',
-                                            password='080102',
-                                            database='myDatabase'
-                                        )
-                        cur = connection.cursor()
-                        update = "UPDATE employee SET name = %s, password = %s, address = %s, phone_number = %s WHERE emp_id = %s"
-                        cur.execute(update, [ename,  epass, eadd, ephone_number, emp_id])
-                        connection.commit()
-                        messagebox.showinfo("Success!!", "Employee ID: {} successfully updated in database.".format(emp_id), parent=e_update)
-                        vall.clear()
-                        page5.tree.delete(*page5.tree.get_children())
-                        page5.DisplayData()
-                        Employee.sel.clear()
-                        e_update.destroy()
-                    else:
-                        messagebox.showerror("Hãy nhập số điện thoại nhân viên.", parent=e_add)
-                else:
-                    messagebox.showerror("Hãy nhập mật khẩu thay đổi.", parent=e_add)
+            if ename.strip() and eadd and epass and ephone_number:
+                try:
+                    emp_id = vall[0]
+                    connection = mysql.connector.connect(
+                        host='localhost',
+                        user='root',
+                        password='080102',
+                        database='myDatabase'
+                    )
+                    cur = connection.cursor()
+                    update_query = "UPDATE employee SET name = %s, password = %s, address = %s, phone_number = %s WHERE emp_id = %s"
+                    cur.execute(update_query, [ename, epass, eadd, ephone_number, emp_id])
+                    connection.commit()
+                    messagebox.showinfo("Thành công!!", "Cập nhật thông tin thành công.", parent=e_update)
+                    vall.clear()
+                    page5.tree.delete(*page5.tree.get_children())
+                    page5.DisplayData()
+                    Employee.sel.clear()
+                    e_update.destroy()
+                except Exception as e:
+                    messagebox.showerror("Error", "An error occurred: {}".format(str(e)))
+                finally:
+                    connection.close()
             else:
-                messagebox.showerror("Hãy nhập địa chỉ thay đổi.", parent=e_add)
-        else:
-            messagebox.showerror("Hãy nhập tên nhân viên.", parent=e_add)
+                messagebox.showerror("Lỗi", "Hãy điền đủ thông tin.")
+
+
+
+
+
+    # def update(self):
+    #     ename = self.entry1.get()
+    #     epass = self.entry2.get()
+    #     eadd = self.entry3.get()
+    #     ephone_number = self.entry4.get()
+    #     # eadd = self.entry5.get()
+    #     # epass = self.entry6.get()
+
+    #     if ename.strip():
+    #         if eadd:
+    #             if epass:
+    #                 if ephone_number:
+    #                     emp_id = vall[0]
+    #                     connection = mysql.connector.connect(
+    #                                         host='localhost',
+    #                                         user='root',
+    #                                         password='080102',
+    #                                         database='myDatabase'
+    #                                     )
+    #                     cur = connection.cursor()
+    #                     update = "UPDATE employee SET name = %s, password = %s, address = %s, phone_number = %s WHERE emp_id = %s"
+    #                     cur.execute(update, [ename,  epass, eadd, ephone_number, emp_id])
+    #                     connection.commit()
+    #                     messagebox.showinfo("Thành công!!", "Cập nhật thông tin thành công.".format(emp_id), parent=e_update)
+    #                     vall.clear()
+    #                     page5.tree.delete(*page5.tree.get_children())
+    #                     page5.DisplayData()
+    #                     Employee.sel.clear()
+    #                     e_update.destroy()
+    #                 else:
+    #                     messagebox.showerror("Hãy nhập số điện thoại nhân viên.", parent=e_add)
+    #             else:
+    #                 messagebox.showerror("Hãy nhập mật khẩu thay đổi.", parent=e_add)
+    #         else:
+    #             messagebox.showerror("Hãy nhập địa chỉ thay đổi.", parent=e_add)
+    #     else:
+    #         messagebox.showerror("Hãy nhập tên nhân viên.", parent=e_add)
 
     def clearr(self):
         self.entry1.delete(0, END)
@@ -1722,11 +1826,11 @@ class Invoice:
         # self.button3.configure(borderwidth="0")
 
         # Đặt cỡ chữ
-        style = ttk.Style()
-        style.configure("TButton", font=("Arial", 13))  # Thay "Arial" và 12 bằng font và cỡ chữ bạn muốn
+        # style = ttk.Style()
+        # style.configure("TButton", font=("Arial", 13))  # Thay "Arial" và 12 bằng font và cỡ chữ bạn muốn
 
         # Kết hợp với style
-        self.button3.configure(style="TButton")
+        # self.button3.configure(style="TButton")
         self.button3.configure(text="""Xoá đơn hàng""")
         self.button3.configure(command=self.delete_invoice)
 

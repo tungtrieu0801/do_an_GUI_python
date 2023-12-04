@@ -3,6 +3,8 @@ import tkinter as tk
 from datetime import datetime
 from tkinter import ttk
 import smtplib
+from docx import Document
+import docx
 from email.message import EmailMessage
 from styles import *
 from tkinter import PhotoImage
@@ -14,7 +16,7 @@ from sale.product_page import create_product_page
 import re
 from sqlite3 import Cursor
 from tkinter import simpledialog
-
+import shared_variables
 import pandas as pd
 from tkinter import filedialog
 import mysql.connector
@@ -92,7 +94,7 @@ def sell(root):
             database='myDatabase'
         )
         cursor = connection.cursor()
-        cursor.execute("SELECT product_name, category, product_price, stock FROM inventory WHERE stock>0")
+        cursor.execute("SELECT product_name, category, stock, product_price FROM inventory WHERE stock>0")
         fetch = cursor.fetchall()
         for data in fetch:
             tree.insert("", "end", values=data)
@@ -437,9 +439,11 @@ def sell(root):
             # Tạo một hàm xử lý sự kiện khi nhấn nút "Lưu"
             def save_quantity():
                 new_quantity = quantity_entry.get()
+                
                 if not new_quantity.isdigit() or int(new_quantity) <= 0:
                     messagebox.showerror("Lỗi", "Số lượng phải là một số nguyên dương.")
                     return
+                new_quantity = int(new_quantity)
                 # Lấy item được chọn trong treeview_selected
                 selected_item = treeview_selected.focus()
 
@@ -454,7 +458,7 @@ def sell(root):
                 product_name = treeview_selected.item(selected_item, "values")[0]
 
                 # Truy vấn số lượng sản phẩm từ bảng inventory
-                query = "SELECT stock FROM inventory WHERE product_name=%s"
+                query = "SELECT stock FROM inventory WHERE product_name= %s"
                 cursor.execute(query, (product_name,))
                 result = cursor.fetchone()
                 if new_quantity>result[0]:

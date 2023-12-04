@@ -104,6 +104,7 @@ class login_page:
         cursor.close()  # Đóng con trỏ sau khi thực hiện truy vấn
         connection.close()  # Đóng kết nối cơ sở dữ liệu
         if results:
+            shared_variables.emp_id = results[0][0]  # Gán giá trị emp_id vào biến toàn cục
             messagebox.showinfo("Login Page", "The login is successful.")
             page1.entry1.delete(0, END)
             page1.entry2.delete(0, END)

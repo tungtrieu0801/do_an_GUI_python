@@ -44,48 +44,7 @@ def sell(root):
         for data in fetch:
             tree.insert("", "end", values=data)
         tree.all_items = fetch
-    # def search_product():
-    #     # Lấy giá trị từ ô tìm kiếm
-    #     search_text = search_entry.get()
 
-    #     # Xóa tất cả các dòng trong treeview1
-    #     tree.delete(*tree.get_children())
-
-    #     # Kết nối cơ sở dữ liệu MySQL
-    #     connection = mysql.connector.connect(
-    #         host='localhost',
-    #         user='root',
-    #         password='080102',
-    #         database='myDatabase'
-    #     )
-
-    #     # Tạo con trỏ để thao tác với cơ sở dữ liệu
-    #     cursor = connection.cursor()
-    #     if search_text:  # Nếu có giá trị trong ô tìm kiếm
-    #     # Truy vấn để lấy dữ liệu từ bảng "inventory" dựa trên tên sản phẩm hoặc loại sản phẩm
-    #         query = "SELECT * FROM inventory WHERE product_name LIKE %s OR category LIKE %s"
-    #         values = (f"%{search_text}%", f"%{search_text}%")
-
-    #     # Thực thi truy vấn
-    #         cursor.execute(query, values)
-    #     else:  # Nếu không có giá trị trong ô tìm kiếm, lấy toàn bộ dữ liệu
-    #     # Truy vấn để lấy toàn bộ dữ liệu từ bảng "inventory"
-    #         query = "SELECT * FROM inventory"
-
-    #     # Thực thi truy vấn
-    #     cursor.execute(query)
-    #     for row in cursor:
-    #         product_name = row[1]
-    #         category = row[2]
-    #         quantity = row[4]  # Assuming "stock" is the correct column index
-    #         unit_price = row[3]  # Assuming "product_price" is the correct column index
-
-    #     tree.insert("", "end", values=(product_name, category, quantity, unit_price))
-
-
-    #     # Đóng con trỏ và kết nối cơ sở dữ liệu
-    #     cursor.close()
-    #     connection.close()
     def search_product():
         connection = mysql.connector.connect(
             host='localhost',
@@ -127,8 +86,6 @@ def sell(root):
 
         if not found:
             messagebox.showerror("Oops!!", f"Product ID: {search_text} not found.")
-
-
 
     #gọi hàm style căn chỉnh
     configure_styles()
@@ -246,6 +203,8 @@ def sell(root):
             if not item_exists:
                 # Thêm sản phẩm mới vào treeview_selected
                 treeview_selected.insert("", "end", values=(product_name, product_type, 1, price))
+    def is_valid_input(char):
+        return char.isdigit() or char == ""
     # Tạo Label với kiểu đã đặt
     name_label = ttk.Label(sell_window, text="Tên khách hàng", style="Round.TLabel")
     name_label.place(relx=0.38, rely=0.1, width=115, height=30)
@@ -254,8 +213,12 @@ def sell(root):
 
     phone_label = ttk.Label(sell_window, text="Số điện thoại", style="Round.TLabel")
     phone_label.place(relx=0.61, rely=0.1, width=100, height=30)
-    phone_entry = ttk.Entry(sell_window)
-    phone_entry.place(relx=0.69, rely=0.1,  width=120, height=30)
+    # phone_label = ttk.Label(sell_window, text="Phone:")
+    # phone_label.place(relx=0.61, rely=0.1, width=100, height=30)
+
+    validate_cmd = (sell_window.register(lambda char: is_valid_input(char)), '%S')
+    phone_entry = ttk.Entry(sell_window, validate="key", validatecommand=validate_cmd)
+    phone_entry.place(relx=0.69, rely=0.1, width=120, height=30)
     
 
     email_label = ttk.Label(sell_window, text="Email", style="Round.TLabel")
@@ -461,6 +424,8 @@ def sell(root):
                 query = "SELECT stock FROM inventory WHERE product_name= %s"
                 cursor.execute(query, (product_name,))
                 result = cursor.fetchone()
+                
+                new_quantity = int(new_quantity)
                 if new_quantity>result[0]:
                     messagebox.showwarning("Lỗi", "Số lượng không đủ.")
                     return

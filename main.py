@@ -3,7 +3,20 @@ from tkinter import *
 from tkinter import messagebox
 
 main = Tk()
-main.geometry("1366x768")
+# main.geometry("1366x768")
+
+screen_width = main.winfo_screenwidth()
+screen_height = main.winfo_screenheight()
+    
+window_width = 1366  # Thay đổi kích thước theo nhu cầu
+window_height = 768  # Thay đổi kích thước theo nhu cầu
+# Tính toán vị trí để cửa sổ xuất hiện giữa màn hình
+x = (screen_width - window_width) // 2
+y = (screen_height - window_height) // 2
+
+    # Đặt vị trí cửa sổ
+main.geometry(f"{window_width}x{window_height}+{x}+{y}")
+main.resizable(width=False, height=False)
 main.title("Home")
 main.resizable(0, 0)
 def Exit():

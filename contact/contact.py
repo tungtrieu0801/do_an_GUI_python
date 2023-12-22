@@ -15,7 +15,7 @@ def contact(root):
     screen_height = root.winfo_screenheight()
     
     window_width = 1440  # Thay đổi kích thước theo nhu cầu
-    window_height = 850  # Thay đổi kích thước theo nhu cầu
+    window_height = 50  # Thay đổi kích thước theo nhu cầu
     # Tính toán vị trí để cửa sổ xuất hiện giữa màn hình
     x = (screen_width - window_width) // 2
     y = (screen_height - window_height) // 2
@@ -36,10 +36,10 @@ def contact(root):
 
     
     label = tk.Label(contact_window, text="Liên hệ với chúng tôi", foreground="green",font=("Arial", 25,'bold'),)  # Đặt kích thước font là 16
-    label.place(x=350, y=100)
+    label.place(x=150, y=100)
 
     frame_information = ttk.Frame(contact_window)
-    frame_information.place(x=350, y=160, width=730, height=300)
+    frame_information.place(x=100, y=60, width=730, height=300)
 
     # Tạo một ttk.Style và cấu hình nó
     style = ttk.Style()
@@ -74,5 +74,9 @@ def contact(root):
     #do image nằm đơn lẻ k phụ thuộc vào gì cả, nên phải lưu vào 1 biến để duy trì ngăn bị thu hồi bởi  garbage collector
     #còn trong file main là do ảnh nằm trong button, nên khi render button nó sẽ render lại cả ảnh.
     image_label.image = location_image
-    image_label.grid(row=0, column=1, rowspan=3, padx=(10, 0),pady=(40, 0))
+    image_label.grid(row=0, column=1, rowspan=2, padx=(10, 0),pady=(40, 0))
+    image = tk.PhotoImage(file="./images/path_to_your_image.png")  # Replace with the actual path to your image
+    image_label = tk.Label(frame_information, image=image)
+    image_label.image = image  # To prevent image from being garbage collected
+    image_label.grid(row=0, column=1, rowspan=3, padx=10)
     

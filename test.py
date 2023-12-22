@@ -1,75 +1,34 @@
 import tkinter as tk
 from tkinter import ttk
 
-class MyApp:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("TreeView Example")
+# Tạo cửa sổ Tkinter
+window = tk.Tk()
+window.title("Thông tin đầu tư")
 
-        # TreeView
-        self.tree = ttk.Treeview(root)
+# Đặt kích thước chữ là 25
+style = ttk.Style()
+style.configure('TLabel', font=('Arial', 25), borderwidth=2, relief="solid", padding=(10, 10))
 
-        # Define columns
-        self.tree["columns"] = ("Column1", "Column2")
+# Tính toán vị trí giữa màn hình
+screen_width = window.winfo_screenwidth()
+screen_height = window.winfo_screenheight()
+x_coordinate = (screen_width - 1300) // 2
+y_coordinate = (screen_height - 700) // 2
 
-        # Configure columns
-        self.tree.column("#0", width=0, stretch=tk.NO)
-        self.tree.column("Column1", anchor=tk.W, width=100)
-        self.tree.column("Column2", anchor=tk.W, width=100)
+# Cấu hình vị trí của cửa sổ
+window.geometry(f"1300x800+{x_coordinate}+{y_coordinate}")
 
-        # Add headings
-        self.tree.heading("#0", text="", anchor=tk.W)
-        self.tree.heading("Column1", text="Column 1", anchor=tk.W)
-        self.tree.heading("Column2", text="Column 2", anchor=tk.W)
+label1 = ttk.Label(window, text="Vốn đầu tư")
+label1.place(relx=0.36,rely=0.36) # Canh giữa theo chiều ngang
 
-        # Button 1
-        btn_show_info = tk.Button(root, text="Show Name and Age", command=self.show_name_and_age)
-        btn_show_info.pack(pady=10)
+label2 = ttk.Label(window, text="Tổng thu")
+label2.place(relx=0.56,rely=0.36) # Canh giữa theo chiều ngang
 
-        # Button 2
-        btn_show_date = tk.Button(root, text="Show Date and Month", command=self.show_date_and_month)
-        btn_show_date.pack(pady=10)
+label3 = ttk.Label(window, text="123123")
+label3.place(relx=0.36,rely=0.66)  # Canh giữa theo chiều ngang
 
-        # Initialize data
-        self.data = [
-            ("John", 25),
-            ("Alice", 30),
-            ("Bob", 22),
-        ]
+label4 = ttk.Label(window, text="124123")
+label4.place(relx=0.56,rely=0.66)  # Canh giữa theo chiều ngang
 
-        # Add sample data
-        self.update_treeview()
-
-    def show_name_and_age(self):
-        # Update data for Name and Age
-        self.data = [
-            ("John", 25),
-            ("Alice", 30),
-            ("Bob", 22),
-        ]
-        self.update_treeview()
-
-    def show_date_and_month(self):
-        # Update data for Date and Month
-        self.data = [
-            ("01", "January"),
-            ("15", "February"),
-            ("20", "March"),
-        ]
-        self.update_treeview()
-
-    def update_treeview(self):
-        # Clear existing data
-        for item in self.tree.get_children():
-            self.tree.delete(item)
-
-        # Add updated data to the TreeView
-        for item in self.data:
-            self.tree.insert("", tk.END, values=item)
-
-        self.tree.pack(expand=tk.YES, fill=tk.BOTH)
-
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = MyApp(root)
-    root.mainloop()
+# Hiển thị cửa sổ
+window.mainloop()

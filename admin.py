@@ -3,7 +3,7 @@ from sqlite3 import Cursor
 from tkinter import simpledialog
 import tkinter
 from turtle import color
-from sqlalchemy import create_engine
+from PIL import Image, ImageTk
 import pandas as pd
 import pandas as pd
 from tkinter import filedialog
@@ -29,7 +29,6 @@ def statistics():
     global statistic
     statistic = Toplevel()
     page10 = Statistics(statistic)
-    page10.time()
     statistic.protocol("WM_DELETE_WINDOW", exitt)
     statistic.mainloop()
 def invoices():
@@ -45,15 +44,13 @@ def random_emp_id(stringLength):
     strr=''.join(random.choice(Digits) for i in range(stringLength-3))
     return ('EMP'+strr)
 
-
-
 def inventory():
     adm.withdraw()
     global inv
     global page3
     inv = Toplevel()
     page3 = Inventory(inv)
-    # page3.time()
+
     inv.protocol("WM_DELETE_WINDOW", exitt)
     inv.mainloop()
 
@@ -115,7 +112,6 @@ class Admin_Page:
         self.button3.configure(text="""Nhân viên""")
         self.button3.configure(command=employee)
 
-
         self.button4 = Button(adm)
         self.button4.place(relx=0.536, rely=0.508, width=146, height=63)
         self.button4.configure(relief="flat")
@@ -128,7 +124,6 @@ class Admin_Page:
         self.button4.configure(borderwidth="0")
         self.button4.configure(text="""Đơn hàng""")
         self.button4.configure(command=invoices)
-
 
         self.button5 = Button(adm)
         self.button5.place(relx=0.732, rely=0.508, width=146, height=63)
@@ -165,7 +160,7 @@ class login_page:
         top.geometry("1366x768")
         top.resizable(0, 0)
         top.title("Retail Manager(ADMIN)")
-
+        self.center_window(top)
         self.label1 = Label(root)
         self.label1.place(relx=0, rely=0, width=1366, height=768)
         self.img = PhotoImage(file="./images/admin_login_fixx.png")
@@ -197,6 +192,13 @@ class login_page:
         self.button1.configure(borderwidth="0")
         self.button1.configure(text="""Đăng nhập""")
         self.button1.configure(command=self.login)
+    def center_window(self, top):
+        top.update_idletasks()
+        width = top.winfo_width()
+        height = top.winfo_height()
+        x = (top.winfo_screenwidth() // 2) - (width // 2)
+        y = (top.winfo_screenheight() // 2) - (height // 2)
+        top.geometry('{}x{}+{}+{}'.format(width, height, x, y))
     def login(self, Event=None):
         username = user.get()
         password = passwd.get()
@@ -247,6 +249,7 @@ class Employee:
         top.geometry("1366x768")
         top.resizable(0, 0)
         top.title("Quản lí nhân viên")
+
 
         self.label1 = Label(emp)
         self.label1.place(relx=0, rely=0, width=1366, height=768)
@@ -374,8 +377,6 @@ class Employee:
                 "Password",
                 "Address",
                 "PhoneNumber",
-                # "Password",
-                # "Designation"
             )
         )
 
@@ -384,18 +385,11 @@ class Employee:
         self.tree.heading("Password", text="Mật khẩu", anchor=W)
         self.tree.heading("Address", text="Địa chỉ", anchor=W)
         self.tree.heading("PhoneNumber", text="Số điện thoại", anchor=W)
-        # self.tree.heading("Password", text="Password", anchor=W)
-        # self.tree.heading("Designation", text="Designation", anchor=W)
-
         self.tree.column("#0", stretch=NO, minwidth=0, width=0)
         self.tree.column("#1", stretch=NO, minwidth=0, width=100)
         self.tree.column("#2", stretch=NO, minwidth=0, width=200)
         self.tree.column("#3", stretch=NO, minwidth=0, width=160)
         self.tree.column("#4", stretch=NO, minwidth=0, width=178)
-        # self.tree.column("#5", stretch=NO, minwidth=0, width=80)
-        # self.tree.column("#6", stretch=NO, minwidth=0, width=80)
-        # self.tree.column("#7", stretch=NO, minwidth=0, width=80)
-
         self.DisplayData()
 
     def DisplayData(self):
@@ -531,21 +525,15 @@ class Employee:
             for i in self.sel:
                 for j in self.tree.item(i)["values"]:
                     vall.append(j)
-            
             page8.entry1.insert(0, vall[1])
             page8.entry2.insert(0, vall[2])
             page8.entry3.insert(0, vall[3])
             page8.entry4.insert(0, vall[4])
-            # page8.entry5.insert(0, vall[3])
-            # page8.entry6.insert(0, vall[5])
             e_update.mainloop()
         elif len(self.sel)==0:
             messagebox.showerror("Lỗi","Vui lòng chọn một nhân viên để cập nhật.")
         else:
             messagebox.showerror("Lỗi","Can only update one employee at a time.")
-
-        
-
 
     def add_emp(self):
         global e_add
@@ -567,8 +555,6 @@ class Employee:
         self.tree.delete(*self.tree.get_children())
         self.DisplayData()  
 
-
-
     def time(self):
         string = strftime("%H:%M:%S %p")
         self.clock.config(text=string)
@@ -580,7 +566,6 @@ class Employee:
             emp.destroy()
             adm.deiconify()
 
-
     def Logout(self):
         sure = messagebox.askyesno("Đăng xuất", "Bạn muốn đăng xuất?")
         if sure == True:
@@ -590,13 +575,12 @@ class Employee:
             page1.entry1.delete(0, END)
             page1.entry2.delete(0, END)
 
-
 class Inventory:
     def __init__(self, top=None):
         top.geometry("1366x768")
         top.resizable(0, 0)
         top.title("Inventory")
-
+        self.center_window(top)
         self.label1 = Label(inv)
         self.label1.place(relx=0, rely=0, width=1366, height=768)
         self.img = PhotoImage(file="./images/inventory_fix.png")
@@ -688,30 +672,13 @@ class Inventory:
 
         self.button7 = ttk.Button(inv)
         self.button7.place(relx=0.052, rely=0.67)
-        # self.button7.configure(relief="flat")
-        # self.button7.configure(overrelief="flat")
-        # self.button7.configure(activebackground="#CF1E14")
-        # self.button7.configure(cursor="hand2")
-        # self.button7.configure(foreground="#ffffff")
-        # self.button7.configure(background="#CF1E14")
-        # self.button7.configure(font="-family {Poppins SemiBold} -size 12")
-        # self.button7.configure(borderwidth="0")
         self.button7.configure(text="Xuất excel")
         self.button7.configure(command=self.export_excel)
 
         self.button8 = ttk.Button(inv)
         self.button8.place(relx=0.052, rely=0.77)
-        # self.button8.configure(relief="flat")
-        # self.button8.configure(overrelief="flat")
-        # self.button8.configure(activebackground="#CF1E14")
-        # self.button8.configure(cursor="hand2")
-        # self.button8.configure(foreground="#ffffff")
-        # self.button8.configure(background="#CF1E14")
-        # self.button8.configure(font="-family {Poppins SemiBold} -size 12")
-        # self.button8.configure(borderwidth="0")
         self.button8.configure(text="Nhập excel")
         self.button8.configure(command=self.import_excel)
-
 
         self.button6 = Button(inv)
         self.button6.place(relx=0.135, rely=0.885, width=76, height=23)
@@ -774,6 +741,13 @@ class Inventory:
         self.tree.column("#7", stretch=NO, minwidth=0, width=120)
 
         self.DisplayData()
+    def center_window(self, top):
+        top.update_idletasks()
+        width = top.winfo_width()
+        height = top.winfo_height()
+        x = (top.winfo_screenwidth() // 2) - (width // 2)
+        y = (top.winfo_screenheight() // 2) - (height // 2)
+        top.geometry('{}x{}+{}+{}'.format(width, height, x, y))
     def import_excel(self):
         # Ask the user to choose an Excel file for import
         file_path = filedialog.askopenfilename(filetypes=[("Excel files", "*.xlsx")])
@@ -823,21 +797,12 @@ class Inventory:
         password='080102',
         database='myDatabase'
         )  # Replace with your database credentials
-
         # Query to fetch data from your MySQL table
         query = "SELECT * FROM inventory"  # Replace with your table name
 
         # Use pandas to read the SQL query result into a DataFrame
         df = pd.read_sql_query(query, connection)
-        # db_uri = "mysql://root:080102@localhost:3306/mydatabase"
 
-        # # Tạo đối tượng engine
-        # engine = create_engine(db_uri)
-
-        # # Sử dụng engine để đọc dữ liệu
-        # query = "SELECT * FROM inventory"
-        # df = pd.read_sql_query(query, engine)
-        # Ask the user to choose a file location to save the Excel file
         file_path = filedialog.asksaveasfilename(defaultextension=".xlsx", filetypes=[("Excel files", "*.xlsx")])
 
         # If the user selected a file, export the DataFrame to Excel
@@ -984,8 +949,6 @@ class Inventory:
             page9.entry4.insert(0, valll[5])
             page9.entry6.insert(0, valll[3])
             page9.entry7.insert(0, valll[6])
-            # page9.entry8.insert(0, valll[7])
-
 
         elif len(self.sel)==0:
             messagebox.showerror("Lỗi","Hãy chọn sản phẩm muốn cập nhật.", parent=inv)
@@ -1069,7 +1032,7 @@ class add_product:
         self.entry4.place(relx=0.132, rely=0.646, width=374, height=30)
         self.entry4.configure(font="-family {Poppins} -size 12")
         self.entry4.configure(relief="flat")
-       
+        self.entry4.configure(validate="key", validatecommand=(self.r2, "%P"))
 
         self.entry6 = Entry(p_add)
         self.entry6.place(relx=0.527, rely=0.413, width=374, height=30)
@@ -1081,15 +1044,7 @@ class add_product:
         self.entry7.place(relx=0.527, rely=0.529, width=374, height=30)
         self.entry7.configure(font="-family {Poppins} -size 12")
         self.entry7.configure(relief="flat")
-       
-
-        # self.entry8 = Entry(p_add)
-        # self.entry8.place(relx=0.527, rely=0.646, width=374, height=30)
-        # self.entry8.configure(font="-family {Poppins} -size 12")
-        # self.entry8.configure(relief="flat")
-        # self.entry8.configure(validate="key", validatecommand=(self.r2, "%P"))
-       
-
+        self.entry7.configure(validate="key", validatecommand=(self.r2, "%P"))
         self.button1 = Button(p_add)
         self.button1.place(relx=0.408, rely=0.836, width=96, height=34)
         self.button1.configure(relief="flat")
@@ -1119,11 +1074,10 @@ class add_product:
     def add(self):
         pqty = self.entry3.get()
         pcat = self.entry2.get()  
-        pmrp = self.entry4.get()  
+        pmrp = self.entry6.get()  
         pname = self.entry1.get()  
-        psubcat = self.entry6.get()  
+        psubcat = self.entry4.get()  
         pcp = self.entry7.get()  
-        # pvendor = self.entry8.get()  
         product_id = random.randint(1000, 9999)
 
         if pname.strip():
@@ -1131,17 +1085,7 @@ class add_product:
                 if psubcat.strip():
                     if pqty:
                         if pcp:
-                            try:
-                                float(pcp)
-                            except ValueError:
-                                messagebox.showerror("Lỗi!", "Invalid cost price.", parent=p_add)
-                            else:
                                 if pmrp:
-                                    try:
-                                        float(pmrp)
-                                    except ValueError:
-                                        messagebox.showerror("Lỗi!", "Invalid MRP.", parent=p_add)
-                                    else:
                                         connection = mysql.connector.connect(
                                             host='localhost',
                                             user='root',
@@ -1151,27 +1095,27 @@ class add_product:
                                         cur = connection.cursor()
                                         # cur = db.cursor()
                                         insert = (
-                                                    "INSERT INTO inventory (product_id, product_name, category, product_price, stock, vendor, vendor_phoneno) VALUES(%s, %s, %s, %s, %s, %s, %s)"
+                                                    "INSERT INTO inventory (product_id, product_name, category,stock, product_price,  vendor, vendor_phoneno) VALUES(%s, %s, %s, %s, %s, %s, %s)"
                                                 )
-                                        cur.execute(insert, [product_id,pname, pcat, psubcat, int(pqty), float(pmrp), float(pcp)])
+                                        cur.execute(insert, [product_id,pname, pcat, psubcat, int(pqty), pmrp, pcp])
                                         connection.commit()
-                                        messagebox.showinfo("Success!!", "Product successfully added in inventory.", parent=p_add)
+                                        messagebox.showinfo("Thành công!", "Đã thêm sản phẩm.", parent=p_add)
                                         p_add.destroy()
                                         page3.tree.delete(*page3.tree.get_children())
                                         page3.DisplayData()
                                         p_add.destroy()
                                 else:
-                                    messagebox.showerror("Oops!", "Please enter MRP.", parent=p_add)
+                                    messagebox.showerror("Lỗi!", "Sửa thông tin không phù hợp.", parent=p_add)
                         else:
-                            messagebox.showerror("Oops!", "Please enter product cost price.", parent=p_add)
+                            messagebox.showerror("Lỗi!", "Sửa thông tin không phù hợp.", parent=p_add)
                     else:
-                        messagebox.showerror("Oops!", "Please enter product quantity.", parent=p_add)
+                        messagebox.showerror("Lỗi!", "Sửa thông tin không phù hợp.", parent=p_add)
                 else:
-                    messagebox.showerror("Oops!", "Please enter product sub-category.", parent=p_add)
+                    messagebox.showerror("Lỗi!", "Sửa thông tin không phù hợp.", parent=p_add)
             else:
-                messagebox.showerror("Oops!", "Please enter product category.", parent=p_add)
+                messagebox.showerror("Lỗi!", "Sửa thông tin không phù hợp.", parent=p_add)
         else:
-            messagebox.showerror("Oops!", "Please enter product name", parent=p_add)
+            messagebox.showerror("Lỗi!", "Sửa thông tin không phù hợp.", parent=p_add)
 
     def clearr(self):
         self.entry1.delete(0, END)
@@ -1203,7 +1147,7 @@ class Update_Product:
 
         self.label1 = Label(p_update)
         self.label1.place(relx=0, rely=0, width=1366, height=768)
-        self.img = PhotoImage(file="./images/update_product2.png")
+        self.img = PhotoImage(file="./images/update_product3.png")
         self.label1.configure(image=self.img)
 
         self.clock = Label(p_update)
@@ -1240,20 +1184,13 @@ class Update_Product:
         self.entry6.place(relx=0.527, rely=0.413, width=374, height=30)
         self.entry6.configure(font="-family {Poppins} -size 12")
         self.entry6.configure(relief="flat")
-       
+        self.entry6.configure(validate="key", validatecommand=(self.r2, "%P"))
 
         self.entry7 = Entry(p_update)
         self.entry7.place(relx=0.527, rely=0.529, width=374, height=30)
         self.entry7.configure(font="-family {Poppins} -size 12")
         self.entry7.configure(relief="flat")
        
-
-        # self.entry8 = Entry(p_update)
-        # self.entry8.place(relx=0.527, rely=0.646, width=374, height=30)
-        # self.entry8.configure(font="-family {Poppins} -size 12")
-        # self.entry8.configure(relief="flat")
-       
-
         self.button1 = Button(p_update)
         self.button1.place(relx=0.408, rely=0.836, width=96, height=34)
         self.button1.configure(relief="flat")
@@ -1314,60 +1251,6 @@ class Update_Product:
             else:
                 messagebox.showerror("Error!", "Please fill in all the fields.", parent=p_update)
 
-
-
-
-
-
-    # def update(self):
-    #     pname = self.entry1.get() #ten
-    #     pcat = self.entry2.get()  #loai
-    #     pqty = self.entry3.get() #soluong
-    #     pvender = self.entry4.get()  #nha cung cap
-          
-    #     pprice = self.entry6.get()  #giatien
-    #     pphone  = self.entry7.get()  #sdt
-    #     # pvendor = self.entry8.get()  
-       
-
-    #     if pname.strip():
-    #         if pcat.strip():
-    #             if pvender.strip():
-    #                 if pprice.strip():
-    #                     if pphone.strip():
-    #                             if pqty.strip():
-    #                                         product_id = valll[0]
-    #                                         connection = mysql.connector.connect(
-    #                                             host='localhost',
-    #                                             user='root',
-    #                                             password='080102',
-    #                                             database='myDatabase'
-    #                                         )
-    #                                         cursor = connection.cursor()
-    #                                         update = (
-    #                                         "UPDATE inventory SET product_name = ?, category = ?, product_price = ?, stock = ?, vendor= ?, vendor_phoneno WHERE product_id = ?"
-    #                                         )
-    #                                         cursor.execute(update, [pname, pcat, pprice, pqty,pvender, pphone, product_id])
-    #                                         connection.commit()
-    #                                         messagebox.showinfo("Success!!", "Product successfully updated in inventory.", parent=p_update)
-    #                                         valll.clear()
-    #                                         Inventory.sel.clear()
-
-    #                                     # else:
-    #                                     #     messagebox.showerror("Lỗi!", "Hãy điền đủ thông tin", parent=p_update)
-    #                             else:
-    #                                 messagebox.showerror("Lỗi!", "Hãy điền đủ thông tin", parent=p_update)
-    #                     else:
-    #                         messagebox.showerror("Lỗi!", "Hãy điền đủ thông tin", parent=p_update)
-    #                 else:
-    #                     messagebox.showerror("Lỗi!", "Hãy điền đủ thông tin", parent=p_update)
-    #             else:
-    #                 messagebox.showerror("Lỗi!", "Hãy điền đủ thông tin", parent=p_update)
-    #         else:
-    #             messagebox.showerror("Lỗi!", "Hãy điền đủ thông tin", parent=p_update)
-    #     else:
-    #         messagebox.showerror("Lỗi!", "Hãy điền đủ thông tin", parent=p_update)
-
     def clearr(self):
         self.entry1.delete(0, END)
         self.entry2.delete(0, END)
@@ -1419,31 +1302,17 @@ class add_employee:
         self.entry2.place(relx=0.132, rely=0.413, width=374, height=30)
         self.entry2.configure(font="-family {Poppins} -size 12")
         self.entry2.configure(relief="flat")
-        # self.entry2.configure(validate="key", validatecommand=(self.r1, "%P"))
 
         self.entry3 = Entry(e_add)
         self.entry3.place(relx=0.132, rely=0.529, width=374, height=30)
         self.entry3.configure(font="-family {Poppins} -size 12")
         self.entry3.configure(relief="flat")
-        # self.entry3.configure(validate="key", validatecommand=(self.r1, "%P"))
 
         self.entry4 = Entry(e_add)
         self.entry4.place(relx=0.527, rely=0.296, width=374, height=30)
         self.entry4.configure(font="-family {Poppins} -size 12")
         self.entry4.configure(relief="flat")
         self.entry4.configure(validate="key", validatecommand=(self.r1, "%P"))
-
-        # self.entry5 = Entry(e_add)
-        # self.entry5.place(relx=0.527, rely=0.413, width=374, height=30)
-        # self.entry5.configure(font="-family {Poppins} -size 12")
-        # self.entry5.configure(relief="flat")
-        # self.entry5.configure(validate="key", validatecommand=(self.r2, "%P"))
-
-        # self.entry6 = Entry(e_add)
-        # self.entry6.place(relx=0.527, rely=0.529, width=374, height=30)
-        # self.entry6.configure(font="-family {Poppins} -size 12")
-        # self.entry6.configure(relief="flat")
-        # self.entry6.configure(show="*")
 
         self.button1 = Button(e_add)
         self.button1.place(relx=0.408, rely=0.836, width=96, height=34)
@@ -1470,7 +1339,6 @@ class add_employee:
         self.button2.configure(borderwidth="0")
         self.button2.configure(text="""Xoá""")
         self.button2.configure(command=self.clearr)
-
 
 
     def testint(self, val):
@@ -1523,56 +1391,11 @@ class add_employee:
                 messagebox.showerror("Validation Error", "Please fill in all the fields.")
 
 
-
-
-
-    # def add(self):
-    #     ename = self.entry1.get()
-    #     epass = self.entry2.get()
-    #     eadd = self.entry3.get()
-    #     ephone_number = self.entry4.get()
-    #     # eadd = self.entry5.get()
-    #     # epass = self.entry6.get()
-
-    #     if ename.strip():
-    #         if eadd:
-    #             if epass:
-    #                 if ephone_number:
-    #                     emp_id = random_emp_id(7)
-    #                     connection = mysql.connector.connect(
-    #                                         host='localhost',
-    #                                         user='root',
-    #                                         password='080102',
-    #                                         database='myDatabase'
-    #                                     )
-    #                     cur = connection.cursor()
-    #                     insert = (
-    #                         "INSERT INTO employee(emp_id, name,address, password, phone_number) VALUES(%s, %s, %s, %s, %s)"
-    #                             )
-    #                     cur.execute(insert, [emp_id, ename, eadd,epass, ephone_number])
-    #                     connection.commit()
-    #                     messagebox.showinfo("Success!!", "Employee ID: {} successfully added in database.".format(emp_id), parent=e_add)
-    #                     self.clearr()
-    #                     e_add.destroy()
-    #                     page5.tree.delete(*page5.tree.get_children())
-    #                     page5.DisplayData()
-    #                     e_add.destroy()
-    #                 else:
-    #                     messagebox.showerror("Hãy điền số điện thoại.", parent=ephone_number)
-    #             else:
-    #                 messagebox.showerror("Hãy điền mật khẩu", parent=epass)
-    #         else:
-    #             messagebox.showerror("Hãy điền địa chỉ.", parent=e_add)
-    #     else:
-    #         messagebox.showerror("Hãy điền tên nhân viên.", parent=ename)
-
     def clearr(self):
         self.entry1.delete(0, END)
         self.entry2.delete(0, END)
         self.entry3.delete(0, END)
         self.entry4.delete(0, END)
-        # self.entry5.delete(0, END)
-        # self.entry6.delete(0, END)
 
 class Update_Employee:
     def __init__(self, top=None):
@@ -1598,37 +1421,23 @@ class Update_Employee:
         self.entry1.place(relx=0.132, rely=0.296, width=374, height=30)
         self.entry1.configure(font="-family {Poppins} -size 12")
         self.entry1.configure(relief="flat")
-        
 
         self.entry2 = Entry(e_update)
         self.entry2.place(relx=0.132, rely=0.413, width=374, height=30)
         self.entry2.configure(font="-family {Poppins} -size 12")
         self.entry2.configure(relief="flat")
-        # self.entry2.configure(validate="key", validatecommand=(self.r1, "%P"))
 
         self.entry3 = Entry(e_update)
         self.entry3.place(relx=0.132, rely=0.529, width=374, height=30)
         self.entry3.configure(font="-family {Poppins} -size 12")
         self.entry3.configure(relief="flat")
-        # self.entry3.configure(validate="key", validatecommand=(self.r1, "%P"))
+
 
         self.entry4 = Entry(e_update)
         self.entry4.place(relx=0.527, rely=0.296, width=374, height=30)
         self.entry4.configure(font="-family {Poppins} -size 12")
         self.entry4.configure(relief="flat")
         self.entry4.configure(validate="key", validatecommand=(self.r1, "%P"))
-
-        # self.entry5 = Entry(e_update)
-        # self.entry5.place(relx=0.527, rely=0.413, width=374, height=30)
-        # self.entry5.configure(font="-family {Poppins} -size 12")
-        # self.entry5.configure(relief="flat")
-
-        # self.entry6 = Entry(e_update)
-        # self.entry6.place(relx=0.527, rely=0.529, width=374, height=30)
-        # self.entry6.configure(font="-family {Poppins} -size 12")
-        # self.entry6.configure(relief="flat")
-        # self.entry6.configure(show="*")
-
         self.button1 = Button(e_update)
         self.button1.place(relx=0.408, rely=0.836, width=96, height=34)
         self.button1.configure(relief="flat")
@@ -1687,57 +1496,11 @@ class Update_Employee:
             else:
                 messagebox.showerror("Lỗi", "Hãy điền đủ thông tin.")
 
-
-
-
-
-    # def update(self):
-    #     ename = self.entry1.get()
-    #     epass = self.entry2.get()
-    #     eadd = self.entry3.get()
-    #     ephone_number = self.entry4.get()
-    #     # eadd = self.entry5.get()
-    #     # epass = self.entry6.get()
-
-    #     if ename.strip():
-    #         if eadd:
-    #             if epass:
-    #                 if ephone_number:
-    #                     emp_id = vall[0]
-    #                     connection = mysql.connector.connect(
-    #                                         host='localhost',
-    #                                         user='root',
-    #                                         password='080102',
-    #                                         database='myDatabase'
-    #                                     )
-    #                     cur = connection.cursor()
-    #                     update = "UPDATE employee SET name = %s, password = %s, address = %s, phone_number = %s WHERE emp_id = %s"
-    #                     cur.execute(update, [ename,  epass, eadd, ephone_number, emp_id])
-    #                     connection.commit()
-    #                     messagebox.showinfo("Thành công!!", "Cập nhật thông tin thành công.".format(emp_id), parent=e_update)
-    #                     vall.clear()
-    #                     page5.tree.delete(*page5.tree.get_children())
-    #                     page5.DisplayData()
-    #                     Employee.sel.clear()
-    #                     e_update.destroy()
-    #                 else:
-    #                     messagebox.showerror("Hãy nhập số điện thoại nhân viên.", parent=e_add)
-    #             else:
-    #                 messagebox.showerror("Hãy nhập mật khẩu thay đổi.", parent=e_add)
-    #         else:
-    #             messagebox.showerror("Hãy nhập địa chỉ thay đổi.", parent=e_add)
-    #     else:
-    #         messagebox.showerror("Hãy nhập tên nhân viên.", parent=e_add)
-
     def clearr(self):
         self.entry1.delete(0, END)
         self.entry2.delete(0, END)
         self.entry3.delete(0, END)
         self.entry4.delete(0, END)
-        # self.entry5.delete(0, END)
-        # self.entry6.delete(0, END)
-
-
 
     def testint(self, val):
         if val.isdigit():
@@ -1763,7 +1526,7 @@ class Invoice:
         top.geometry("1366x768")
         top.resizable(0, 0)
         top.title("Invoices")
-
+        self.center_window(top)
         self.label1 = Label(invoice)
         self.label1.place(relx=0, rely=0, width=1366, height=768)
         self.img = PhotoImage(file="./images/invoices_fix.png")
@@ -1816,65 +1579,16 @@ class Invoice:
 
         self.button3 = ttk.Button(invoice)
         self.button3.place(relx=0.052, rely=0.432)
-        # self.button3.configure(relief="flat")
-        # self.button3.configure(overrelief="flat")
-        # self.button3.configure(activebackground="#CF1E14")
-        # self.button3.configure(cursor="hand2")
-        # self.button3.configure(foreground="#ffffff")
-        # self.button3.configure(background="#CF1E14")
-        # self.button3.configure(font="-family {Poppins SemiBold} -size 12")
-        # self.button3.configure(borderwidth="0")
-
-        # Đặt cỡ chữ
-        # style = ttk.Style()
-        # style.configure("TButton", font=("Arial", 13))  # Thay "Arial" và 12 bằng font và cỡ chữ bạn muốn
-
-        # Kết hợp với style
-        # self.button3.configure(style="TButton")
         self.button3.configure(text="""Xoá đơn hàng""")
         self.button3.configure(command=self.delete_invoice)
 
-
-
-        self.button6 = ttk.Button(invoice)
-        self.button6.place(relx=0.052, rely=0.552)
-        # self.button6.configure(relief="flat")
-        # self.button6.configure(overrelief="flat")
-        # self.button6.configure(activebackground="#CF1E14")
-        # self.button6.configure(cursor="hand2")
-        # self.button6.configure(foreground="#ffffff")
-        # self.button6.configure(background="#CF1E14")
-        # self.button6.configure(font="-family {Poppins SemiBold} -size 12")
-        # self.button6.configure(borderwidth="0")
-        self.button6.configure(text="""Danh sách giao hàng""")
-        self.button6.configure(command=self.show_deliver)
-
-
-
-
         self.button5 = ttk.Button(invoice)
-        self.button5.place(relx=0.052, rely=0.602)
-        # self.button5.configure(relief="flat")
-        # self.button5.configure(overrelief="flat")
-        # self.button5.configure(activebackground="#CF1E14")
-        # self.button5.configure(cursor="hand2")
-        # self.button5.configure(foreground="#ffffff")
-        # self.button5.configure(background="#CF1E14")
-        # self.button5.configure(font="-family {Poppins SemiBold} -size 12")
-        # self.button5.configure(borderwidth="0")
+        self.button5.place(relx=0.052, rely=0.54)
         self.button5.configure(text="""Danh sách khách hàng""")
         self.button5.configure(command=self.show_customers)
 
         self.button7 = ttk.Button(invoice)
-        self.button7.place(relx=0.052, rely=0.7)
-        # self.button7.configure(relief="flat")
-        # self.button7.configure(overrelief="flat")
-        # self.button7.configure(activebackground="#CF1E14")
-        # self.button7.configure(cursor="hand2")
-        # self.button7.configure(foreground="#ffffff")
-        # self.button7.configure(background="#CF1E14") 
-        # self.button7.configure(font="-family {Poppins SemiBold} -size 12")
-        # self.button7.configure(borderwidth="0")
+        self.button7.place(relx=0.052, rely=0.49)
         self.button7.configure(text="""Danh sách đơn hàng""")
         self.button7.configure(command=self.DisplayData)
 
@@ -1902,7 +1616,7 @@ class Invoice:
         self.tree.configure(selectmode="extended")
 
         self.tree.bind("<<TreeviewSelect>>", self.on_tree_select)
-        self.tree.bind("<Double-1>", self.double_tap)
+        # self.tree.bind("<Double-1>", self.double_tap)
 
         self.scrollbary.configure(command=self.tree.yview)
         self.scrollbarx.configure(command=self.tree.xview)
@@ -1912,7 +1626,6 @@ class Invoice:
 
         self.tree.configure(
             columns=(
-                # "invoice_id",
                 "name",
                 "total",
                 "phone",
@@ -1920,7 +1633,6 @@ class Invoice:
             )
         )
 
-        # self.tree.heading("invoice_id", text="ID", anchor=W)
         self.tree.heading("name", text="Tên khách hàng", anchor=W)
         self.tree.heading("total", text="Giá trị đơn hàng", anchor=W)
         self.tree.heading("phone", text="Số điện thoại", anchor=W)
@@ -1931,21 +1643,14 @@ class Invoice:
         self.tree.column("#2", stretch=NO, minwidth=0, width=179)
         self.tree.column("#3", stretch=NO, minwidth=0, width=179)
         self.tree.column("#4", stretch=NO, minwidth=0, width=185)
-        # self.tree.column("#4", stretch=NO, minwidth=0, width=179)
-        
-    
         self.DisplayData()
-    
-    # def switch_table(self):
-    #     # Kiểm tra xem đang hiển thị bảng invoices hay bảng customers
-    #     if self.tree["columns"] == ("invoice_id", "total", "name", "phone", "email"):
-    #         # Chuyển sang hiển thị bảng customers
-    #         self.show_customers()
-    #     else:
-    #         # Chuyển sang hiển thị bảng invoices
-    #         self.DisplayData()
-    
-
+    def center_window(self, top):
+        top.update_idletasks()
+        width = top.winfo_width()
+        height = top.winfo_height()
+        x = (top.winfo_screenwidth() // 2) - (width // 2)
+        y = (top.winfo_screenheight() // 2) - (height // 2)
+        top.geometry('{}x{}+{}+{}'.format(width, height, x, y))
     def show_customers(self):
         # Connect to the MySQL database
         conn = mysql.connector.connect(
@@ -1976,11 +1681,6 @@ class Invoice:
         for item in self.tree.get_children():
             self.tree.delete(item)
 
-        # Add updated data to the tree
-        # for item in self.data:
-        #     self.tree.insert("", tkinter.END, values=item)
-        # for index, item in enumerate(self.data, start=1):
-        #     self.tree.insert("", tkinter.END, iid=index, values=(index,) + item)
         for index, item in enumerate(self.data, start=1):
             pay_total = item[1]  # Giả sử cột "pay_total" là cột thứ 3 (index 2)
             ranking = 1 if pay_total > 100 else 2
@@ -1995,7 +1695,7 @@ class Invoice:
         self.tree.configure(selectmode="extended")
 
         self.tree.bind("<<TreeviewSelect>>", self.on_tree_select)
-        self.tree.bind("<Double-1>", self.double_tap)
+        # self.tree.bind("<Double-1>", self.double_tap)
 
         self.scrollbary.configure(command=self.tree.yview)
         self.scrollbarx.configure(command=self.tree.xview)
@@ -2021,84 +1721,7 @@ class Invoice:
         self.tree.column("#3", stretch=tkinter.NO, minwidth=0, width=179)
 
 #----------------------------------------------------------------------------------------------------------------------------
-    def show_deliver(self):
-        # Connect to the MySQL database
-        connection = mysql.connector.connect(
-            host='localhost',
-            user='root',
-            password='080102',
-            database='myDatabase'
-        )
-        cursor = connection.cursor()
-                # find_user = "SELECT * FROM inventory"
-        cursor.execute("SELECT * FROM deliver_detail")
-
-        # cur.execute("SELECT * FROM raw_inventory")
-        fetch = cursor.fetchall()
-        for data in fetch:
-            self.tree.insert("", "end", values=(data[1], data[2], data[3], data[4], data[5]))
-        self.all_items = fetch
-
-
-        # Update TreeView
-        self.update_treeview()
-
-        # Close the database connection
-        cursor.close()
-        connection.close()
-
-    def update_treeview(self):
-        # Clear existing data
-        for item in self.tree.get_children():
-            self.tree.delete(item)
-
-        # Add updated data to the tree
-        # for item in self.data:
-        #     self.tree.insert("", tkinter.END, values=item)
-        # for index, item in enumerate(self.data, start=1):
-        #     self.tree.insert("", tkinter.END, iid=index, values=(index,) + item)
-        for index, data in enumerate(self.all_items, start=1):
-            self.tree.insert("", tkinter.END, iid=index, values=(index,) + tuple(data[1:6]))
-
-
-
-        # Configure and place the tree
-        self.tree.place(relx=0.307, rely=0.203, width=880, height=550)
-        self.tree.configure(
-            yscrollcommand=self.scrollbary.set, xscrollcommand=self.scrollbarx.set
-        )
-        self.tree.configure(selectmode="extended")
-
-        self.tree.bind("<<TreeviewSelect>>", self.on_tree_select)
-        self.tree.bind("<Double-1>", self.double_tap)
-
-        self.scrollbary.configure(command=self.tree.yview)
-        self.scrollbarx.configure(command=self.tree.xview)
-
-        self.scrollbary.place(relx=0.954, rely=0.203, width=22, height=548)
-        self.scrollbarx.place(relx=0.307, rely=0.924, width=884, height=22)
-
-        self.tree.configure(
-            columns=(
-                "ID","Customer Name", "Paying Total","Phone Number", "Address", "Status"
-            )
-        )
-        self.tree.heading("ID", text="ID", anchor=tkinter.W)
-        self.tree.heading("Customer Name", text="Tên khách hàng", anchor=tkinter.W)
-        self.tree.heading("Paying Total", text="Tổng giá", anchor=tkinter.W)
-        self.tree.heading("Phone Number", text="Số điện thoại", anchor=tkinter.W)
-        self.tree.heading("Address", text="Address", anchor=tkinter.W)
-        self.tree.heading("Status", text="Status", anchor=tkinter.W)
-
-        self.tree.column("#0", stretch=tkinter.NO, minwidth=0, width=0)
-        self.tree.column("#1", stretch=tkinter.NO, minwidth=0, width=50)
-        self.tree.column("#2", stretch=tkinter.NO, minwidth=0, width=149)
-        self.tree.column("#3", stretch=tkinter.NO, minwidth=0, width=179)
-        self.tree.column("#4", stretch=tkinter.NO, minwidth=0, width=159)
-        self.tree.column("#5", stretch=tkinter.NO, minwidth=0, width=179)
-        self.tree.column("#6", stretch=tkinter.NO, minwidth=0, width=129)
-
-
+    
 #------------------------------------------------------------------------------
 
 
@@ -2128,7 +1751,7 @@ class Invoice:
         self.tree.configure(selectmode="extended")
 
         self.tree.bind("<<TreeviewSelect>>", self.on_tree_select)
-        self.tree.bind("<Double-1>", self.double_tap)
+        # self.tree.bind("<Double-1>", self.double_tap)
 
         self.scrollbary.configure(command=self.tree.yview)
         self.scrollbarx.configure(command=self.tree.xview)
@@ -2138,7 +1761,6 @@ class Invoice:
 
         self.tree.configure(
             columns=(
-                # "invoice_id",
                 "name",
                 "total",
                 "phone",
@@ -2146,7 +1768,6 @@ class Invoice:
             )
         )
 
-        # self.tree.heading("invoice_id", text="ID", anchor=W)
         self.tree.heading("name", text="Tên khách hàng", anchor=W)
         self.tree.heading("total", text="Tổng giá", anchor=W)
         self.tree.heading("phone", text="Số điện thoại", anchor=W)
@@ -2158,49 +1779,12 @@ class Invoice:
         self.tree.column("#3", stretch=NO, minwidth=0, width=179)
         self.tree.column("#4", stretch=NO, minwidth=0, width=179)
 
-    # def show_customers(self):
-    #     # Truy vấn dữ liệu từ bảng customers
-    #     # cursor = self.conn.cursor()
-    #     connection = mysql.connector.connect(
-    #         host='localhost',
-    #         user='root',
-    #         password='080102',
-    #         database='myDatabase'
-    #     )
-    #     cursor = connection.cursor()
-    #     cursor.execute("SELECT * FROM customers")
-    #     customers = cursor.fetchall()
-
-    #     # Xóa dữ liệu cũ trong Treeview
-    #     for item in self.tree.get_children():
-    #         self.tree.delete(item)
-
-    #     # Hiển thị dữ liệu mới trong Treeview
-    #     for customer in customers:
-    #         self.tree.insert("", "end", values=customer)
-
-
     sel = []
     def on_tree_select(self, Event):
         self.sel.clear()
         for i in self.tree.selection():
             if i not in self.sel:
                 self.sel.append(i)
-
-    def double_tap(self, Event):
-        item = self.tree.identify('item', Event.x, Event.y)
-        global bill_num
-        bill_num = self.tree.item(item)['values'][0]
-        
-
-        global bill
-        bill = Toplevel()
-        pg = open_bill(bill)
-        #bill.protocol("WM_DELETE_WINDOW", exitt)
-        bill.mainloop()
-
-        
-
 
     def delete_invoice(self):
         connection = mysql.connector.connect(
@@ -2238,7 +1822,6 @@ class Invoice:
                     cursor.execute(delete_invoice, (k,))
                     connection.commit()
 
-
                 messagebox.showinfo("Thành công!!", "Đã xoá đơn hàng.", parent=invoice)
                 self.sel.clear()
                 self.tree.delete(*self.tree.get_children())
@@ -2246,8 +1829,6 @@ class Invoice:
                 self.DisplayData()
         else:
             messagebox.showerror("Lỗi!!","Hãy chọn một đơn hàng", parent=invoice)
-
-
 
     def search_inv(self):
         val = []
@@ -2261,11 +1842,10 @@ class Invoice:
             if search==to_search:
                 self.tree.selection_set(val[val.index(search)-1])
                 self.tree.focus(val[val.index(search)-1])
-                messagebox.showinfo("Thành công!!", "Bill Number: {} found.".format(self.entry1.get()), parent=invoice)
+                messagebox.showinfo("Thành công!!", parent=invoice)
                 break
         else: 
-            messagebox.showerror("Oops!!", "Bill NUmber: {} not found.".format(self.entry1.get()), parent=invoice)
-
+            messagebox.showerror("Lỗi!", "Không tìm thấy.", parent=invoice)
 
     def Logout(self):
         sure = messagebox.askyesno("Đăng xuất", "Bạn muốn đăng xuất?")
@@ -2285,247 +1865,73 @@ class Invoice:
         if sure == True:
             invoice.destroy()
             adm.deiconify()
-    
 
+#Contact us
 class Statistics:
     def __init__(self, top=None):
-        top.geometry("1366x768")
+        top.geometry("766x468")
         top.resizable(0, 0)
-        top.title("Invoices")
-
-        self.label1 = Label(statistic)
-        self.label1.place(relx=0, rely=0, width=1366, height=768)
-        self.img = PhotoImage(file="./images/invoices.png")
-        self.label1.configure(image=self.img)
-
-        self.message = Label(statistic)
-        self.message.place(relx=0.046, rely=0.055, width=136, height=30)
-        self.message.configure(font="-family {Poppins} -size 10")
-        self.message.configure(foreground="#000000")
-        self.message.configure(background="#ffffff")
-        self.message.configure(text="""ADMIN""")
-        self.message.configure(anchor="w")
-
-        self.clock = Label(statistic)
-        self.clock.place(relx=0.9, rely=0.065, width=102, height=36)
-        self.clock.configure(font="-family {Poppins Light} -size 12")
-        self.clock.configure(foreground="#000000")
-        self.clock.configure(background="#ffffff")
-
-        self.entry1 = Entry(statistic)
-        self.entry1.place(relx=0.040, rely=0.286, width=240, height=28)
-        self.entry1.configure(font="-family {Poppins} -size 12")
-        self.entry1.configure(relief="flat")
-
-        self.button1 = Button(statistic)
-        self.button1.place(relx=0.229, rely=0.289, width=76, height=23)
-        self.button1.configure(relief="flat")
-        self.button1.configure(overrelief="flat")
-        self.button1.configure(activebackground="#CF1E14")
-        self.button1.configure(cursor="hand2")
-        self.button1.configure(foreground="#ffffff")
-        self.button1.configure(background="#CF1E14")
-        self.button1.configure(font="-family {Poppins SemiBold} -size 10")
-        self.button1.configure(borderwidth="0")
-        self.button1.configure(text="""Search""")
-        # self.button1.configure(command=self.search_inv)
-
-        self.button2 = Button(statistic)
-        self.button2.place(relx=0.035, rely=0.106, width=76, height=23)
-        self.button2.configure(relief="flat")
-        self.button2.configure(overrelief="flat")
-        self.button2.configure(activebackground="#CF1E14")
-        self.button2.configure(cursor="hand2")
-        self.button2.configure(foreground="#ffffff")
-        self.button2.configure(background="#CF1E14")
-        self.button2.configure(font="-family {Poppins SemiBold} -size 12")
-        self.button2.configure(borderwidth="0")
-        self.button2.configure(text="""Logout""")
-        self.button2.configure(command=self.Logout)
-
-        self.button3 = Button(statistic)
-        self.button3.place(relx=0.052, rely=0.432, width=306, height=28)
-        self.button3.configure(relief="flat")
-        self.button3.configure(overrelief="flat")
-        self.button3.configure(activebackground="#CF1E14")
-        self.button3.configure(cursor="hand2")
-        self.button3.configure(foreground="#ffffff")
-        self.button3.configure(background="#CF1E14")
-        self.button3.configure(font="-family {Poppins SemiBold} -size 12")
-        self.button3.configure(borderwidth="0")
-        self.button3.configure(text="""DELETE INVOICE""")
-        # self.button3.configure(command=self.delete_invoice)
-
-    
-
-        self.button4 = Button(statistic)
-        self.button4.place(relx=0.135, rely=0.885, width=76, height=23)
-        self.button4.configure(relief="flat")
-        self.button4.configure(overrelief="flat")
-        self.button4.configure(activebackground="#CF1E14")
-        self.button4.configure(cursor="hand2")
-        self.button4.configure(foreground="#ffffff")
-        self.button4.configure(background="#CF1E14")
-        self.button4.configure(font="-family {Poppins SemiBold} -size 12")
-        self.button4.configure(borderwidth="0")
-        self.button4.configure(text="""EXIT""")
-        self.button4.configure(command=self.Exit)
-
-        self.scrollbarx = Scrollbar(statistic, orient=HORIZONTAL)
-        self.scrollbary = Scrollbar(statistic, orient=VERTICAL)
-        self.tree = ttk.Treeview(statistic)
-        self.tree.place(relx=0.307, rely=0.203, width=880, height=550)
-        self.tree.configure(
-            yscrollcommand=self.scrollbary.set, xscrollcommand=self.scrollbarx.set
-        )
-        self.tree.configure(selectmode="extended")
-
-        self.tree.bind("<<TreeviewSelect>>", self.on_tree_select)
-        self.tree.bind("<Double-1>", self.double_tap)
-
-        self.scrollbary.configure(command=self.tree.yview)
-        self.scrollbarx.configure(command=self.tree.xview)
-
-        self.scrollbary.place(relx=0.954, rely=0.203, width=22, height=548)
-        self.scrollbarx.place(relx=0.307, rely=0.924, width=884, height=22)
-
-        self.tree.configure(
-            columns=(
-                "Bill Number",
-                "Date",
-                "Customer Name",
-                "Customer Phone No.",
-            )
-        )
-
-        self.tree.heading("Bill Number", text="Bill Number", anchor=W)
-        self.tree.heading("Date", text="Date", anchor=W)
-        self.tree.heading("Customer Name", text="Customer Name", anchor=W)
-        self.tree.heading("Customer Phone No.", text="Customer Phone No.", anchor=W)
-        
-
-        self.tree.column("#0", stretch=NO, minwidth=0, width=0)
-        self.tree.column("#1", stretch=NO, minwidth=0, width=219)
-        self.tree.column("#2", stretch=NO, minwidth=0, width=219)
-        self.tree.column("#3", stretch=NO, minwidth=0, width=219)
-        self.tree.column("#4", stretch=NO, minwidth=0, width=219)
-        
-
-        self.DisplayData()
-
-
-    # def DisplayData(self):
-    #     cur.execute("SELECT * FROM bill")
-    #     fetch = cur.fetchall()
-    #     for data in fetch:
-    #         self.tree.insert("", "end", values=(data))
-
-    # sel = []
-    # def on_tree_select(self, Event):
-    #     self.sel.clear()
-    #     for i in self.tree.selection():
-    #         if i not in self.sel:
-    #             self.sel.append(i)
-
-    # def double_tap(self, Event):
-    #     item = self.tree.identify('item', Event.x, Event.y)
-    #     global bill_num
-    #     bill_num = self.tree.item(item)['values'][0]
-        
-
-    #     global bill
-    #     bill = Toplevel()
-    #     pg = open_bill(bill)
-    #     #bill.protocol("WM_DELETE_WINDOW", exitt)
-    #     bill.mainloop()
+        top.title("Liên hệ")
 
         
+        self.center_window(top)
 
-
-    # def delete_invoice(self):
-    #     val = []
-    #     to_delete = []
-
-    #     if len(self.sel)!=0:
-    #         sure = messagebox.askyesno("Confirm", "Are you sure you want to delete selected invoice(s)?", parent=invoice)
-    #         if sure == True:
-    #             for i in self.sel:
-    #                 for j in self.tree.item(i)["values"]:
-    #                     val.append(j)
-                
-    #             for j in range(len(val)):
-    #                 if j%5==0:
-    #                     to_delete.append(val[j])
-                
-    #             for k in to_delete:
-    #                 delete = "DELETE FROM bill WHERE bill_no = ?"
-    #                 cur.execute(delete, [k])
-    #                 db.commit()
-
-    #             messagebox.showinfo("Success!!", "Invoice(s) deleted from database.", parent=invoice)
-    #             self.sel.clear()
-    #             self.tree.delete(*self.tree.get_children())
-
-    #             self.DisplayData()
-    #     else:
-    #         messagebox.showerror("Error!!","Please select an invoice", parent=invoice)
-
-    # def search_inv(self):
-    #     val = []
-    #     for i in self.tree.get_children():
-    #         val.append(i)
-    #         for j in self.tree.item(i)["values"]:
-    #             val.append(j)
-
-    #     to_search = self.entry1.get()
-    #     for search in val:
-    #         if search==to_search:
-    #             self.tree.selection_set(val[val.index(search)-1])
-    #             self.tree.focus(val[val.index(search)-1])
-    #             messagebox.showinfo("Success!!", "Bill Number: {} found.".format(self.entry1.get()), parent=invoice)
-    #             break
-    #     else: 
-    #         messagebox.showerror("Oops!!", "Bill NUmber: {} not found.".format(self.entry1.get()), parent=invoice)
-
-
+        self.button4 = ttk.Button(statistic,text="Quay lại",command=self.Exit)
+        self.button4.place(x=40,y=14)
+        self.contact_us = self.ContactUs(top)
+    def center_window(self, top):
+        top.update_idletasks()
+        width = top.winfo_width()
+        height = top.winfo_height()
+        x = (top.winfo_screenwidth() // 2) - (width // 2)
+        y = (top.winfo_screenheight() // 2) - (height // 2)
+        top.geometry('{}x{}+{}+{}'.format(width, height, x, y))
     def Logout(self):
-        sure = messagebox.askyesno("Logout", "Are you sure you want to logout?")
+        sure = messagebox.askyesno("Đăng xuất?", "Bạn muốn đăng xuất?")
         if sure == True:
             statistic.destroy()
             root.deiconify()
             page1.entry1.delete(0, END)
             page1.entry2.delete(0, END)
 
-    def time(self):
-        string = strftime("%H:%M:%S %p")
-        self.clock.config(text=string)
-        self.clock.after(1000, self.time)
-
     def Exit(self):
-        sure = messagebox.askyesno("Exit","Are you sure you want to exit?", parent=statistic)
+        sure = messagebox.askyesno("Thoát?","Bạn muốn thoát?", parent=statistic)
         if sure == True:
             statistic.destroy()
             adm.deiconify()
 
+    class ContactUs:
+        def __init__(self, top):
+            frame_back = ttk.Frame(top)
+            frame_back.place(x=20, y=20)
 
+            label = tkinter.Label(top, text="Liên hệ với chúng tôi", foreground="green", font=("Arial", 20, 'bold'))
+            label.place(x=40, y=75)
 
+            frame_information = ttk.Frame(top)
+            frame_information.place(x=80, y=130, width=600, height=200)
 
+            style = ttk.Style()
+            style.configure("Custom.TFrame")
+            frame_information["style"] = "Custom.TFrame"
 
+            style = ttk.Style()
+            style.configure("White.TLabel", font=("Poppins SemiBold", 13))
 
+            district = ttk.Label(frame_information, text="Địa chỉ: 108 Phố Nguyên Xá, Minh Khai, Bắc Từ Liêm, Hà Nội",
+                                 style='White.TLabel')
+            district.place(x=10,y=50)
 
+            phone_number = ttk.Label(frame_information, text="Số điện thoại: 0987654321", style='White.TLabel')
+            phone_number.place(x=10,y=85)
 
-
-
-
-
-
-
-
-
-
-
-
-
+            gmail = ttk.Label(frame_information, text="Gmail: trieutungvp@gmail.com", style='White.TLabel')
+            gmail.place(x=10,y=120)
+            image = tkinter.PhotoImage(file="./images/map (1).png")  # Replace with the actual path to your image
+            resized_image = image.subsample(1, 1)  # Adjust the subsample values to resize the image
+            image_label = tkinter.Label(frame_information, image=resized_image)
+            image_label.image = resized_image  # To prevent the image from being garbage collected
+            image_label.place(x=470, y=50)           
 
 
 page1 = login_page(root)

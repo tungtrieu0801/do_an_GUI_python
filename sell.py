@@ -112,6 +112,9 @@ def sell(root):
     # frame_back.place(x=20,y=20)
     back_button = ttk.Button(sell_window, text="Quay lại", command=close_window_2, style='Back_Bbutton.TButton')
     back_button.place(relx=0.007, rely=0.006, width=100, height=45)
+    font_style = ('Arial', 24,'bold')
+    label_shop = ttk.Label(sell_window, text="Happy Shop", foreground="green", font=font_style)
+    label_shop.place(relx=0.4, rely=0.004)
     
     scrollbarx = Scrollbar(sell_window, orient=HORIZONTAL)
     scrollbary = Scrollbar(sell_window, orient=VERTICAL)
@@ -305,22 +308,15 @@ def sell(root):
 
     #tao nut ship hang
 
-    button_deliver = ttk.Button(sell_window, text="Giao hàng tại nhà")
-    button_deliver.place(relx=0.68, rely=0.16)
 
     #tạo nút "hàng hoá giảm giá"
-    button_display_discount = ttk.Button(sell_window, text="Hàng giảm giá")
-    button_display_discount.place(relx=0.03, rely=0.16)
+
    
 
-    #sap xep hang hoa theo abc
-    button_arrange = ttk.Button(sell_window, text="Sắp xếp tên")
-    button_arrange.place(relx=0.21, rely=0.16)
 
 
-
-    button_deliver = ttk.Button(sell_window, text="Giao hàng tại nhà")
-    button_deliver.place(relx=0.58, rely=0.16)
+    # button_deliver = ttk.Button(sell_window, text="Giao hàng tại nhà")
+    # button_deliver.place(relx=0.58, rely=0.16)
 
     # Tạo hàm xử lý sự kiện khi nhấn nút "Xóa"
     def delete_all_data():
@@ -328,7 +324,7 @@ def sell(root):
 
     # Tạo nút "Xóa"
     button_delete = ttk.Button(sell_window, text="Xóa", command=delete_all_data)
-    button_delete.place(relx=0.762, rely=0.16)
+    button_delete.place(relx=0.68, rely=0.16)
 
 
     display_data(tree)
@@ -444,8 +440,6 @@ def sell(root):
     send_email_button = ttk.Button(sell_window, text='Gửi email',command=sendEmail)
     send_email_button.place(relx=0.9,rely=0.16)
 
-    notification_button = ttk.Button(sell_window, text='Thông báo',command=sendEmail)
-    notification_button.place(relx=0.9, rely=0.02)
 
 
 
@@ -486,7 +480,7 @@ def sell(root):
 
     # Tạo nút "Sản phẩm hết hàng"
     button_display_zero = ttk.Button(sell_window, text="Sản phẩm hết hàng", command=display_zero_stock)
-    button_display_zero.place(relx=0.11, rely=0.16)
+    button_display_zero.place(relx=0.03, rely=0.16)
 
     def sort_by_product_name():
        
@@ -586,5 +580,5 @@ def sell(root):
 
     # Tạo nút "Lời nhắn"
     button_notification = ttk.Button(sell_window, text="Lời nhắn", command=open_word_file)
-    button_notification.place(relx=0.28, rely=0.16)
+    button_notification.place(relx=0.14, rely=0.16)
 

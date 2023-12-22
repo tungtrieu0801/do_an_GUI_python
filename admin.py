@@ -135,7 +135,7 @@ class Admin_Page:
         self.button5.configure(background="#ffffff")
         self.button5.configure(font="-family {Poppins SemiBold} -size 12")
         self.button5.configure(borderwidth="0")
-        self.button5.configure(text="""THỐNG KÊ""")
+        self.button5.configure(text="""LIÊN HỆ""")
         self.button5.configure(command=statistics)
     def Logout(self):
         sure = messagebox.askyesno("Đăng xuất", "Bạn muốn đăng xuất?", parent=adm)

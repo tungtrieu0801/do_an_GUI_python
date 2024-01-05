@@ -730,8 +730,8 @@ class Inventory:
         self.tree.heading("ID", text="ID", anchor=W)
         self.tree.heading("Tên sản phẩm", text="Tên sản phẩm", anchor=W)
         self.tree.heading("Loại sản phẩm", text="Loại sản phẩm", anchor=W)
-        self.tree.heading("Số lượng", text="Số lượng", anchor=W)
-        self.tree.heading("Giá", text="Giá(VND)", anchor=W)
+        self.tree.heading("Số lượng", text="Giá(VND", anchor=W)
+        self.tree.heading("Giá", text="Số lượng", anchor=W)
         self.tree.heading("Nhà cung cấp", text="Nhà cung cấp", anchor=W)
         self.tree.heading("Liên lạc nhà cung cấp", text="Số điện thoại", anchor=W)
 
@@ -1123,7 +1123,7 @@ class add_product:
                                         insert = (
                                                     "INSERT INTO inventory (product_id, product_name, category,stock, product_price,  vendor, vendor_phoneno) VALUES(%s, %s, %s, %s, %s, %s, %s)"
                                                 )
-                                        cur.execute(insert, [product_id,pname, pcat, psubcat, int(pqty), pmrp, pcp])
+                                        cur.execute(insert, [product_id,pname, pcat, int(pqty), psubcat, pmrp, pcp])
                                         connection.commit()
                                         messagebox.showinfo("Thành công!", "Đã thêm sản phẩm.", parent=p_add)
                                         p_add.destroy()

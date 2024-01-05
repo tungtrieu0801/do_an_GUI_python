@@ -9,7 +9,10 @@ from email.message import EmailMessage
 from styles import *
 from tkinter import PhotoImage
 from PIL import Image, ImageTk
-
+from reportlab.lib.utils import ImageReader
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from datetime import datetime
 import re
 from sqlite3 import Cursor
 from tkinter import simpledialog
@@ -41,7 +44,8 @@ def sell(root):
         for data in fetch:
             tree.insert("", "end", values=data)
         tree.all_items = fetch
-
+        
+    #hoangggggg....................................
     def search_product():
         connection = mysql.connector.connect(
             host='localhost',
@@ -236,6 +240,7 @@ def sell(root):
     )
     cursor = connection.cursor()
     def calculate_total():
+        sum=0
         customer_name = name_entry.get()
         phone_number = phone_entry.get()
         email = email_entry.get()
@@ -246,13 +251,19 @@ def sell(root):
 
         khuyenmai = float(khuyenmai_combobox.get().strip("%")) / 100
         for item in selected_items:
+            
+
             product_name = treeview_selected.item(item, "values")[0]  # Tên sản phẩm là cột đầu tiên
             quantity = float(treeview_selected.item(item, "values")[2])  # Số lượng là cột thứ 3
             price = float(treeview_selected.item(item, "values")[3])  # Đơn giá là cột thứ 4
             subtotal = quantity * price
+            sum+=subtotal
             subtotal_with_discount = subtotal -subtotal*khuyenmai
             total += subtotal_with_discount
 
+            #vuathem
+            shared_variables.total=total
+            shared_variables.subtotal=sum
             # Thêm chi tiết món hàng vào danh sách
             invoice_items.append((product_name, quantity, price, subtotal))
 
@@ -578,4 +589,104 @@ def sell(root):
     # Tạo nút "Lời nhắn"
     button_notification = ttk.Button(sell_window, text="Lời nhắn", command=open_word_file)
     button_notification.place(relx=0.14, rely=0.16)
+
+    #hoanggggg.............................................
+    def create_pdf(customer_name, phone_number, email, total,sum, products,khuyenmai):
+        # Tạo canvas mới
+        c = canvas.Canvas("invoice.pdf", pagesize=letter)
+
+        # Lấy kích thước của trang PDF
+        page_width, page_height = letter
+
+        # Thêm ảnh vào file PDF
+        image_path = "./images/bill1.png"  # Đường dẫn tới ảnh của bạn
+        img = ImageReader(image_path)
+        img_width, img_height = img.getSize()
+        # Tính toán tỷ lệ giữa chiều rộng và chiều cao của ảnh
+        img_ratio = img_width / img_height
+        # Tính toán kích thước mới của ảnh dựa trên tỷ lệ và kích thước của trang PDF
+        if img_ratio > 1:
+            new_img_width = page_width
+            new_img_height = page_width / img_ratio
+        else:
+            new_img_width = page_height * img_ratio
+            new_img_height = page_height
+
+        # Vẽ ảnh lên trang PDF
+        c.drawImage(img, 0, 0, width=new_img_width, height=new_img_height)
+
+        # Thiết lậpfont chữ Times New Roman và kích thước chữ
+        c.setFont("Times-Roman", 12)
+
+        # Thiết lập font chữ lại thành Times New Roman
+        c.setFont("Times-Roman", 12)
+
+        c.drawString(140, 613, customer_name)
+        c.drawString(125, 585, phone_number)
+        c.drawString(86, 557, email)
+        current_time = datetime.now().strftime("<%d-%m-%Y> <%H:%M:%S>")
+        c.drawString(400, 656, current_time)
+        c.drawString(450, 156, str(total))
+        c.drawString(450, 206, str(sum))
+        c.drawString(450, 185, "{}%".format(int(khuyenmai * 100)))
+        # Vẽ danh sách sản phẩm trên trang PDF
+        y_position = 480  # Vị trí dọc ban đầu để bắt đầu vẽ các sản phẩm
+        for product in products:
+            product_name = product["name"]
+            product_type = product["type"]
+            product_price = product["price"]
+            product_quantity = product["quantity"]
+            
+
+            # Vẽ thông tin sản phẩm
+            c.drawString(100, y_position, product_name)
+            c.drawString(270, y_position, product_type)
+            c.drawString(380, y_position, str(product_price))
+            c.drawString(500, y_position, str(product_quantity))
+            
+
+            y_position -= 25  # Giảm vị trí dọc để vẽ sản phẩm tiếp theo
+        # Lưu và đóng file PDF
+        c.save()
+
+    def print_button_clicked():
+        # Lấy thông tin từ các Entry fields
+        customer_name = name_entry.get()
+        phone_number = phone_entry.get()
+        email = email_entry.get()
+        total = shared_variables.total
+        sum=shared_variables.subtotal
+        khuyenmai = float(khuyenmai_combobox.get().strip("%")) / 100
+
+        if customer_name == "" or total == 0:
+            messagebox.showwarning("Cảnh báo", "Vui lòng nhập tên khách hàng và thực hiện thanh toán trước khi in hóa đơn.")
+        else:
+            # Lấy danh sách sản phẩm từ treeview_selected
+            products = []
+            for item in treeview_selected.get_children():
+                values = treeview_selected.item(item, "values")
+                if len(values) >= 4:
+                    product_name = values[0]
+                    product_type = values[1]
+                    product_price = values[2]
+                    product_quantity = values[3]
+
+                    if product_name != "" and product_type != "" and product_price != "" and product_quantity != "":
+                        product = {
+                            "name": product_name,
+                            "type": product_type,
+                            "price": float(product_price),
+                            "quantity": int(product_quantity)
+                        }
+                        products.append(product)
+
+            # Gọi hàm tạo file PDF
+            create_pdf(customer_name, phone_number, email, total, sum, products, khuyenmai)
+            messagebox.showinfo("Thông báo", "In hóa đơn thành công")
+
+
+    
+    # Tạo nút "In hóa đơn" và gán sự kiện khi nhấn nút
+    print_button = ttk.Button(sell_window, text="In hóa đơn", command=print_button_clicked)
+    print_button.place(relx=0.75, rely=0.16)
 

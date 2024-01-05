@@ -9,10 +9,7 @@ from email.message import EmailMessage
 from styles import *
 from tkinter import PhotoImage
 from PIL import Image, ImageTk
-from sale.home import create_home_page
-from sale.contact_page import create_contact_page
-from sale.about_page import create_about_page
-from sale.product_page import create_product_page
+
 import re
 from sqlite3 import Cursor
 from tkinter import simpledialog

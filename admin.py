@@ -585,7 +585,9 @@ class Inventory:
         self.label1.place(relx=0, rely=0, width=1366, height=768)
         self.img = PhotoImage(file="./images/inventory_fix.png")
         self.label1.configure(image=self.img)
-
+            # Create a custom style with padding
+        style = ttk.Style()
+        style.configure("Padded.TButton", padding=(10, 5))
         self.message = Label(inv)
         self.message.place(relx=0.046, rely=0.055, width=136, height=30)
         self.message.configure(font="-family {Poppins} -size 10")
@@ -670,13 +672,13 @@ class Inventory:
         self.button5.configure(text="""XOÁ SẢN PHẨM""")
         self.button5.configure(command=self.delete_product)
 
-        self.button7 = ttk.Button(inv)
+        self.button7 = ttk.Button(inv,style="Padded.TButton")
         self.button7.place(relx=0.052, rely=0.67)
         self.button7.configure(text="Xuất excel")
         self.button7.configure(command=self.export_excel)
 
-        self.button8 = ttk.Button(inv)
-        self.button8.place(relx=0.052, rely=0.77)
+        self.button8 = ttk.Button(inv,style="Padded.TButton")
+        self.button8.place(relx=0.052, rely=0.73)
         self.button8.configure(text="Nhập excel")
         self.button8.configure(command=self.import_excel)
 
@@ -1531,7 +1533,10 @@ class Invoice:
         self.label1.place(relx=0, rely=0, width=1366, height=768)
         self.img = PhotoImage(file="./images/invoices_fix.png")
         self.label1.configure(image=self.img)
-
+        
+        # Create a custom style with padding
+        style = ttk.Style()
+        style.configure("Padded.TButton", padding=(10, 5))
         self.message = Label(invoice)
         self.message.place(relx=0.046, rely=0.055, width=136, height=30)
         self.message.configure(font="-family {Poppins} -size 10")
@@ -1577,18 +1582,18 @@ class Invoice:
         self.button2.configure(text="""Đăng xuất""")
         self.button2.configure(command=self.Logout)
 
-        self.button3 = ttk.Button(invoice)
-        self.button3.place(relx=0.052, rely=0.432)
+        self.button3 = ttk.Button(invoice, style="Padded.TButton")
+        self.button3.place(relx=0.052, rely=0.47)
         self.button3.configure(text="""Xoá đơn hàng""")
         self.button3.configure(command=self.delete_invoice)
 
-        self.button5 = ttk.Button(invoice)
-        self.button5.place(relx=0.052, rely=0.54)
+        self.button5 = ttk.Button(invoice, style="Padded.TButton")
+        self.button5.place(relx=0.052, rely=0.59)
         self.button5.configure(text="""Danh sách khách hàng""")
         self.button5.configure(command=self.show_customers)
 
-        self.button7 = ttk.Button(invoice)
-        self.button7.place(relx=0.052, rely=0.49)
+        self.button7 = ttk.Button(invoice, style="Padded.TButton")
+        self.button7.place(relx=0.052, rely=0.53)
         self.button7.configure(text="""Danh sách đơn hàng""")
         self.button7.configure(command=self.DisplayData)
 

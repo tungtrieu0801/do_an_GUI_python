@@ -645,7 +645,7 @@ class Inventory:
         self.button3.configure(borderwidth="0")
         self.button3.configure(text="""THÊM SẢN PHẨM""")
         self.button3.configure(command=self.add_product)
-
+        
         self.button4 = Button(inv)
         self.button4.place(relx=0.052, rely=0.5, width=306, height=28)
         self.button4.configure(relief="flat")
@@ -677,10 +677,13 @@ class Inventory:
         self.button7.configure(text="Xuất excel")
         self.button7.configure(command=self.export_excel)
 
+
+    
         self.button8 = ttk.Button(inv,style="Padded.TButton")
-        self.button8.place(relx=0.052, rely=0.73)
+        self.button8.place(relx=0.15, rely=0.67)
         self.button8.configure(text="Nhập excel")
         self.button8.configure(command=self.import_excel)
+
 
         self.button6 = Button(inv)
         self.button6.place(relx=0.135, rely=0.885, width=76, height=23)
@@ -728,7 +731,7 @@ class Inventory:
         self.tree.heading("Tên sản phẩm", text="Tên sản phẩm", anchor=W)
         self.tree.heading("Loại sản phẩm", text="Loại sản phẩm", anchor=W)
         self.tree.heading("Số lượng", text="Số lượng", anchor=W)
-        self.tree.heading("Giá", text="Giá", anchor=W)
+        self.tree.heading("Giá", text="Giá(VND)", anchor=W)
         self.tree.heading("Nhà cung cấp", text="Nhà cung cấp", anchor=W)
         self.tree.heading("Liên lạc nhà cung cấp", text="Số điện thoại", anchor=W)
 
@@ -743,6 +746,25 @@ class Inventory:
         self.tree.column("#7", stretch=NO, minwidth=0, width=120)
 
         self.DisplayData()
+        #################3
+        self.total_value_label = Label(inv)
+        self.total_value_label.place(relx=0.06, rely=0.8, width=280, height=23)
+        self.total_value_label.configure(font="-family {Poppins SemiBold} -size 12")
+        self.total_value_label.configure(foreground="#000000")
+        self.total_value_label.configure(background="#ffffff")
+        self.update_total_value_label() 
+    #dieu chinh label tong gia tri
+    def update_total_value_label(self):
+        total_value = self.calculate_total_value()
+        self.total_value_label.configure(text=f"Tổng giá trị kho hàng: {total_value} VND")
+
+    def calculate_total_value(self):
+        total_value = 0
+        for item in self.tree.get_children():
+            quantity = int(self.tree.item(item, 'values')[3])
+            price = float(self.tree.item(item, 'values')[4])
+            total_value += quantity * price
+        return total_value
     def center_window(self, top):
         top.update_idletasks()
         width = top.winfo_width()
@@ -929,6 +951,7 @@ class Inventory:
                 self.tree.delete(*self.tree.get_children())
 
                 self.DisplayData()
+                self.update_total_value_label()
         else:
             messagebox.showerror("Lỗi!!","Hãy chọn một sản phẩm.", parent=inv)
 
@@ -1072,8 +1095,9 @@ class add_product:
         self.button2.configure(borderwidth="0")
         self.button2.configure(text="""Xoá""")
         self.button2.configure(command=self.clearr)
-
+    
     def add(self):
+        
         pqty = self.entry3.get()
         pcat = self.entry2.get()  
         pmrp = self.entry6.get()  
@@ -1105,7 +1129,10 @@ class add_product:
                                         p_add.destroy()
                                         page3.tree.delete(*page3.tree.get_children())
                                         page3.DisplayData()
+                                        #############
+                                        
                                         p_add.destroy()
+                                        
                                 else:
                                     messagebox.showerror("Lỗi!", "Sửa thông tin không phù hợp.", parent=p_add)
                         else:
@@ -1592,6 +1619,15 @@ class Invoice:
         self.button5.configure(text="""Danh sách khách hàng""")
         self.button5.configure(command=self.show_customers)
 
+        self.total_revenue_label = Label(invoice)
+        self.total_revenue_label.place(relx=0.052, rely=0.65,width=200, height=36)
+        self.total_revenue_label.configure(font="-family {Poppins Light} -size 12")
+        self.total_revenue_label.configure(foreground="#000000")
+        self.total_revenue_label.configure(background="#ffffff")
+
+
+
+
         self.button7 = ttk.Button(invoice, style="Padded.TButton")
         self.button7.place(relx=0.052, rely=0.53)
         self.button7.configure(text="""Danh sách đơn hàng""")
@@ -1648,7 +1684,58 @@ class Invoice:
         self.tree.column("#2", stretch=NO, minwidth=0, width=179)
         self.tree.column("#3", stretch=NO, minwidth=0, width=179)
         self.tree.column("#4", stretch=NO, minwidth=0, width=185)
+        self.update_total_revenue_label()  #
         self.DisplayData()
+
+    #hamtinhtongthu
+    def update_total_revenue_label(self):
+        total_value = self.calculate_total_value()
+        self.total_revenue_label.configure(text=f"Tổng thu: {total_value} VND")
+
+    def calculate_total_value(self):
+        total_value = 0
+        try:
+            # Kết nối đến database
+            connection = mysql.connector.connect(
+                host='localhost',
+                user='root',
+                password='080102',
+                database='mydatabase'
+            )
+
+            cursor = connection.cursor()
+
+            # Thực hiện truy vấn để lấy dữ liệu
+            cursor.execute("SELECT total FROM invoices")
+
+            # Lấy dữ liệu từ truy vấn
+            rows = cursor.fetchall()
+
+            # Tính tổng giá trị
+            for row in rows:
+                price = float(row[0])
+                total_value += price
+
+            # In giá trị để kiểm tra
+            print(total_value)
+
+        except Exception as e:
+            print(f"Error: {e}")
+
+        finally:
+            # Đóng kết nối với database
+            if connection.is_connected():
+                cursor.close()
+                connection.close()
+
+        return total_value
+    
+
+
+
+
+
+
     def center_window(self, top):
         top.update_idletasks()
         width = top.winfo_width()
